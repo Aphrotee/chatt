@@ -1,0 +1,205 @@
+@use '../../index.scss' as index;
+
+.messages-wrapper {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    // background: url('../../images/texture\ paper\ white.jpg');
+    // background-position: center;
+
+    .user-nav {
+        display:flex;
+        min-height: 50px;
+        align-items: center;
+        background: hsla(0, 6%, 93%, 0.5);
+        padding: 0 1em 0 1em;
+
+
+        .calls {
+            display: flex;
+            gap: .8em;
+            font-size: 1.2em;
+            justify-content: flex-end;
+            width: 100%;
+        }
+    }
+
+    .messages > * {
+        margin: 1em 1em 0 0;
+        display: flex;
+
+    &:nth-child(odd) {
+
+        padding:0 5em 0 1em;
+        &>.time-stamp {
+            align-self: flex-end;
+            font-size: .6em;
+            margin: 0 .4em .3em 0;
+            font-weight: 900;
+        }
+
+        &>.current-user {
+            width: fit-content;
+            background: rgb(255, 255, 255);
+            padding: .5em;
+            border-radius: 0 15px 15px 15px;
+
+        &>div {
+            font-size: .75em;
+            margin-top: .7em;
+        }
+    }
+    }
+
+    &:nth-child(even) {
+        padding-left: 5em;
+
+        &>.time-stamp {
+            align-self: flex-end;
+            font-size: .6em;
+            margin: 0 0 .3em .4em;
+            font-weight: 900;
+        }
+
+        &>.other-user {
+            width: fit-content;
+            color: rgb(223, 221, 221);
+            font-weight: 500;
+            justify-self: flex-end;
+            float: right;
+            background: index.$primary-color;
+            padding: .8em;
+            border-radius: 15px 0 15px 15px;
+        }
+    }
+    }
+    .search-bar {
+        position: fixed;
+        bottom: 0;
+        width: inherit;
+        background: #f0f2f5;
+        height: 90px;
+        display:flex;
+        gap: 2%;
+        align-items: center;
+
+
+        &>form {
+            display: flex;
+            width:100%;
+            padding-right: 50px;
+
+            .icons {
+                display: flex;
+                align-items: center;
+                gap: .8em;
+                font-size: 1.3em;
+                color: index.$primary-color;
+                padding: 0 10px;
+
+                &>ion-icon[name="attach-sharp"] {
+                    transform: rotate(45deg);
+                }
+            }
+
+            &>input[type="search"] {
+                width: inherit;
+                outline: none;
+                padding-left: 15px;
+                background: rgb(255, 255, 255);
+                border: 0;
+                height: 45px;
+                border-radius: 15px;
+            }
+
+            & button {
+                transform: rotate(270deg);
+                border: 0;
+                color: index.$primary-color;
+                background: none;
+                position: absolute;
+                right: 0;
+                font-size: 32px;
+
+            }}
+        }
+
+}
+
+
+@media (min-width: 768px) {
+    .messages-wrapper {
+        width: 59%;
+        float: right;
+        display:block;
+
+        .messages {
+            margin: 3em 1em 0 0;
+        }
+
+    }
+
+    .search-bar form input {
+        padding-left: 10px;
+    }
+}
+
+@media (max-width: 450px) {
+    .messages-wrapper {
+
+        .search-bar > form {
+
+            input[type="search"] {
+                padding: 0 38px;
+            }
+
+            .icons > ion-icon[name=attach-sharp] {
+            position: absolute;
+            top: 40%;
+            display: block;
+            right: 15%;
+            }
+
+            .icons > ion-icon[name=happy-sharp] {
+                position: absolute;
+                top: 40%;
+                display: block;
+                left: 8%;
+                }
+        }
+    }
+}
+
+@media (max-width: 280px) {
+
+    .messages-wrapper .search-bar {
+        height: 60px;
+
+        form {
+            padding-right: 40px;
+
+            &>input[type="search"] {
+                height: 36px;
+                padding: 0 28px;
+            }
+
+            .icons {
+
+                padding:0 5px;
+
+                ion-icon[name=attach-sharp] {
+                    right: 17%;
+                    top: 35%;
+                }
+                ion-icon[name=happy-sharp] {
+                    left: 5%;
+                    top: 35%;
+                }
+            }
+
+            button {
+                padding: 0;
+            }
+        }
+    }
+}

@@ -1,14 +1,127 @@
+@use '../../index.scss' as index;
+
 .sidebar {
     width:100vw;
-    background: red;
+    display: none;
     height: 100vh;
-    overflow-y: scroll;
-    display: static;
+    position: fixed;
+    z-index: 1;
 
+    .chats {
+        padding: 2em 0 0 .5em;
+        height: 100%;
+
+        .menu {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: index.$primary-color;
+            display: flex;
+
+            &>div {
+                width: 62%;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            &>div:hover {
+                cursor: pointer;
+            }
+        }
+
+        .chats-wrapper {
+            overflow-y: scroll;
+            height: 80%;
+            width: 100%;
+            margin-top: 1em;
+        }
+
+        .chats-wrapper > div {
+            display: flex;
+            gap: .8em;
+            border-top: 1px solid rgb(219, 218, 218);
+            padding: .5em 0;
+            margin: 0 .5em;
+
+            &>div:first-child {
+                position: relative;
+
+                .notifications {
+                    position: absolute;
+                    display: flex;
+                    width: 20px;
+                    height: 20px;
+                    justify-content: center;
+                    border-radius: 10px;
+                    align-items: center;
+                    background: index.$primary-color;
+                    color: rgb(235, 235, 235);
+                    top: 0;
+                    right: -2px;
+
+                    &>div {
+                        font-weight: bold;
+                        font-size: .7em;
+                    }
+                }
+
+            }
+
+            .details {
+                width: 50%;
+                padding-top: .3em;
+
+                span {
+                    font-weight: bolder;
+                    color:rgb(37, 36, 36)
+                }
+
+                p {
+                    margin: 0;
+                    padding-top: .3em;
+                    font-weight: 500;
+                    color:rgb(56, 55, 55);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+            }
+
+            .timestamp {
+                width: 100%;
+                font-weight: bold;
+                font-size: small;
+
+                span {
+                    float: right;
+                }
+            }
+
+        }
+
+        img {
+            max-width:60px;
+            min-height: 60px;
+            object-fit: cover;
+            aspect-ratio: 16/9;
+            border-radius: 30px;
+        }
+    }
 }
 
-@media (min-width: 912px) {
+@media (min-width: 768px) {
     .sidebar {
-        width:35vw;
+        width:41%;
+
+        .chats {
+
+            .chats-wrapper > div {
+
+                .details {
+                    width: 60%;
+                }
+            }
+
+        }
     }
 }

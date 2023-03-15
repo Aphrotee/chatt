@@ -1,0 +1,32 @@
+@use '../../index.scss' as index;
+
+nav {
+    display: flex;
+    height:50px;
+    background: rgb(241, 241, 241);
+    color: rgb(27, 27, 27);
+    align-items: center;
+
+    &>div:first-child {
+        padding-left: 1em;
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+
+    &>div:nth-child(2) {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .links {
+        display: flex;
+        font-size: 1.2em;
+    }
+
+    .links > * {
+        padding-right: 1em;
+    }
+
+
+}

@@ -1,0 +1,14 @@
+.sidebar {
+    width:100vw;
+    background: red;
+    height: 100vh;
+    overflow-y: scroll;
+    display: static;
+
+}
+
+@media (min-width: 912px) {
+    .sidebar {
+        width:35vw;
+    }
+}

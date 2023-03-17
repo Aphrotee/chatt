@@ -2,44 +2,52 @@
 
 .sidebar {
     width:100vw;
-    display: none;
     height: 100vh;
     position: fixed;
     z-index: 1;
+    background: index.$secondary-color;
 
     .chats {
-        padding: 2em 0 0 .5em;
+        margin: .3em .8em 0 .8em;
         height: 100%;
 
         .menu {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: index.$primary-color;
-            display: flex;
+            position: relative;
 
-            &>div {
-                width: 62%;
-                display: flex;
-                justify-content: flex-end;
+            &>input {
+                outline: none;
+                border-radius: 50px;
+                width: 100%;
+                border: 0;
+                height: 38px;
+                padding: 15px;
+                margin-bottom: 1em;
             }
 
-            &>div:hover {
-                cursor: pointer;
+            &>ion-icon[name="search-outline"] {
+                position: absolute;
+                top:9px;
+                right: 11px;
             }
         }
 
         .chats-wrapper {
             overflow-y: scroll;
-            height: 80%;
             width: 100%;
-            margin-top: 1em;
+            height: 80%;
+            background: white;
+            border-radius: 25px;
+
+            &>div:first-child {
+                border-top: 0;
+            }
         }
 
         .chats-wrapper > div {
             display: flex;
             gap: .8em;
             border-top: 1px solid rgb(219, 218, 218);
-            padding: .5em 0;
+            padding: .37em 0;
             margin: 0 .5em;
 
             &>div:first-child {
@@ -54,7 +62,7 @@
                     border-radius: 10px;
                     align-items: center;
                     background: index.$primary-color;
-                    color: rgb(235, 235, 235);
+                    color: rgb(255, 255, 255);
                     top: 0;
                     right: -2px;
 
@@ -77,9 +85,8 @@
 
                 p {
                     margin: 0;
-                    padding-top: .3em;
                     font-weight: 500;
-                    color:rgb(56, 55, 55);
+                    color:rgb(110, 110, 110);
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;

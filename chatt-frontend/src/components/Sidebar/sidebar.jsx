@@ -9,10 +9,8 @@ const Sidebar = () => {
             <Navbar />
             <div className='chats'>
                 <div className='menu'>
-                    <span>Conversations</span>
-                    <div>
-                        <ion-icon name="search-outline"></ion-icon>
-                    </div>
+                    <input type="search" />
+                    <ion-icon name="search-outline"></ion-icon>
                 </div>
 
 

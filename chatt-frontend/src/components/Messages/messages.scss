@@ -3,34 +3,69 @@
 .messages-wrapper {
     width: 100%;
     height: 100vh;
+    margin-bottom: 4em;
+    background: white;
     position: relative;
-    // background: url('../../images/texture\ paper\ white.jpg');
-    // background-position: center;
 
-    .user-nav {
+    .messages::-webkit-scrollbar{
+        background: white;
+    }
+}
+
+.user-nav {
+
         display:flex;
-        min-height: 50px;
         align-items: center;
-        background: hsla(0, 6%, 93%, 0.5);
-        padding: 0 1em 0 1em;
+        padding: .4em 0;
+        margin: 0 1.5em;
+        border-bottom: 1px solid rgb(185, 185, 185);
 
+        &>div:first-child {
+            display:flex;
+            align-items: center;
 
-        .calls {
-            display: flex;
-            gap: .8em;
-            font-size: 1.2em;
-            justify-content: flex-end;
+            img {
+                width:50px;
+                height:50px;
+                object-fit: cover;
+                border-radius: 25px;
+            }
+        }
+
+        &>div:nth-child(2) {
             width: 100%;
+            padding-left: 20px;
+
+            p {
+                margin:0;
+            }
+
+            p:first-child {
+                font-weight: 800;
+            }
+
+            p:last-child {
+                font-size: .8em;
+                font-weight: 500;
+                color: rgb(100, 98, 98);
+            }
+        }
+
+        &>div:last-child {
+            color: index.$primary-color;
+            font-size: 1.2em;
         }
     }
 
     .messages > * {
         margin: 1em 1em 0 0;
+        text-align: left;
         display: flex;
 
     &:nth-child(odd) {
 
         padding:0 5em 0 1em;
+        width: 80%;
         &>.time-stamp {
             align-self: flex-end;
             font-size: .6em;
@@ -39,8 +74,9 @@
         }
 
         &>.current-user {
-            width: fit-content;
-            background: rgb(255, 255, 255);
+            max-width: 80%;
+            word-wrap:break-word;
+            background: index.$secondary-color;
             padding: .5em;
             border-radius: 0 15px 15px 15px;
 
@@ -52,19 +88,21 @@
     }
 
     &:nth-child(even) {
-        padding-left: 5em;
+        direction: rtl;
 
         &>.time-stamp {
             align-self: flex-end;
             font-size: .6em;
             margin: 0 0 .3em .4em;
             font-weight: 900;
+            direction: ltr !important;
         }
 
         &>.other-user {
-            width: fit-content;
-            color: rgb(223, 221, 221);
+            max-width: 80%;
+            color: rgb(255, 255, 255);
             font-weight: 500;
+            word-wrap: break-word;
             justify-self: flex-end;
             float: right;
             background: index.$primary-color;
@@ -75,10 +113,8 @@
     }
     .search-bar {
         position: fixed;
-        bottom: 0;
         width: inherit;
-        background: #f0f2f5;
-        height: 90px;
+        bottom:1%;
         display:flex;
         gap: 2%;
         align-items: center;
@@ -87,15 +123,15 @@
         &>form {
             display: flex;
             width:100%;
-            padding-right: 50px;
+            padding: 10px 50px 15px 0;
 
             .icons {
                 display: flex;
                 align-items: center;
-                gap: .8em;
-                font-size: 1.3em;
-                color: index.$primary-color;
-                padding: 0 10px;
+                gap: .5em;
+                font-size: 1.8em;
+                color: rgb(99, 97, 97);
+                padding: 0 12px;
 
                 &>ion-icon[name="attach-sharp"] {
                     transform: rotate(45deg);
@@ -106,7 +142,7 @@
                 width: inherit;
                 outline: none;
                 padding-left: 15px;
-                background: rgb(255, 255, 255);
+                background: index.$secondary-color;
                 border: 0;
                 height: 45px;
                 border-radius: 15px;
@@ -121,27 +157,34 @@
                 right: 0;
                 font-size: 32px;
 
-            }}
+            }
         }
-
 }
 
 
 @media (min-width: 768px) {
+
     .messages-wrapper {
+        display:block;
         width: 59%;
         float: right;
-        display:block;
 
         .messages {
-            margin: 3em 1em 0 0;
+            padding-top: .8em;
+            height: 75%;
+            overflow-y: scroll;
+        }
+    }
+
+        .search-bar {
+            width: 57%;
+
+            form input {
+                padding-left: 10px;
+            }
         }
 
-    }
 
-    .search-bar form input {
-        padding-left: 10px;
-    }
 }
 
 @media (max-width: 450px) {

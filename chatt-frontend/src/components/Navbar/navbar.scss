@@ -15,18 +15,49 @@ nav {
 
     &>div:nth-child(2) {
         display: flex;
+        position: relative;
         width: 100%;
+        margin-right: 1em;
+        font-size: 1.3em;
         justify-content: flex-end;
+
+        .dropdown {
+        position: absolute;
+        box-shadow: 0 2px 10px rgb(92, 89, 89);
+        background: rgb(255, 255, 255);
+        width: 60%;
+        bottom: -97px;
+        z-index: 1;
+        right: 0;
+
+        &>ul {
+            padding: 0;
+            margin: .5em 0;
+
+            li:not(li:first-child) {
+                border-top: 1px solid rgba(0, 0, 0, 0.116);
+            }
+
+            li:hover {
+                cursor: pointer;
+                background: rgba(128, 128, 128, 0.164);
+            }
+
+            li {
+                list-style: none;
+                padding: .4em 1.2em;
+                font-size: .8em;
+                color: rgb(94, 87, 87);
+            }
+        }
     }
+}
 
-    .links {
-        display: flex;
-        font-size: 1.2em;
+    &>div:nth-child(2):hover ion-icon {
+        cursor: pointer
     }
+}
 
-    .links > * {
-        padding-right: 1em;
-    }
-
-
+.hidden {
+    display: none;
 }

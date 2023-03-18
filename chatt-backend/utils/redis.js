@@ -2,6 +2,7 @@ import redis from 'redis';
 
 class RedisClient {
   constructor() {
+    this.alive = true;
     this.client = redis.createClient({
         url: process.env.REDIS_URI
     });
@@ -10,8 +11,13 @@ class RedisClient {
       console.log('Redis connection established');
     });
     this.client.on('error', (err) => {
+      this.alive = false;
       console.log('Redis client error:', err);
     });
+  }
+
+  isAlive() {
+    return this.alive;
   }
 
   async get(key) {

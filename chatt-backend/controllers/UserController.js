@@ -52,7 +52,7 @@ class UserController {
     }
   }
 
-  userProfile(req, res, next) {
+  userProfile(req, res) {
     const userId = new mongoose.Types.ObjectId(req.userPayload._id);
     const email = req.userPayload.email;
     Users.findOne({ _id: userId, email: email })
@@ -63,6 +63,16 @@ class UserController {
       .catch((err) => {
         res.status(500).send({ error: err.toString() });
       });
+  }
+
+  allUsers(req, res) {
+    Users.find()
+      .then((data) => {
+        res.status(299).send(data);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.toString });
+      })
   }
 }
 

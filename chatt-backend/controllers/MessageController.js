@@ -3,7 +3,7 @@ import Messages from '../models/Messages.js';
 
 class MessageController{
 
-  newMessage(req, res, next) {
+  newMessage(req, res) {
     const message = req.body;
   
     Messages.create(message)
@@ -16,14 +16,14 @@ class MessageController{
     });
   }
 
-  allMessages(req, res, next) {
+  allMessages(req, res) {
     const containerId = mongoose.Types.ObjectId(req.containerId);
 
     if (containerId) {
       Messages.find({ containerId })
         .then((data) => {
           res.cookie('X-Token', req.token);
-          res.status(200).json(data);
+          res.status(200).send(data);
         })
         .catch((err) => {
           res.status(500).json({ error: err.toString() });

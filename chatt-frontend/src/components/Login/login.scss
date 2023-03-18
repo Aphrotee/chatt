@@ -1,0 +1,42 @@
+@use '../../index.scss';
+
+.login {
+    width: 100%;
+    height: 100vh;
+    display:flex;
+
+    &>div:first-child {
+        background: url('../../src/images/undraw_chatting_re_j55r.svg');
+        background-size: contain;
+        width: 80%;
+        display:none;
+        background-color: index.$primary-color;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    &>div:nth-child(2){
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .login-box {
+           width:400px;
+           min-height: 400px;
+           background: pink;
+
+           form input {
+            display: block;
+           }
+        }
+    }
+}
+
+
+
+@media (min-width: 768px) {
+    .login div:first-child {
+        display: block;
+    }
+}

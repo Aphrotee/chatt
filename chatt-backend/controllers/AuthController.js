@@ -8,20 +8,16 @@ class AuthController {
   login(req, res) {
     const email = req.email;
     const password = req.password;
-    console.log('email', email);
     Users.findOne({ email })
       .then(async (user) => {
-        console.log(user);
         if (user) {
           if (await bcrypt.compare(password, user.password)) {
-            console.log('valid password')
             const token = jwt.sign(
               { _id: user._id.toString(), email: user.email, username: user.username },
               process.env.JWT_SECRET,
               {
                 expiresIn: "7d"
               });
-              console.log('token', token);
               await redis.set(token, 1, 60 * 60 * 24 * 7);
             res.cookie('X-Token', token);
             res.status(200).json({ token });
@@ -41,7 +37,6 @@ class AuthController {
   logout(req, res) {
     redis.set(req.token, 0, 60 * 60 * 24 * 7);
     res.cookie('X-Token', '');
-    res.redirect(302, '/');
   };
 }
 

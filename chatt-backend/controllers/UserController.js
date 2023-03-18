@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Users from '../models/Users.js';
+import welcomeNewUser from '../worker.js';
 
 
 class UserController {
-  async register(req, res, next) {
+  async register(req, res) {
     const { username, email, password } = req.body;
-    console.log(username, req.body);
 
     if (!username) {
       res.status(400).json({ error: "Missing username" });
@@ -33,6 +33,7 @@ class UserController {
                         username: user.username,
                         email: user.email
                        };
+                      welcomeNewUser.add({ email: user.email, username: user.username });
                       res.status(201).json(response);
                     })
                     .catch((err) => {
@@ -67,4 +68,4 @@ class UserController {
 
 
 const userController = new UserController();
-export default userController;
+export default userController;  

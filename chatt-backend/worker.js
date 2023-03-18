@@ -1,16 +1,24 @@
 import Bull from 'bull';
+import mailer from './utils/nodemailer.js';
 
 
-const welcomeNewMembers = Bull('welcomeNewMembers');
+const welcomeNewUser = Bull('Welcome new user');
+console.log('Worker up!');
 
-welcomeNewMembers.process((job, done) => {
+welcomeNewUser.process((job, done) => {
   if (job.data.email === undefined) {
     done("No user email found");
   } else if (job.data.username === undefined) {
     done("No username found");
   } else {
-    const message = "Welcome to Chatt instant messaging"
+    const username = job.data.username;
+    const subject = "Welcome to Chatt Instant Messaging";
+    const message = `Dear ${username},\n\nYou have successfully created a Chatt Instant Messaging\
+ account.\nWe are more than happy to welcome you to use Chatt to send messages to your friends,\
+ colleauges and loved ones.\n\nRegards,\nChatt Instant Messaging Team`
+    mailer(job.data.email, subject, message);
+    done();
   }
 });
 
-export default welcomeNewMembers;
+export default welcomeNewUser;

@@ -26,16 +26,18 @@ class DBClient {
             const messageDetails = change.fullDocument;
             pusher.trigger('messages', 'inserted',
               {
-                name: messageDetails.name,
+                username: messageDetails.username,
                 message: messageDetails.message,
-                timestamp: messageDetails.timestamp
+                timestamp: messageDetails.timestamp,
+                receiverId: messageDetails.receiverId,
+                containerId: messageDetails.containerId
               }
             );
           } else {
             console.log('Error triggering pusher');
           }
         });
-        msgContChangeStream.on('change', (change) => {
+        /**msgContChangeStream.on('change', (change) => {
           console.log('Change occured:', change);
           if (change.operationType === 'update') {
             const containerDetails = change.updateDescription.updatedFields;
@@ -46,7 +48,7 @@ class DBClient {
               timestamp: containerDetails.timestamp
             })
           }
-        })
+        })*/
       })
       .catch((err) => {
         this.alive = false;

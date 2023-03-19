@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Users from '../models/Users.js';
+import welcomeNewUser from '../worker.js';
 
 
 class UserController {
-  async register(req, res, next) {
+
+  async register(req, res) {
     const { username, email, password } = req.body;
-    console.log(username, req.body);
 
     if (!username) {
       res.status(400).json({ error: "Missing username" });
@@ -33,6 +34,7 @@ class UserController {
                         username: user.username,
                         email: user.email
                        };
+                      welcomeNewUser.add({ email: user.email, username: user.username });
                       res.status(201).json(response);
                     })
                     .catch((err) => {
@@ -51,7 +53,7 @@ class UserController {
     }
   }
 
-  userProfile(req, res, next) {
+  userProfile(req, res) {
     const userId = new mongoose.Types.ObjectId(req.userPayload._id);
     const email = req.userPayload.email;
     Users.findOne({ _id: userId, email: email })
@@ -63,8 +65,23 @@ class UserController {
         res.status(500).send({ error: err.toString() });
       });
   }
+
+  allUsers(req, res) {
+    Users.aggregate([
+      { $match: { } },
+      { $set: { id: '$_id' }},
+      { $project: { _id: 0, password: 0 }}
+    ])
+      .then((data) => {
+        res.status(200).send(data);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.toString });
+      })
+  }
+
 }
 
 
 const userController = new UserController();
-export default userController;
+export default userController;  

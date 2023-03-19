@@ -5,22 +5,29 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "dev": "nodemon server.js",
     "test": "test",
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "Aiyebogan Temitope",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "bull": "^4.10.4",
+    "chai": "^4.3.7",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
+    "mocha": "^10.2.0",
+    "moment": "^2.29.4",
     "mongoose": "^7.0.1",
     "morgan": "^1.10.0",
+    "node-datetime": "^2.1.2",
+    "nodemailer": "^6.9.1",
     "pusher": "^5.1.2",
-    "redis": "^4.6.5"
+    "redis": "^4.6.5",
+    "sinon": "^15.0.2"
   }
 }

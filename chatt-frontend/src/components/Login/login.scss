@@ -1,33 +1,148 @@
 @use '../../index.scss';
 
 .login {
-    width: 100%;
+    position: relative;
     height: 100vh;
-    display:flex;
+
+    .header {
+        position: absolute;
+        color: index.$primary-color;
+        font-weight: bolder;
+        font-family: 'Teko', sans-serif;
+        font-size: 1.5em;
+        top: 6%;
+        left:40%;
+    }
 
     &>div:first-child {
         background: url('../../src/images/undraw_chatting_re_j55r.svg');
         background-size: contain;
-        width: 80%;
-        display:none;
+        width: 45vw;
+        display: none;
+        height:inherit;
+        position: fixed;
         background-color: index.$primary-color;
         background-repeat: no-repeat;
         background-position: center;
+        font-family: 'Teko', sans-serif;
+
+        p {
+            color: rgba(255, 255, 255, 0.89);
+            font-weight: bolder;
+            font-size: 1.8em;
+            margin-left: 1em;
+        }
+
+        .user {
+            position: absolute;
+            font-size: 1.2em;
+            color: index.$primary-color;
+        }
+
+        .user1 {
+            top:31%;
+            left: 8%;
+        }
+
+        .user2 {
+            bottom:38.5%;
+            right: 8%;
+        }
     }
 
     &>div:nth-child(2){
-        width: 100%;
+        width:  100vw;
+        height: inherit;
         display: flex;
         align-items: center;
+        position: relative;
+        float:right;
         justify-content: center;
 
-        .login-box {
-           width:400px;
-           min-height: 400px;
-           background: pink;
+        .copyright {
+            position: absolute;
+            bottom:5%;
+            font-weight:bolder;
+            text-align: center;
+            margin:  0 1.2em;
+            font-size: .9em;
+            color: index.$primary-color
+        }
 
-           form input {
-            display: block;
+        .login-box {
+            box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
+           width: 80%;
+           min-height: 70%;
+           display: grid;
+           text-align: center;
+           align-items: center;
+
+           form {
+
+            p {
+                margin: 1em 1em;
+            }
+
+            div:first-child {
+                text-align: left;
+                margin: 0 10%;
+            }
+
+            div:first-child p:first-child{
+                font-size: 1.5em;
+                color: index.$primary-color;
+                margin: 0;
+                font-weight: bold;
+            }
+
+            div:first-child p:nth-child(2){
+                color: rgba(43, 37, 37, 0.747);
+                font-size: .8em;
+                font-weight: 800;
+                margin:0;
+            }
+
+            button {
+                width: 81%;
+                height: 40px;
+                background: index.$primary-color;
+                border-radius: 10px;
+                color: white;
+                font-size: 1em;
+                font-weight: bold;
+                outline: none;
+                margin-top: 8%;
+                border:none;
+            }
+
+            .email {
+                margin-top: .8em;
+            }
+
+            .email, .password {
+                position: relative;
+
+                ion-icon {
+                    position: absolute;
+                    color: index.$primary-color;
+                    bottom: 13px;
+                    left: 11%
+                }
+            }
+
+            &>div {
+
+                input {
+                    width: 75%;
+                    outline: none;
+                    padding-left: 30px;
+                    background: index.$secondary-color;
+                    margin-top: 5%;
+                    border: none;
+                    height: 40px;
+                    border-radius: 10px;
+                }
+            }
            }
         }
     }
@@ -35,8 +150,17 @@
 
 
 
-@media (min-width: 768px) {
-    .login div:first-child {
-        display: block;
+@media (min-width: 650px) {
+
+    .login .header {
+        display:none;
+    }
+
+    .login > div:first-child {
+        display:block;
+    }
+
+    .login > div:nth-child(2) {
+        width: 55vw;
     }
 }

@@ -1,7 +1,21 @@
 import './messages.scss';
 import Sidebar from '../Sidebar/sidebar'
+import { useEffect } from 'react';
+import Pusher from 'pusher-js'
 
 const Messages = () => {
+
+    useEffect(() => {
+        const pusher = new Pusher('5ac65fc188cfeb946d3c', {
+            cluster: 'mt1'
+          });
+
+          const channel = pusher.subscribe('messages');
+          channel.bind('inserted', function(data) {
+            alert(JSON.stringify(data));
+          });
+    })
+
     return (
             <>
                 <Sidebar />

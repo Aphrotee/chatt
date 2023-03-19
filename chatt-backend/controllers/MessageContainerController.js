@@ -6,7 +6,6 @@ class MessageContainerController {
   getContainer(req, res) {
     const sender = new mongoose.Types.ObjectId(req.userPayload._id);
     const receiver = new mongoose.Types.ObjectId(req.body.receiverId);
-    console.log(sender, receiver);
 
     MessageContainers.aggregate([
       { $match: { members: { $all: [sender, receiver] } } }
@@ -39,6 +38,7 @@ class MessageContainerController {
 
   allContainers(req, res) {
     const sender = new mongoose.Types.ObjectId(req.userPayload._id);
+
     MessageContainers.aggregate([
       { $match: { members: { $all: [sender] }, numberOfMessages: { $gt: 0 } } },
       { $sort: { timestamp: -1 } }
@@ -51,6 +51,21 @@ class MessageContainerController {
       });
   }
 
+  getContainerById(req, res) {
+    const id = new mongoose.Types.ObjectId(req.containerId);
+
+    MessageContainers.findById(id)
+      .then((data) => {
+        if (data) {
+          res.status(200).json(data);
+        } else {
+          res.status(404).json({ error: "Container not found" });
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.toString() });
+      });
+  }
 }
 
 

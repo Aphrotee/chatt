@@ -5,6 +5,7 @@ import Users from '../models/Users.js';
 
 
 class AuthController {
+
   login(req, res) {
     const email = req.email;
     const password = req.password;
@@ -38,6 +39,7 @@ class AuthController {
     redis.set(req.token, 0, 60 * 60 * 24 * 7);
     res.cookie('X-Token', '');
   };
+
 }
 
 

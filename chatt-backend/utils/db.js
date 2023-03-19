@@ -13,11 +13,14 @@ class DBClient {
       useUnifiedTopology: true
     })
       .then(() => {
+        this.alive = true;
         console.log('DB connection established');
-        /**const db = mongoose.connection;
+        const db = mongoose.connection;
         const messages = db.collection('messages');
-        const changeStream = messages.watch();
-        changeStream.on('change', (change) => {
+        const messagecontainers = db.collection('messagecontainers');
+        const messageChangeStream = messages.watch();
+        const msgContChangeStream = messagecontainers.watch();
+        messageChangeStream.on('change', (change) => {
           console.log('Change occured:', change);
           if (change.operationType === 'insert') {
             const messageDetails = change.fullDocument;
@@ -31,7 +34,19 @@ class DBClient {
           } else {
             console.log('Error triggering pusher');
           }
-        });*/
+        });
+        msgContChangeStream.on('change', (change) => {
+          console.log('Change occured:', change);
+          if (change.operationType === 'update') {
+            const containerDetails = change.updateDescription.updatedFields;
+            pusher.trigger('messagecontainers', 'updated',
+            {
+              id: change.documentKey._id,
+              lastMessage: containerDetails.lastMessage,
+              timestamp: containerDetails.timestamp
+            })
+          }
+        })
       })
       .catch((err) => {
         this.alive = false;

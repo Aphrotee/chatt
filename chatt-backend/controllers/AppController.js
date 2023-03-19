@@ -5,6 +5,7 @@ import Messages from "../models/Messages.js";
 import MessageContainers from "../models/MessageContainers.js";
 
 class AppController {
+
   home(req, res) {
     res.status(200).send("Welcome to Chatt Instant Messaging");
   }
@@ -41,6 +42,7 @@ class AppController {
         res.status(500).json({ error: err.toString() });
       });
   }
+
 }
 
 const appController = new AppController();

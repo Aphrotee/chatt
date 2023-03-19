@@ -5,6 +5,7 @@ import welcomeNewUser from '../worker.js';
 
 
 class UserController {
+
   async register(req, res) {
     const { username, email, password } = req.body;
 
@@ -66,14 +67,19 @@ class UserController {
   }
 
   allUsers(req, res) {
-    Users.find()
+    Users.aggregate([
+      { $match: { } },
+      { $set: { id: '$_id' }},
+      { $project: { _id: 0, password: 0 }}
+    ])
       .then((data) => {
-        res.status(299).send(data);
+        res.status(200).send(data);
       })
       .catch((err) => {
         res.status(500).json({ error: err.toString });
       })
   }
+
 }
 
 

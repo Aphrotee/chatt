@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+dotenv.config();
 import db from './utils/db.js';
 import extractCredentials from './middlewares/extractCredentials.js';
 import verifyToken from './middlewares/verifyToken.js';
@@ -17,7 +18,6 @@ import messageContainerController from './controllers/MessageContainerController
 
 // app config
 const app = express();
-dotenv.config();
 const port = process.env.PORT || 9000;
 
 
@@ -56,7 +56,7 @@ app.get('/api/v1/messages/:containerId/all', verifyToken, messageController.allM
 
 app.get('/api/v1/container', verifyToken, messageContainerController.getContainer);
 
-app.get('api/v1/containers/all', verifyToken, messageContainerController.allContainers);
+app.get('/api/v1/containers/all', verifyToken, messageContainerController.allContainers);
 
 
 // listener

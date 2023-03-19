@@ -13,7 +13,6 @@ const extractCredentials = (req, res, next) => {
         res.status(400).json({ error: "There is an error with the Auth Header" });
       } else {
         details = details.split(':');
-        console.log('details', details);
         req.email = details[0];
         req.password = details[1];
         next();

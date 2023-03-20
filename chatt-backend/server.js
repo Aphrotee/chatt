@@ -38,7 +38,7 @@ app.get('/api/v1/status', appController.status);
 
 app.get('/api/v1/stats', appController.stats);
 
-app.post('/api/v1/auth/register', userController.register);
+app.post('/api/v1/auth/register', extractCredentials, userController.register);
 
 app.post('/api/v1/auth/login', extractCredentials, authController.login);
 
@@ -50,13 +50,11 @@ app.get('/api/v1/users/all', verifyApiKey, userController.allUsers);
 
 app.post('/api/v1/messages/new', verifyToken, messageController.newMessage);
 
-app.param('containerId', (req, res, next, value) => { req.containerId = value; next(); });
+app.param('containerId', (req, res, next, value) => { req.containerId = value; next();})
 
-app.get('/api/v1/messages/:containerId/all', verifyToken, messageController.allMessages);
+app.get('/api/v1/messages/:containerId/all', messageController.allMessages);
 
 app.get('/api/v1/container', verifyToken, messageContainerController.getContainer);
-
-app.get('/api/v1/containers/:containerId', verifyToken, messageContainerController.getContainerById);
 
 app.get('/api/v1/containers/all', verifyToken, messageContainerController.allContainers);
 

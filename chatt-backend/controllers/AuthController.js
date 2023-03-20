@@ -1,15 +1,16 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import redis from '../utils/redis.js'
-import Users from '../models/Users.js';
+import users from '../models/Users.js';
 
 
 class AuthController {
 
-  login(req, res) {
-    const email = req.email;
-    const password = req.password;
-    Users.findOne({ email })
+
+ login(req, res) {
+    const email = req.body.email
+    const password = req.body.password;
+    users.findOne({ email })
       .then(async (user) => {
         if (user) {
           if (await bcrypt.compare(password, user.password)) {
@@ -20,8 +21,9 @@ class AuthController {
                 expiresIn: "7d"
               });
               await redis.set(token, 1, 60 * 60 * 24 * 7);
+              console.log(token)
             res.cookie('X-Token', token);
-            res.status(200).json({ token });
+            return res.status(200).json({ token });
           } else {
             res.status(401).json({ error: "Wrong password!" });
           }

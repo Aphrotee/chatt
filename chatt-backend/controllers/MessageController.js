@@ -1,23 +1,26 @@
 import moment from 'moment/moment.js';
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import Messages from '../models/Messages.js';
-import Users from '../models/Users.js';
-import MessageContainers from '../models/MessageContainers.js';
+import users from '../models/Users.js';
+import messagecontainers from '../models/MessageContainers.js';
 
 
 class MessageController{
 
-  newMessage(req, res) {
+
+  async newMessage(req, res) {
     const {
       message,
       type,
       timestamp,
       receiverId,
       containerId
-    } = req.body;
+    } = req.body
+
     const senderId = new mongoose.Types.ObjectId(req.userPayload._id);
     const username = req.userPayload.username;
     const valid_types = ['text', 'image'];
+    const ObjectId = mongoose.Types.ObjectId
 
     if (!message) {
       res.status(400).json({ error: "Missing message body" });
@@ -32,16 +35,16 @@ class MessageController{
     } else if (!containerId) {
       res.status(400).json({ error: "Missing container id" });
     } else {
-      Users.findById(new mongoose.Types.ObjectId(senderId))
+      users.findById(new mongoose.Types.ObjectId(senderId))
         .then((sender) => {
           if (sender) {
-            Users.findById(new mongoose.Types.ObjectId(receiverId))
+            users.findById(new mongoose.Types.ObjectId(receiverId))
               .then((receiver) => {
                 if (receiver) {
-                  MessageContainers.findById(new mongoose.Types.ObjectId(containerId))
+                  messagecontainers.findById(new mongoose.Types.ObjectId(containerId))
                     .then((container) => {
                       if (container && container.members.includes(senderId) &&
-                      container.members.includes(receiverId) && senderId.toString() !== receiverId.toString()) {
+                      container.members.includes(new ObjectId(receiverId)) && senderId.toString() !== receiverId) {
                         const msgTimestamp = moment().format('MMMM Do YYYY-hh:mma');
                         Messages.create({
                           message,
@@ -53,7 +56,7 @@ class MessageController{
                           containerId
                         })
                           .then((sentMessage) => {
-                            MessageContainers.findByIdAndUpdate(new mongoose.Types.ObjectId(containerId), {
+                            messagecontainers.findByIdAndUpdate(new mongoose.Types.ObjectId(containerId), {
                               $set: {
                                 lastMessage: message,
                                 timestamp: msgTimestamp

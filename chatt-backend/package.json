@@ -26,6 +26,7 @@
     "morgan": "^1.10.0",
     "node-datetime": "^2.1.2",
     "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.21",
     "pusher": "^5.1.2",
     "redis": "^4.6.5",
     "sinon": "^15.0.2"

@@ -20,6 +20,7 @@ const Login = () => {
            </div>
 
            <div>
+        
            <div className='header'>
             CHATT
             </div>
@@ -41,7 +42,7 @@ const Login = () => {
                     </form>
             </div>
 
-            <div className='copyright'>Copyright &#x40;Chatt 2022  |  Privacy policy </div>
+            <div className='copyright'>COPYRIGHT &#x40;CHATT 2022  |  PRIVACY POLICY </div>
            </div>
 
         </section>

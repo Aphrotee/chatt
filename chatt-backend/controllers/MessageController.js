@@ -11,7 +11,6 @@ class MessageController{
     const {
       message,
       type,
-      timestamp,
       receiverId,
       containerId
     } = req.body;

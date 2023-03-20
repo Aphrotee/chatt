@@ -32,9 +32,10 @@ class DBClient {
                 receiverId: messageDetails.receiverId,
                 containerId: messageDetails.containerId
               }
-            );
-          } else {
-            console.log('Error triggering pusher');
+            )
+              .catch((err) => {
+                console.log('Error triggering pusher:', err);
+              });
           }
         });
         /**msgContChangeStream.on('change', (change) => {

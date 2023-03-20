@@ -40,7 +40,7 @@ app.get('/api/v1/stats', appController.stats);
 
 app.post('/api/v1/auth/register', extractCredentials, userController.register);
 
-app.post('/api/v1/auth/login', extractCredentials, authController.login);
+app.get('/api/v1/auth/login', extractCredentials, authController.login);
 
 app.delete('/api/v1/auth/logout', verifyToken, authController.logout);
 

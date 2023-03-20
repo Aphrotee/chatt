@@ -12,7 +12,6 @@ class MessageController{
     const {
       message,
       type,
-      timestamp,
       receiverId,
       containerId
     } = req.body
@@ -26,10 +25,8 @@ class MessageController{
       res.status(400).json({ error: "Missing message body" });
     } else if (!type) {
       res.status(400).json({ error: "Missing message type" });
-    } else if (!valid_types.includes(type)) {
+    } else if (!type || !valid_types.includes(type)) {
       res.status(400).json({ error: "Invalid message type" });
-    } else if (!timestamp) {
-      res.status(400).json({ error: "Missing timestamp" });
     } else if (!receiverId) {
       res.status(400).json({ error: "Missing receiver id" });
     } else if (!containerId) {

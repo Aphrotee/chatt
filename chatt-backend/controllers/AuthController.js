@@ -38,6 +38,7 @@ class AuthController {
   logout(req, res) {
     redis.set(req.token, 0, 60 * 60 * 24 * 7);
     res.cookie('X-Token', '');
+    res.json({message: "successfully logged out"});  
   };
 
 }

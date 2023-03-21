@@ -1,6 +1,6 @@
 @use '../../index.scss';
 
-.login {
+.signup {
     position: relative;
     height: 100vh;
 
@@ -69,7 +69,7 @@
             color: index.$primary-color
         }
 
-        .login-box {
+        .signup-box {
             box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
            width: 80%;
            min-height: 70%;
@@ -106,7 +106,7 @@
                 margin-top: .8em;
             }
 
-            .email, .password {
+            .email, .username, .password, .confirm-password {
                 position: relative;
 
                 ion-icon {
@@ -133,8 +133,8 @@
                     height: 40px;
                     border-radius: 10px;
                 }
-
             }
+
             #button {
                 width: 51%;
                 height: 40px;
@@ -161,15 +161,15 @@
 
 @media (min-width: 650px) {
 
-    .login .header {
+    .signup .header {
         display:none;
     }
 
-    .login > div:first-child {
+    .signup > div:first-child {
         display:block;
     }
 
-    .login > div:nth-child(2) {
+    .signup > div:nth-child(2) {
         width: 55vw;
     }
 }

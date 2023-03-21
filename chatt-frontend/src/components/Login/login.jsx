@@ -1,6 +1,8 @@
 import './login.scss';
 import gsap from 'gsap'
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import base64 from 'base-64';
 
 const Login = () => {
     gsap.registerPlugin()
@@ -9,14 +11,84 @@ const Login = () => {
 
     useEffect(() => {
         gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3})
-    })
+    });
+
+    const [inputs, setInputs] = useState({});
+
+    const handleChange = (event) => {
+      const name = event.target.name;
+      const value = event.target.value;
+      setInputs(values => ({ ...values, [name]: value }));
+    }
+
+    const msg = useRef(null);
+    const [Msg, setMsg] = useState("");
+    const loading = useRef(null);
+    const [Loading, setLoading] = useState(false);
+    const [loginBtn, setLoginBtn] = useState("Login")
+    const navigate = useNavigate();
+
+    const applyMessage = (message, success) => {
+      if (success) {
+        setMsg("");
+      } else {
+        msg.current.style.color = 'red';
+      }
+      setMsg(message);
+    }
+    const loginUser = (event) => {
+      event.preventDefault();
+      console.log(Loading);
+      if (!Loading) {
+        const { email, password } = inputs;
+
+        setMsg("");
+        if (!email) {
+          applyMessage("Please enter email", false)
+        } else if (!password) {
+          applyMessage("Please enter password", false)
+        } else {
+            console.log(email, password)
+          setLoading(!Loading);
+          setLoginBtn("Logging in...");
+          loading.current.style.opacity = 0.6
+          loading.current.style.cursor = 'not-allowed';
+          const auth = base64.encode(`${email}:${password}`);
+          const authorization = `Bearer ${auth}`;
+          axios.get('/auth/login',
+          {
+            email, username, password,
+          },
+          {
+            method: 'get',
+            headers: { 'Content-Type': 'application/json', 'Authorization': authorization }
+          })
+            .then((value) => {  
+              applyMessage(``, true);
+              loading.current.style.opacity = 1
+              loading.current.style.cursor = 'default';
+              setLoginBtn("Login successful");
+              navigate('/messages', { replace: true });
+            })
+            .catch((err) => {
+              setLoading(false);
+              setLoginBtn("Login");
+              loading.current.style.opacity = 1
+              loading.current.style.cursor = 'pointer';
+              applyMessage(`${err.response.data['error']}`, false);
+            });
+          
+        }
+      }
+    }
+
 
     return (
         <section className="login">
            <div>
             <p>CHATT</p>
-            <div ref={user1} className="user user1">What time are you <br/> coming over today</div>
-            <div ref={user2} className="user user2">I'll be right there <br/> after i see my mom off</div>
+            <div ref={user1} className="user user1">What time are you <br/> coming over today?</div>
+            <div ref={user2} className="user user2">I'll be right there <br/> after I see my mom off</div>
            </div>
 
            <div>
@@ -24,24 +96,26 @@ const Login = () => {
             CHATT
             </div>
             <div className='login-box'>
-                    <form action="" method="post">
+                    <form name="loginForm" onSubmit={loginUser}>
                         <div>
                             <p>Welcome Back</p>
                             <p>Enter your details to resume connecting with friends and loved ones</p>
                         </div>
                         <div className='email'>
                             <ion-icon name="mail"></ion-icon>
-                            <input type="email" name="email" id="email"placeholder='Email' /></div>
+                            <input type="email" name="email" placeholder='Email' value={inputs.email} onChange={handleChange} /></div>
                         <div className='password'>
                             <ion-icon name="lock-closed"></ion-icon>
-                            <input type="password" name="password" id="password" placeholder='Password'/></div>
-                        <button type="submit">Log In</button>
+                            <input type="password" name="password" placeholder='Password' value={inputs.password} onChange={handleChange} /></div>
+                        <input id="button" ref={loading} type="submit" value={loginBtn} />
+                        <p class='message' ref={msg}>{Msg}</p>
 
-                        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+                        <p>Don't have an account? <a href="#" onClick={() => {navigate('/signup')}} > Sign Up</a></p>
+                        <p><a href="/change-password">Forgot Password?</a></p>
                     </form>
             </div>
 
-            <div className='copyright'>Copyright &#x40;Chatt 2022  |  Privacy policy </div>
+            <div className='copyright'>Copyright &#x40;Chatt 2023  |  Privacy policy </div>
            </div>
 
         </section>

@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 const axios = Axios.create({
-  baseURL: 'https://chatt-p5n7.onrender.com/api/v1',
+  baseURL: 'http://127.0.0.1:9000/api/v1',
 });
 
 export default axios;

@@ -56,16 +56,16 @@ const ResetPassword = () => {
             loading.current.style.opacity = 0.6
             loading.current.style.cursor = 'not-allowed';
             const userId = cookies.get('userId');
-            axios.post('/auth/resetpassword',
+            axios.put('/auth/reset-password',
             {
               userId, otp, password,
             },
             {
-              method: 'post',
+              method: 'put',
               headers: { 'Content-Type': 'application/json' }
             })
               .then((value) => {  
-                applyMessage(`Password reset successful`, true);
+                applyMessage(value.data['message'], true);
                 loading.current.style.opacity = 1
                 loading.current.style.cursor = 'default';
                 setResetBtn("Reset password");
@@ -106,7 +106,7 @@ const ResetPassword = () => {
                         </div>
                         <div className='otp'>
                             <ion-icon name="key"></ion-icon>
-                            <input type="number" name="otp" placeholder='Otp' value={inputs.otp} onChange={handleChange} /></div>
+                            <input type="number" name="otp" placeholder='OTP' value={inputs.otp} onChange={handleChange} /></div>
                         <div className='password'>
                             <ion-icon name="lock-closed"></ion-icon>
                             <input type="password" name="password" placeholder='New Password' value={inputs.password} onChange={handleChange} /></div>
@@ -114,6 +114,7 @@ const ResetPassword = () => {
                             <ion-icon name="lock-closed"></ion-icon>
                             <input type="password" name="confirm_password" placeholder='Confirm New Password' value={inputs.confirm_password} onChange={handleChange} /></div>
                         <input id="button" ref={loading} type="submit" value={resetBtn} />
+                        <p>Check email for otp</p>
                         <p class='message' ref={msg} >{Msg}</p>
 
                     </form>

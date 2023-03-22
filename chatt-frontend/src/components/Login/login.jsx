@@ -3,6 +3,8 @@ import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import base64 from 'base-64';
+import axios from '../../axios1.js';
+import cookies from '../../cookies.js';
 
 const Login = () => {
     gsap.registerPlugin()
@@ -54,14 +56,12 @@ const Login = () => {
           loading.current.style.opacity = 0.6
           loading.current.style.cursor = 'not-allowed';
           const auth = base64.encode(`${email}:${password}`);
+          console.log(auth);
           const authorization = `Bearer ${auth}`;
-          axios.get('/auth/login',
-          {
-            email, username, password,
-          },
-          {
+          axios({
+            url: '/auth/login',
             method: 'get',
-            headers: { 'Content-Type': 'application/json', 'Authorization': authorization }
+            headers: { 'Authorization': authorization }
           })
             .then((value) => {  
               applyMessage(``, true);
@@ -80,6 +80,47 @@ const Login = () => {
           
         }
       }
+    }
+
+    const forgotPassword = (event) => {
+      event.preventDefault();
+      if (!Loading) {
+        const { email } = inputs;
+
+        setMsg("");
+        if (!email) {
+          applyMessage("Please enter email", false);
+        } else {
+          setLoading(!Loading);
+          loading.current.style.opacity = 0.6
+          loading.current.style.cursor = 'not-allowed';
+          axios.post('/auth/send-otp',
+          {
+            email
+          },
+          {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' }
+          })
+            .then((value) => {  
+              applyMessage(`Check email for otp`, true);
+              loading.current.style.opacity = 1
+              loading.current.style.cursor = 'default';
+              const userId = value.data['userId'];
+              cookies.set('userId', userId);
+              setTimeout(() => {
+                navigate('/reset-password', { replace: true });
+              }, 2000);
+            })
+            .catch((err) => {
+              setLoading(false);
+              loading.current.style.opacity = 1
+              loading.current.style.cursor = 'pointer';
+              applyMessage(`${err.response.data['error']}`, false);
+            });
+        }
+      }
+
     }
 
 
@@ -110,8 +151,8 @@ const Login = () => {
                         <input id="button" ref={loading} type="submit" value={loginBtn} />
                         <p class='message' ref={msg}>{Msg}</p>
 
-                        <p>Don't have an account? <a href="#" onClick={() => {navigate('/signup')}} > Sign Up</a></p>
-                        <p><a href="/change-password">Forgot Password?</a></p>
+                        <p>Don't have an account? <u className="other-options" onClick={() => {navigate('/signup')}} > Sign Up</u></p>
+                        <p><u className="other-options" onClick={forgotPassword}>Forgot Password?</u></p>
                     </form>
             </div>
 

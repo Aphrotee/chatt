@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Signup from '../src/components/Signup/signup';
-import Login from '../src/components/Login/login';
+import Signup from './components/Signup/signup';
+import Login from './components/Login/login';
+import ResetPassword from './components/Reset-password/resetPassword';
 import {
           BrowserRouter as Router,
           Routes,
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/messages" element={<Messages />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
         <Route path="/login" element={<Login />}></Route>
+        <Route patg="/reset-password" element={<ResetPassword />}></Route>
       </Routes>
     </Router>
   </React.StrictMode>

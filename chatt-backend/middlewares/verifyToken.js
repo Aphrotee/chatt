@@ -8,16 +8,16 @@ const verifyToken = async (req, res, next) => {
   } else {
     const validity = await redis.get(token);
     if (Number(validity)) {
-    jwt.verify(token, process.env.JWT_SECRET, (err, userPayload) => {
-      if (err) {
-        res.status(401).json( { error: err.toString() });
-      } else {
-        req.userPayload = userPayload;
-        req.token = token;
-        res.cookie('X-Token', req.token);
-        next();
-      }
-    });
+      jwt.verify(token, process.env.JWT_SECRET, (err, userPayload) => {
+        if (err) {
+          res.status(401).json( { error: err.toString() });
+        } else {
+          req.userPayload = userPayload;
+          req.token = token;
+          res.cookie('X-Token', req.token);
+          next();
+         }
+      });
     } else {
       res.status(403).json({ error: "User is logged out, please login" });
     }

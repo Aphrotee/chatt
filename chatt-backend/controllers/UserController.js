@@ -76,7 +76,7 @@ class UserController {
         res.status(200).send(data);
       })
       .catch((err) => {
-        res.status(500).json({ error: err.toString });
+        res.status(500).json({ error: err.toString() });
       })
   }
 
@@ -84,4 +84,4 @@ class UserController {
 
 
 const userController = new UserController();
-export default userController;  
+export default userController;

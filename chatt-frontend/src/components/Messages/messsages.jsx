@@ -1,9 +1,12 @@
 import './messages.scss';
 import Sidebar from '../Sidebar/sidebar'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Pusher from 'pusher-js'
+import axios from '../../axios'
 
 const Messages = () => {
+
+    let newMessage = null
 
     useEffect(() => {
         const pusher = new Pusher('5ac65fc188cfeb946d3c', {
@@ -12,8 +15,15 @@ const Messages = () => {
 
           const channel = pusher.subscribe('messages');
           channel.bind('inserted', function(data) {
-            alert(JSON.stringify(data));
+            newMessage = JSON.parse(JSON.stringify(data));
+
+            const containerUrl = `/messages/${newMessage.containerId}/all`
+            axios.get(containerUrl).then((response) => {
+            console.log('This is Axios', response.data)
+          })
+
           });
+
     })
 
     return (

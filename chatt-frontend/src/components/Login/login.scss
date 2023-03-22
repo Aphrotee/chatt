@@ -3,13 +3,13 @@
 .login {
     position: relative;
     height: 100vh;
+    font-family: 'Teko', sans-serif;
 
     .header {
         position: absolute;
         color: index.$primary-color;
         font-weight: bolder;
-        font-family: 'Teko', sans-serif;
-        font-size: 1.5em;
+        font-size: 2.5em;
         top: 6%;
         left:40%;
     }
@@ -27,20 +27,20 @@
         font-family: 'Teko', sans-serif;
 
         p {
-            color: rgba(255, 255, 255, 0.89);
+            color: rgb(255, 255, 255);
             font-weight: bolder;
-            font-size: 1.8em;
-            margin-left: 1em;
+            font-size: 2.5em;
+            margin: .5em 0 0 1em;
         }
 
         .user {
             position: absolute;
             font-size: 1.2em;
-            color: index.$primary-color;
+            color: pink;
         }
 
         .user1 {
-            top:31%;
+            top:170px;
             left: 8%;
         }
 
@@ -61,12 +61,12 @@
 
         .copyright {
             position: absolute;
-            bottom:5%;
+            bottom:6%;
             font-weight:bolder;
             text-align: center;
-            margin:  0 1.2em;
-            font-size: .9em;
-            color: index.$primary-color
+            margin:  0 1em;
+            font-size: 1em;
+            color: rgba(15, 14, 14, 0.781)
         }
 
         .login-box {

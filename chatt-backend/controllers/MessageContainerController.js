@@ -1,11 +1,13 @@
 import MessageContainers from '../models/MessageContainers.js';
+import Users from '../models/Users.js';
 import mongoose from 'mongoose';
 
 class MessageContainerController {
 
   getContainer(req, res) {
     const sender = new mongoose.Types.ObjectId(req.userPayload._id);
-    const receiver = new mongoose.Types.ObjectId(req.body.receiverId);
+    const senderUsername = req.userPayload.username;
+    const receiver = new mongoose.Types.ObjectId(req.receiverId);
 
     MessageContainers.aggregate([
       { $match: { members: { $all: [sender, receiver] } } }
@@ -14,24 +16,29 @@ class MessageContainerController {
         if (data.length > 0) {
           res.status(200).json(data[0]);
         } else {
-          MessageContainers.create({
-            members: [sender, receiver],
-            numberOfMessages: 0,
-            lastMessage: '',
-            timestamp: ''
+          Users.findById(receiver)
+            .then((Receiver) => {
+              MessageContainers.create({
+                members: [sender, receiver],
+                membersUsernames: [senderUsername, Receiver.username],
+                numberOfMessages: 0,
+                lastMessage: '',
+                timestamp: ''
+              })
+              .then((data) => {
+                res.cookie('X-Token', req.token);
+                res.status(201).json(data);
+              })
+              .catch((err) => {
+                res.status(500).json({ error: err.toString() });
+              });
           })
-           .then((data) => {
-              res.cookie('X-Token', req.token);
-              res.status(201).json(data);
-            })
-            .catch((err) => {
-              console.log('create', err);
-              res.status(500).json({ error: err.toString() });
-            });
+          .catch((err) => {
+            res.status(500).json({ error: err.toString() });
+          });
         }
       })
       .catch((err) => {
-        console.log('find', err);
         res.status(500).json({ error: err.toString() });
       });
   }

@@ -104,7 +104,11 @@ class MessageController{
     const containerId = new mongoose.Types.ObjectId(req.containerId);
 
     if (containerId) {
-      Messages.find({ containerId })
+      Messages.aggregate([
+        { $match: { containerId } },
+        { $set: { id: '$_id' }},
+        { $project: { _id: 0 }}
+      ])
         .then((data) => {
           res.cookie('X-Token', req.token);
           res.status(200).send(data);

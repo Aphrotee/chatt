@@ -50,7 +50,7 @@ const Login = () => {
         } else if (!password) {
           applyMessage("Please enter password", false)
         } else {
-            console.log(email, password)
+          console.log(email, password);
           setLoading(!Loading);
           setLoginBtn("Logging in...");
           loading.current.style.opacity = 0.6
@@ -68,6 +68,7 @@ const Login = () => {
               loading.current.style.opacity = 1
               loading.current.style.cursor = 'default';
               setLoginBtn("Login successful");
+              cookies.set('X-Token', value.data['token']);
               navigate('/messages', { replace: true });
             })
             .catch((err) => {
@@ -102,8 +103,7 @@ const Login = () => {
             method: 'post',
             headers: { 'Content-Type': 'application/json' }
           })
-            .then((value) => {  
-              applyMessage(`Check email for otp`, true);
+            .then((value) => {
               loading.current.style.opacity = 1
               loading.current.style.cursor = 'default';
               const userId = value.data['userId'];

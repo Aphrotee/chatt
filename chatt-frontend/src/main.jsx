@@ -19,7 +19,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/messages" element={<Messages />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
         <Route path="/login" element={<Login />}></Route>
-        <Route patg="/reset-password" element={<ResetPassword />}></Route>
+        <Route path="/reset-password" element={<ResetPassword />}></Route>
+        <Route path="*" element={<h2>Page Not Found</h2>}></Route>
       </Routes>
     </Router>
   </React.StrictMode>

@@ -22,7 +22,7 @@ const port = process.env.PORT || 9000;
 
 
 //middlewares
-app.use(express.json());
+app.use(express.json({ limit: "30mb" }));
 app.use(morgan('dev'));
 app.use(cors());
 app.use(cookieParser());
@@ -42,6 +42,10 @@ app.post('/api/v1/auth/register', extractCredentials, userController.register);
 
 app.get('/api/v1/auth/login', extractCredentials, authController.login);
 
+app.post('/api/v1/auth/send-otp', authController.sendOtp);
+
+app.put('/api/v1/auth/reset-password', authController.resetPassword);
+
 app.delete('/api/v1/auth/logout', verifyToken, authController.logout);
 
 app.get('/api/v1/users/me', verifyToken, userController.userProfile);
@@ -54,7 +58,9 @@ app.param('containerId', (req, res, next, value) => { req.containerId = value; n
 
 app.get('/api/v1/messages/:containerId/all', verifyToken, messageController.allMessages);
 
-app.get('/api/v1/container', verifyToken, messageContainerController.getContainer);
+app.param('receiverId', (req, res, next, value) => { req.receiverId = value; next(); });
+
+app.get('/api/v1/container/:receiverId', verifyToken, messageContainerController.getContainer);
 
 app.get('/api/v1/containers/all', verifyToken, messageContainerController.allContainers);
 

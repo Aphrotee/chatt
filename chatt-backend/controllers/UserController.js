@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Users from '../models/Users.js';
-import MessageContainers from '../models/MessageContainers.js';
-import welcomeNewUser from '../worker.js';
+import worker from '../worker.js';
 
 
 class UserController {
@@ -35,7 +34,7 @@ class UserController {
                         username: user.username,
                         email: user.email
                        };
-                      welcomeNewUser.add({ email: user.email, username: user.username });
+                      worker.welcomeNewUser.add({ email: user.email, username: user.username });
                       res.status(201).json(response);
                     })
                     .catch((err) => {

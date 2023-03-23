@@ -1,15 +1,15 @@
 @use '../../index.scss';
 
-.login {
+.signup {
     position: relative;
     height: 100vh;
-    font-family: 'Teko', sans-serif;
 
     .header {
         position: absolute;
         color: index.$primary-color;
         font-weight: bolder;
-        font-size: 2.5em;
+        font-family: 'Teko', sans-serif;
+        font-size: 1.5em;
         top: 6%;
         left:40%;
     }
@@ -27,20 +27,20 @@
         font-family: 'Teko', sans-serif;
 
         p {
-            color: rgb(255, 255, 255);
+            color: rgba(255, 255, 255, 0.89);
             font-weight: bolder;
-            font-size: 2.5em;
-            margin: .5em 0 0 1em;
+            font-size: 1.8em;
+            margin-left: 1em;
         }
 
         .user {
             position: absolute;
             font-size: 1.2em;
-            color: pink;
+            color: index.$primary-color;
         }
 
         .user1 {
-            top:170px;
+            top:31%;
             left: 8%;
         }
 
@@ -61,15 +61,15 @@
 
         .copyright {
             position: absolute;
-            bottom:6%;
+            bottom:5%;
             font-weight:bolder;
             text-align: center;
-            margin:  0 1em;
-            font-size: 1em;
-            color: rgba(15, 14, 14, 0.781)
+            margin:  0 1.2em;
+            font-size: .9em;
+            color: index.$primary-color
         }
 
-        .login-box {
+        .signup-box {
             box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
            width: 80%;
            min-height: 70%;
@@ -106,7 +106,7 @@
                 margin-top: .8em;
             }
 
-            .email, .password {
+            .email, .username, .password, .confirm-password {
                 position: relative;
 
                 ion-icon {
@@ -133,8 +133,8 @@
                     height: 40px;
                     border-radius: 10px;
                 }
-
             }
+
             #button {
                 width: 51%;
                 height: 40px;
@@ -152,15 +152,6 @@
                 margin-left: auto;
                 margin-right: auto;
             }
-
-            .other-options {
-                color: blue;
-                cursor: pointer;
-                &:hover {
-                    text-decoration: underline;
-                    color: red;
-                }
-            }
            }
         }
     }
@@ -170,15 +161,15 @@
 
 @media (min-width: 650px) {
 
-    .login .header {
+    .signup .header {
         display:none;
     }
 
-    .login > div:first-child {
+    .signup > div:first-child {
         display:block;
     }
 
-    .login > div:nth-child(2) {
+    .signup > div:nth-child(2) {
         width: 55vw;
     }
 }

@@ -10,7 +10,7 @@ const extractCredentials = (req, res, next) => {
       res.status(400).json({ error: "There is an error with the Auth Header" });
     } else {
       details = details[1];
-      //details = Buffer.from(details, 'base64').toString();
+      details = Buffer.from(details, 'base64').toString();
 
       if (!details.includes(':')) {
         res.status(400).json({ error: "There is an error with the Auth Header" });

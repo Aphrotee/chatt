@@ -21,7 +21,7 @@ class DBClient {
         const messageChangeStream = messages.watch();
         const msgContChangeStream = messagecontainers.watch();
         messageChangeStream.on('change', (change) => {
-          console.log('Change occured:', change);
+          // console.log('Change occured:', change);
           if (change.operationType === 'insert') {
             const messageDetails = change.fullDocument;
             pusher.trigger('messages', 'inserted',

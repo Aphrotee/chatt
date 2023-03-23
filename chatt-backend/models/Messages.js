@@ -4,7 +4,7 @@ const MessageSchema = mongoose.Schema({
   message: String,
   type: String,
   username: String,
-  timestamp: String,
+  timestamp: Object,
   senderId: mongoose.Types.ObjectId,
   receiverId: mongoose.Types.ObjectId,
   containerId: mongoose.Types.ObjectId

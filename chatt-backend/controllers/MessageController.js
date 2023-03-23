@@ -43,11 +43,14 @@ class MessageController{
                       if (container && container.members.includes(senderId) &&
                       container.members.includes(new ObjectId(receiverId)) && senderId.toString() !== receiverId) {
                         const msgTimestamp = moment().format('MMMM Do YYYY-hh:mma');
+                        const timstampArr = msgTimestamp.split('-');
+                        const date = timstampArr[0];
+                        const time = timstampArr[1];
                         Messages.create({
                           message,
                           type,
                           username,
-                          timestamp: msgTimestamp,
+                          timestamp: { date, time },
                           senderId,
                           receiverId,
                           containerId
@@ -56,7 +59,7 @@ class MessageController{
                             messagecontainers.findByIdAndUpdate(new mongoose.Types.ObjectId(containerId), {
                               $set: {
                                 lastMessage: message,
-                                timestamp: msgTimestamp
+                                timestamp: { date, time }
                               },
                               $inc: {
                                 numberOfMessages: 1

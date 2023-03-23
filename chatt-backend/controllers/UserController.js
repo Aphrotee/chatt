@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Users from '../models/Users.js';
+import MessageContainers from '../models/MessageContainers.js';
 import welcomeNewUser from '../worker.js';
 
 

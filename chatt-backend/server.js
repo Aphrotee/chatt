@@ -52,7 +52,7 @@ app.post('/api/v1/messages/new', verifyToken, messageController.newMessage);
 
 app.param('containerId', (req, res, next, value) => { req.containerId = value; next();})
 
-app.get('/api/v1/messages/:containerId/all', messageController.allMessages);
+app.get('/api/v1/messages/:containerId/all', verifyToken, messageController.allMessages);
 
 app.get('/api/v1/container', verifyToken, messageContainerController.getContainer);
 

@@ -1,77 +1,63 @@
 import './messages.scss';
-import Sidebar from '../Sidebar/sidebar'
-import { useEffect, useState } from 'react';
-import Pusher from 'pusher-js'
-import axios from '../../axios'
 
-const Messages = () => {
+const Messages = ({ messages, user }) => {
 
-    let newMessage = null
+    const display = () => {
+        if (messages.length === 0) {
+            return (
+            <div className="empty">
+                <div>
+                    <img src="../../src/images/undraw_modern_life_re_8pdp.svg" alt="" srcset="" />
+                </div>
+                <div>
+                    <p>Chatt Instant Messaging</p>
+                    <p>Send instant messages to friends and loved ones to keep in touch with another</p>
+                </div>
+            </div>)
+        }
 
-    useEffect(() => {
-        const pusher = new Pusher('5ac65fc188cfeb946d3c', {
-            cluster: 'mt1'
-          });
-
-          const channel = pusher.subscribe('messages');
-          channel.bind('inserted', function(data) {
-            newMessage = JSON.parse(JSON.stringify(data));
-
-            const containerUrl = `/messages/${newMessage.containerId}/all`
-            axios.get(containerUrl).then((response) => {
-            console.log('This is Axios', response.data)
-          })
-
-          });
-
-    })
-
-    return (
+        return (
             <>
-                <Sidebar />
-                <section className='messages-wrapper'>
-                    <div className="user-nav">
-                        <div><img src="../../src/images/IMG_1445.JPG" alt="" /></div>
-                        <div>
-                            <p>Atabong Cecilia</p>
-                            <p>Last seen 3:35pm </p>
-                        </div>
-                        <div>
-                            <ion-icon name="call-outline"></ion-icon>
-                        </div>
+            <div className="user-nav">
+                    <div><img src="../../src/images/IMG_1445.JPG" alt="" /></div>
+                    <div>
+                        <p>Atabong Cecilia</p>
+                        <p>Last seen 3:35pm </p>
                     </div>
-                    <div className='messages'>
-                        <div>
-                            <div className='time-stamp'>12:34</div>
-                            <div className='current-user'>
-                            Lorem ipsum
-                            </div>
-                            </div>
-                            <div>
-                            <div className='time-stamp'>12:43</div>
-                            <div className='other-user'>
-                               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consequuntur molestiae recusandae eaque soluta quis, eveniet blanditiis rem aperiam porro quo beatae ut neque aut ea iste tempore nesciunt expedita optio officiis repellat. Libero a, repudiandae saepe modi aliquam fuga commodi cumque itaque! Enim debitis, facilis, dolores esse fuga a illum error earum molestiae quis sapiente, voluptatem vel unde? Recusandae repellendus consequuntur, optio impedit in ducimus cupiditate, nemo blanditiis, similique explicabo temporibus adipisci labore dolore vel exercitationem ipsum dignissimos debitis possimus velit. Velit recusandae in obcaecati eveniet ad maxime, tenetur possimus assumenda corrupti, asperiores rem quibusdam cumque animi ut! Explicabo, amet.
-                            </div>
-                        </div>
+                    <div>
+                        <ion-icon name="call-outline"></ion-icon>
                     </div>
-                    <div className="search-bar">
+            </div>
+            <div className='messages'>
+            {messages.map((message) => {
+            return (
+            <div key={message._id} className={message.senderId === user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
+                <div>{message.message}</div>
+                <div className='time-stamp'>{message.timestamp}</div>
+            </div>)
+            })}
+            </div>
+            <div className="search-bar">
                             <form action="" method="post">
                                 <div className="icons">
                                     <ion-icon name="happy-outline"></ion-icon>
                                     <ion-icon name="attach-sharp"></ion-icon>
                                 </div>
-                                <input type="search" name="" id="" />
+                                <input type="search" name="" id="" placeholder='Send a Message'/>
                                 <button type="button">
                                     <ion-icon name="navigate-circle"></ion-icon>
                                 </button>
                             </form>
-                    </div>
-                </section>
+            </div>
             </>
+        )
+    }
 
-
+    return (
+        <section className='messages-wrapper'>
+            {display()}
+        </section>
         );
-
 }
 
 export default Messages;

@@ -51,6 +51,7 @@ class MessageController{
                           type,
                           username,
                           timestamp: { date, time },
+                          milliTimestamp: Date.now(),
                           senderId,
                           receiverId,
                           containerId
@@ -59,7 +60,8 @@ class MessageController{
                             messagecontainers.findByIdAndUpdate(new mongoose.Types.ObjectId(containerId), {
                               $set: {
                                 lastMessage: message,
-                                timestamp: { date, time }
+                                timestamp: { date, time },
+                                milliTimestamp: Date.now()
                               },
                               $inc: {
                                 numberOfMessages: 1
@@ -110,7 +112,8 @@ class MessageController{
       Messages.aggregate([
         { $match: { containerId } },
         { $set: { id: '$_id' }},
-        { $project: { _id: 0 }}
+        { $project: { _id: 0 }},
+        { $sort: { milliTimestamp: 1 } }
       ])
         .then((data) => {
           res.cookie('X-Token', req.token);

@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 const UserSchema = mongoose.Schema({
   username: String,
   email: String,
-  password: String
+  password: String,
+  quote: String
 });
 
 export default mongoose.model('users', UserSchema);

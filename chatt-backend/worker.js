@@ -1,5 +1,5 @@
 import Bull from 'bull';
-import mailer from './utils/nodemailer.js';
+import mailer from './utils/mailer.js';
 
 
 const welcomeNewUser = Bull('Welcome new user');
@@ -38,7 +38,8 @@ sendOtpEmail.process((job, done) => {
     const expireBy = job.data.expireBy;
     const otp = job.data.otp;
     const message = `Dear ${username},\n\nYou have requested for a password reset, the OTP for
- reseting your password is ${otp}. This otp will expire by ${expireBy}.
+ reseting your password is <strong>${otp}</strong>. This otp will expire by ${expireBy}.
+\nIf this wasn't you, please discard this email.
 \n\nRegards,\nChatt Instant Messaging Team`;
     mailer(job.data.email, subject, message);
     done();

@@ -9,10 +9,10 @@ const ResetPassword = () => {
     gsap.registerPlugin()
     const user1 = useRef();
     const user2 = useRef();
-    const [inputs, setInputs] = useState({});
     const msg = useRef(null);
-    const [Msg, setMsg] = useState("");
     const loading = useRef(null);
+    const [Msg, setMsg] = useState("");
+    const [inputs, setInputs] = useState({});
     const [Loading, setLoading] = useState(false);
     const [resetBtn, setResetBtn] = useState("Reset password")
     const navigate = useNavigate();

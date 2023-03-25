@@ -52,6 +52,8 @@ app.get('/api/v1/users/me', verifyToken, userController.userProfile);
 
 app.get('/api/v1/users/all', verifyApiKey, userController.allUsers);
 
+app.put('/api/v1/users/update-status-quote', verifyApiKey, userController.updateStatus);
+
 app.post('/api/v1/messages/new', verifyToken, messageController.newMessage);
 
 app.param('containerId', (req, res, next, value) => { req.containerId = value; next();})

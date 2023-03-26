@@ -1,13 +1,48 @@
 import './messages.scss';
+import axios from '../../axios'
+import cookies from '../../cookies'
+import { useState, useRef, useEffect} from 'react'
 
-const Messages = ({ messages, user }) => {
+const Messages = ({ messages, user, other, setContainers}) => {
+
+    const [input, setInput] = useState('')
+    const scrollbar = useRef(null)
+    const cookie = cookies.get('X-Token')
+
+    const sendMessage = async (e) => {
+        e.preventDefault()
+        const data =  {
+            message: input,
+            containerId: other.id,
+            receiverId: other.otherId[0],
+            senderId: user.id,
+            type: "text",
+        }
+
+        await axios.post('/messages/new', data,
+        { headers: {
+                        'X-Token': cookie
+                    }
+                }
+        )
+
+        axios.get("containers/all", {
+            headers: {
+                'X-Token': cookie
+            }
+        }).then((response) => {
+
+        setContainers(response.data)
+        })
+        setInput("")
+    }
 
     const display = () => {
         if (messages.length === 0) {
             return (
-            <div className="empty">
+            <div ref={scrollbar} className="empty">
                 <div>
-                    <img src="../../src/images/undraw_modern_life_re_8pdp.svg" alt="" srcset="" />
+                    <img src="../../src/images/undraw_modern_life_re_8pdp.svg" alt="" />
                 </div>
                 <div>
                     <p>Chatt Instant Messaging</p>
@@ -19,39 +54,49 @@ const Messages = ({ messages, user }) => {
         return (
             <>
             <div className="user-nav">
-                    <div><img src="../../src/images/IMG_1445.JPG" alt="" /></div>
+                    <div><img src="../../src/images/profile (1).png" alt="" /></div>
                     <div>
-                        <p>Atabong Cecilia</p>
-                        <p>Last seen 3:35pm </p>
+                        <p>{other.name}</p>
+                        <p>Last reply at {other.lastSeen}</p>
                     </div>
                     <div>
                         <ion-icon name="call-outline"></ion-icon>
                     </div>
             </div>
-            <div className='messages'>
+            <div ref={scrollbar} className='messages'>
             {messages.map((message) => {
             return (
-            <div key={message._id} className={message.senderId === user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
+            <div key={message._id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
+                <div className='time-stamp'>{message.timestamp.time}</div>
                 <div>{message.message}</div>
-                <div className='time-stamp'>{message.timestamp}</div>
             </div>)
             })}
             </div>
             <div className="search-bar">
-                            <form action="" method="post">
-                                <div className="icons">
-                                    <ion-icon name="happy-outline"></ion-icon>
-                                    <ion-icon name="attach-sharp"></ion-icon>
-                                </div>
-                                <input type="search" name="" id="" placeholder='Send a Message'/>
-                                <button type="button">
-                                    <ion-icon name="navigate-circle"></ion-icon>
-                                </button>
-                            </form>
+                <form onSubmit={sendMessage}>
+                    <div className="icons">
+                        <ion-icon name="happy-outline"></ion-icon>
+                        <ion-icon name="attach-sharp"></ion-icon>
+                    </div>
+                    <input value={input}
+                           onChange={(e) => setInput(e.target.value)}
+                           type="search" name="" id=""
+                           placeholder='Send a Message'/>
+
+                    <button onClick={sendMessage} type="button">
+                        <ion-icon name="navigate-circle"></ion-icon>
+                    </button>
+                </form>
             </div>
             </>
         )
     }
+
+
+
+    // useEffect(() => {
+    //     console.log(scrollbar.getBoundingClientRect().height)
+    // }, [])
 
     return (
         <section className='messages-wrapper'>

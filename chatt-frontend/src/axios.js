@@ -1,7 +1,7 @@
-import axios from 'axios'
+import Axios from 'axios';
 
-const instance = axios.create({
-    baseURL: "http://localhost:9000/api/v1"
-})
+const axios = Axios.create({
+  baseURL: 'https://chatt.up.railway.app/api/v1',
+});
 
-export default instance;
+export default axios;

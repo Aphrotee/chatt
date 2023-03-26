@@ -2,7 +2,7 @@ import './signup.scss';
 import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../axios1.js';
+import axios from '../../axios.js';
 
 const Signup = () => {
     gsap.registerPlugin()
@@ -65,7 +65,7 @@ const Signup = () => {
               method: 'post',
               headers: { 'Content-Type': 'application/json' }
             })
-              .then((value) => {  
+              .then((value) => {
                 applyMessage(`Welcome ${value.data.username}`, true);
                 loading.current.style.opacity = 1
                 loading.current.style.cursor = 'default';

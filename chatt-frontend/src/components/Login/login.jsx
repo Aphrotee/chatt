@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import base64 from 'base-64';
-import axios from '../../axios1.js';
+import axios from '../../axios.js';
 import cookies from '../../cookies.js';
 
 const Login = () => {
@@ -63,7 +63,7 @@ const Login = () => {
             method: 'get',
             headers: { 'Authorization': authorization }
           })
-            .then((value) => {  
+            .then((value) => {
               applyMessage(``, true);
               loading.current.style.opacity = 1
               loading.current.style.cursor = 'default';
@@ -78,7 +78,7 @@ const Login = () => {
               loading.current.style.cursor = 'pointer';
               applyMessage(`${err.response.data['error']}`, false);
             });
-          
+
         }
       }
     }
@@ -128,12 +128,10 @@ const Login = () => {
         <section className="login">
            <div>
             <p>CHATT</p>
-            <div ref={user1} className="user user1">What time are you <br/> coming over today?</div>
-            <div ref={user2} className="user user2">I'll be right there <br/> after I see my mom off</div>
            </div>
 
            <div>
-        
+
            <div className='header'>
             CHATT
             </div>

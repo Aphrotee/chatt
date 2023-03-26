@@ -3,85 +3,141 @@ import Navbar from '../Navbar/navbar';
 import Messages from '../Messages/messsages'
 import Pusher from 'pusher-js'
 import axios from '../../axios'
-import { useEffect, useState } from 'react';
-const IMG1 = '../../src/images/IMG_1445.JPG';
+import gsap from 'gsap';
+import cookies from '../../cookies'
+import { useEffect, useState, useRef} from 'react';
+const defaultPic = '../../src/images/profile (1).png';
 
 const Sidebar = () => {
 
-
-    const [containers, setCotainers] = useState([]);
+    const loader = useRef()
+    const chatt = useRef()
+    const details = useRef()
+    const [containers, setContainers] = useState(null);
     const [messages, setMessages] = useState([])
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState([])
+    const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
+    const cookie = cookies.get('X-Token')
+
+    useEffect(() => {
+        gsap.fromTo(loader.current, {display: 'block'}, {display: 'none', duration: 3})
+        gsap.fromTo(chatt.current, {opacity: 0}, {opacity: 1, duration: 1, delay: 1.5})
+        gsap.fromTo(details.current, {opacity: 0, y: 200}, {opacity: 1, y: 280, duration: 1})
+    }, [])
+
     useEffect(() => {
 
-                axios.get('/containers/all', {
+                axios.get("containers/all", {
                     headers: {
-                        'X-Token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDE3MjIxM2ZjNzJkNjBhNDg3ODBkNWYiLCJlbWFpbCI6ImNhdGFib25nODlAZ21haWwuY29tIiwidXNlcm5hbWUiOiJjZWNpbGlhIiwiaWF0IjoxNjc5NTEwOTg3LCJleHAiOjE2ODAxMTU3ODd9.IqVENLnwefh6yCF7fUr5dOQc09X7yrxA9Xh0W8-_2eU"
+                        'X-Token': cookie
                     }
                 }).then((response) => {
 
-                setCotainers(response.data)
+                setContainers(response.data)
                 })
 
                 axios.get('/users/me', {
                     headers: {
-                        'X-Token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDE3MjIxM2ZjNzJkNjBhNDg3ODBkNWYiLCJlbWFpbCI6ImNhdGFib25nODlAZ21haWwuY29tIiwidXNlcm5hbWUiOiJjZWNpbGlhIiwiaWF0IjoxNjc5NTEwOTg3LCJleHAiOjE2ODAxMTU3ODd9.IqVENLnwefh6yCF7fUr5dOQc09X7yrxA9Xh0W8-_2eU"
+                        'X-Token': cookie
                     }
                 }).then((response) => {
                     setUser(response.data)
                 })
                 }, []);
 
-    // useEffect(() => {
-    //     const pusher = new Pusher('5ac65fc188cfeb946d3c', {
-    //         cluster: 'mt1'
-    //       });
+    useEffect(() => {
+        const pusher = new Pusher('5ac65fc188cfeb946d3c', {
+            cluster: 'mt1'
+          });
 
-    //         const channel = pusher.subscribe('messages');
-    //         channel.bind('inserted', function(data) {
-    //             console.log(data)
-    //         })
+            const channel = pusher.subscribe('messages');
+            channel.bind('inserted', function(data) {
+                setMessages([...messages, data])
+            })
 
-    //         return () => {
-    //             channel.unbind_all()
-    //             channel.unsubscribe()
-    //           }
-    //       }, [containers]);
+            return () => {
+                channel.unbind_all()
+                channel.unsubscribe()
+              }
+          }, [messages]);
 
     const getMessages = (id) => {
+        const date = new Date()
+        console.log(date.toLocaleTimeString('en-US'))
         axios.get(`/messages/${id}/all`, {
             headers: {
-                'X-Token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDE3MjIxM2ZjNzJkNjBhNDg3ODBkNWYiLCJlbWFpbCI6ImNhdGFib25nODlAZ21haWwuY29tIiwidXNlcm5hbWUiOiJjZWNpbGlhIiwiaWF0IjoxNjc5NTEwOTg3LCJleHAiOjE2ODAxMTU3ODd9.IqVENLnwefh6yCF7fUr5dOQc09X7yrxA9Xh0W8-_2eU"
+                'X-Token': cookie
             }
         }).then((response) => {
             setMessages(response.data)
         })
     }
 
+
     const userDisplay = () => {
+        if (containers === null) return <div></div>
+
+
         if (containers.length === 0) {
             return (
             <div className='noUser'>
-                <p>You have no recent chats</p>
+                <p>You have no recent chats.</p>
                 <p>Search for users and start a conversation now</p>
             </div>)
         }
 
+
+    const getName = (name) => {
+        setOther(existingValues => ({
+            ...existingValues,
+            name: name,
+        }))
+    }
+
+    const getlastSeen = (lastSeen) => {
+        setOther(existingValues => ({
+            ...existingValues,
+            lastSeen: lastSeen
+        }))
+    }
+
+    const getId = (id) => {
+        setOther(existingValues => ({
+            ...existingValues,
+            id:id
+        }))
+    }
+
+    const get_id = (_id) => {
+        setOther(existingValues => ({
+            ...existingValues,
+            otherId:_id
+        }))
+    }
+
+    console.log('onClick', messages)
+    console.log('containers', containers)
         return (
             containers.map((container) => {
-                return (<div key={container._id} onClick={() => {getMessages(container._id)}}>
+                return (<div className="wrap" key={container._id}
+                             onClick={() => {getMessages(container._id);
+                                             getName(container.membersUsernames.filter(name => name !== user.username));
+                                             getlastSeen( container.timestamp.time);
+                                             getId(container._id);
+                                             get_id(container.members.filter(member => member !== user.id));
+                                             }}>
                     <div>
-                        <img src={IMG1} alt="" />
+                        <img src={defaultPic} alt="" />
                         <div className='notifications'>
                             <div>99</div>
                         </div>
                     </div>
                     <div className='details'>
-                        <span>{container.name}</span>
+                        <span>{container.membersUsernames.filter(name => name !== user.username)}</span>
                         <p>{container.lastMessage}</p>
                     </div>
                     <div className="timestamp">
-                        <span>{container.timestamp}</span>
+                        <span>{container.timestamp.time}</span>
                     </div>
                 </div>)
                 }
@@ -89,9 +145,10 @@ const Sidebar = () => {
         )
     }
 
+
     return (
         <>
-        <section className='sidebar'>
+            <section className='sidebar'>
             <Navbar />
             <div className='chats'>
                 <div className='menu'>
@@ -106,7 +163,7 @@ const Sidebar = () => {
                 <div className="search-wrapper hidden">
                 <div>
                         <div>
-                            <img src={IMG1} alt="" />
+                            <img src={defaultPic} alt="" />
                             <div className='notifications'>
                                 <div>99</div>
                             </div>
@@ -122,10 +179,17 @@ const Sidebar = () => {
                 </div>
 
             </div>
-        </section>
-        <Messages messages={messages} user={user}/>
+            </section>
+            <Messages messages={messages} user={user} other={other} setContainers={setContainers}/>
+            <div ref={loader} className='loading'>
+                <div ref={details}>
+                    <p>Chatt Instant Messaging</p>
+                    <p ref={chatt}>Keeping in touch with friends, family and onnecting with new people all over the world </p>
+                </div>
+            </div>
         </>
         );
+
 }
 
 export default Sidebar;

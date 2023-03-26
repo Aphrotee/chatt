@@ -66,7 +66,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers}) => {
                         <ion-icon name="call-outline"></ion-icon>
                     </div>
             </div>
-            
+
             <div ref={scrollbar} className='messages'>
             {messages.map((message) => {
 
@@ -76,10 +76,12 @@ const Messages = ({ messages, user, other, otherUser, setContainers}) => {
                 <div className='time-stamp'>{message.timestamp.time}</div>
                 <div>{message.message}</div>
             </div>)
+                }
             })}
             </div>
+
             <div className="search-bar">
-                <form onSubmit={sendMessag
+                <form onSubmit={sendMessage}>
                     <div className="icons">
                         <ion-icon name="happy-outline"></ion-icon>
                         <ion-icon name="attach-sharp"></ion-icon>

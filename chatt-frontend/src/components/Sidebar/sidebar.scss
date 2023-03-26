@@ -64,7 +64,7 @@
                 left: 11px;
             }
 
-            
+
         }
 
         .chats-wrapper > div >div:first-child, .search-wrapper > div >div:first-child{
@@ -111,7 +111,12 @@
             cursor: pointer;
         }
 
-        .chats-wrapper .wrap {
+        .chats-wrapper .wrap, .search-wrapper .wrap{
+            width: 100%;
+
+            &>div:first-child {
+                width: 25%;
+            }
 
             display: flex;
             gap: .8em;
@@ -145,7 +150,7 @@
             }
 
             .details {
-                width: 50%;
+                width: 100%;
                 padding-top: .3em;
 
                 span {
@@ -156,6 +161,7 @@
                 p {
                     margin: 0;
                     font-weight: 500;
+                    width:inherit;
                     color:rgb(110, 110, 110);
                     white-space: nowrap;
                     overflow: hidden;
@@ -165,7 +171,7 @@
             }
 
             .timestamp {
-                width: 100%;
+                width: 30%;
                 font-weight: bold;
                 font-size: small;
 
@@ -175,9 +181,6 @@
             }
         }
         .search-wrapper {
-            max-height: 34%;
-            position: absolute;
-            z-index: 10;
             display: none;
         }
     }

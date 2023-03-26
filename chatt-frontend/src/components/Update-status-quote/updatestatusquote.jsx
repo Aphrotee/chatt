@@ -1,14 +1,10 @@
 import './updatestatusquote.scss';
-import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../axios1.js';
+import axios from '../../axios.js';
 import cookies from '../../cookies';
 
 const UpdateStatusQuote = () => {
-    gsap.registerPlugin()
-    const user1 = useRef()
-    const user2 = useRef()
     const msg = useRef(null);
     const loading = useRef(null);
     const [Msg, setMsg] = useState("");
@@ -17,9 +13,6 @@ const UpdateStatusQuote = () => {
     const [updateBtn, setUpdateBtn] = useState("Update")
     const navigate = useNavigate();
 
-    useEffect(() => {
-        gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3})
-    });
 
     const handleChange = (event) => {
       const name = event.target.name;
@@ -63,7 +56,7 @@ const UpdateStatusQuote = () => {
                 'X-API-Key': import.meta.env.VITE_API_KEY
               }
             })
-              .then((value) => {  
+              .then((value) => {
                 loading.current.style.opacity = 1
                 loading.current.style.cursor = 'default';
                 setUpdateBtn("Update");

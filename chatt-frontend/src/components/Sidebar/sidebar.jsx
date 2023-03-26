@@ -4,24 +4,29 @@ import Messages from '../Messages/messsages'
 import Pusher from 'pusher-js'
 import axios from '../../axios'
 import cookies from '../../cookies';
+import gsap from 'gsap';
 import { useEffect, useState, useRef } from 'react'
-const IMG1 = '../../src/images/images/profile (1).png';
+const defaultPic = '../../src/images/profile (1).png';
 
 const Sidebar = () => {
-
-
-    const searchWrapper = useRef(null)
-    const [otherUser, setOtherUser] = useState(null);
-    const [allUsers, setAllUsers] = useState([]);
-    const [input, setInput] = useState(null);
-    const loader = useRef()
-    const chatt = useRef()
-    const details = useRef()
-    const [containers, setContainers] = useState(null);
-    const [messages, setMessages] = useState([])
-    const [user, setUser] = useState([])
-    const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
+    // browser cookie
     const cookie = cookies.get('X-Token')
+
+    // DOM references
+    const chatt = useRef()
+    const loader = useRef()
+    const details = useRef()
+    const searchWrapper = useRef(null)
+
+    // State variables
+    const [user, setUser] = useState([])
+    const [input, setInput] = useState(null);
+    const [messages, setMessages] = useState([])
+    const [allUsers, setAllUsers] = useState([])
+    const [state, setState] = useState(true)
+    const [otherUser, setOtherUser] = useState(null);
+    const [containers, setContainers] = useState([]);
+    const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
 
     useEffect(() => {
         gsap.fromTo(loader.current, {display: 'block'}, {display: 'none', duration: 3})
@@ -79,8 +84,6 @@ const Sidebar = () => {
 
 
     const userDisplay = () => {
-        if (containers === null) return <div></div>
-
 
         if (containers.length === 0) {
             return (
@@ -90,6 +93,41 @@ const Sidebar = () => {
             </div>)
         }
 
+        return (
+            // containers.filter((container) => {
+            //     if (container.nummberOfMessages) {
+            //         return true;
+            //     } else {
+            //         return false;
+            //     }
+            // });
+            containers.map((container) => {
+
+                return (<div className="wrap" key={container._id}
+                             onClick={() => {getMessages(container._id);
+                                             getName(container.membersUsernames.filter(name => name !== user.username));
+                                             getlastSeen( container.timestamp.time);
+                                             getId(container._id);
+                                             get_id(container.members.filter(member => member !== user.id));
+                                             }}>
+                    <div>
+                        <img src={defaultPic} alt="" />
+                        <div className='notifications'>
+                            <div>99</div>
+                        </div>
+                    </div>
+                    <div className='details'>
+
+                      <span>{container.membersUsernames.filter(name => name !== user.username)}</span>
+                        <p>{container.lastMessage}</p>
+                    </div>
+                    <div className="timestamp">
+                        <span>{container.timestamp.time}</span>
+                    </div>
+                </div>)
+            })
+        )
+    }
 
     const getName = (name) => {
         setOther(existingValues => ({
@@ -119,43 +157,6 @@ const Sidebar = () => {
         }))
     }
 
-    console.log('onClick', messages)
-    console.log('containers', containers)
-        return (
-            // containers.filter((container) => {
-            //     if (container.nummberOfMessages) {
-            //         return true;
-            //     } else {
-            //         return false;
-            //     }
-            // });
-            containers.map((container) => {
-
-                return (<div className="wrap" key={container._id}
-                             onClick={() => {getMessages(container._id);
-                                             getName(container.membersUsernames.filter(name => name !== user.username));
-                                             getlastSeen( container.timestamp.time);
-                                             getId(container._id);
-                                             get_id(container.members.filter(member => member !== user.id));
-                                             }}>
-                    <div>
-                        <img src={defaultPic} alt="" />
-                        <div className='notifications'>
-                            <div>99</div>
-                        </div>
-                    </div>
-                    <div className='details
-                    
-                      <span>{container.membersUsernames.filter(name => name !== user.username)}</span>
-                        <p>{container.lastMessage}</p>
-                    </div>
-                    <div className="timestamp">
-                        <span>{container.timestamp.time}</span>
-                    </div>
-                </div>)
-            })
-        )
-    }
 
     const getUsers = () => {
         axios.get('/users/all', {
@@ -177,9 +178,14 @@ const Sidebar = () => {
 
     const handleChange = (event) => {
         const query = event.target.value;
+        console.log(query)
+
         if (!query) {
+            console.log(query)
+            setState(true)
             setInput(null);
         } else {
+            setState(false)
             setInput(query);
         }
     }
@@ -220,9 +226,9 @@ const Sidebar = () => {
             }
             return match.map((user) => {
                 return (
-                    <div onClick={() => {getContainer(user.id)}} >
+                    <div className='wrap' onClick={() => {getContainer(user.id)}} >
                         <div>
-                            <img src={IMG1} alt=""/>
+                            <img src={defaultPic} alt=""/>
                         </div>
                         <div className='details'>
                             <span>{user.username}</span>
@@ -244,14 +250,15 @@ const Sidebar = () => {
                     <input type="search" placeholder='Search to start a converstion' value={input || ''} onClick={getUsers} onChange={handleChange} />
                     <ion-icon name="search-outline"></ion-icon>
                 </div>
+
                 <div ref={searchWrapper} className="search-wrapper">
                     {matchedUsers()}
                 </div>
 
-                <div className='chats-wrapper'>
+                <div className={state? 'chats-wrapper' : 'hidden'}>
                     {userDisplay()}
                 </div>
-                    
+
                 <div className="search-wrapper hidden">
                 <div>
                         <div>
@@ -269,19 +276,18 @@ const Sidebar = () => {
                         </div>
                     </div>
                 </div>
-    
-
+            </div>
             </section>
+
             <Messages messages={messages} user={user} other={other} otherUser={otherUser} setContainers={setContainers}/>
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>
-                    <p ref={chatt}>Keeping in touch with friends, family and onnecting with new people all over the world </p>
+                    <p ref={chatt}> Keeping in touch with friends, family and onnecting with new people all over the world </p>
                 </div>
             </div>
         </>
         );
-
 }
 
 export default Sidebar;

@@ -13,7 +13,6 @@ import {
 import Sidebar from './components/Sidebar/sidebar'
 import './index.scss';
 
-//dotenv.config();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

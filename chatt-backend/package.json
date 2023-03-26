@@ -12,6 +12,7 @@
   "author": "Aiyebogan Temitope",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "bcrypt": "^5.1.0",
     "bull": "^4.10.4",
     "chai": "^4.3.7",

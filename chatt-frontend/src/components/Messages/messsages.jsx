@@ -3,7 +3,8 @@ import axios from '../../axios'
 import cookies from '../../cookies'
 import { useState, useRef, useEffect} from 'react'
 
-const Messages = ({ messages, user, other, setContainers}) => {
+
+const Messages = ({ messages, user, other, otherUser, setContainers}) => {
 
     const [input, setInput] = useState('')
     const scrollbar = useRef(null)
@@ -37,8 +38,9 @@ const Messages = ({ messages, user, other, setContainers}) => {
         setInput("")
     }
 
+
     const display = () => {
-        if (messages.length === 0) {
+        if (messages.length === 0 && otherUser === null) {
             return (
             <div ref={scrollbar} className="empty">
                 <div>
@@ -54,6 +56,7 @@ const Messages = ({ messages, user, other, setContainers}) => {
         return (
             <>
             <div className="user-nav">
+
                     <div><img src="../../src/images/profile (1).png" alt="" /></div>
                     <div>
                         <p>{other.name}</p>
@@ -63,8 +66,11 @@ const Messages = ({ messages, user, other, setContainers}) => {
                         <ion-icon name="call-outline"></ion-icon>
                     </div>
             </div>
+            
             <div ref={scrollbar} className='messages'>
             {messages.map((message) => {
+
+            if (Object.keys(message).length !== 0 && user !== undefined) {
             return (
             <div key={message._id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
                 <div className='time-stamp'>{message.timestamp.time}</div>
@@ -73,17 +79,19 @@ const Messages = ({ messages, user, other, setContainers}) => {
             })}
             </div>
             <div className="search-bar">
-                <form onSubmit={sendMessage}>
+                <form onSubmit={sendMessag
                     <div className="icons">
                         <ion-icon name="happy-outline"></ion-icon>
                         <ion-icon name="attach-sharp"></ion-icon>
                     </div>
+
                     <input value={input}
                            onChange={(e) => setInput(e.target.value)}
                            type="search" name="" id=""
                            placeholder='Send a Message'/>
 
                     <button onClick={sendMessage} type="button">
+
                         <ion-icon name="navigate-circle"></ion-icon>
                     </button>
                 </form>

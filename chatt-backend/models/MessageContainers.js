@@ -5,7 +5,8 @@ const MessageContainerSchema = mongoose.Schema({
   membersUsernames: Array(String),
   numberOfMessages: Number,
   lastMessage: String,
-  timestamp: Object
+  timestamp: Object,
+  milliTimestamp: Number
 });
 
 export default mongoose.model('messagecontainers', MessageContainerSchema);

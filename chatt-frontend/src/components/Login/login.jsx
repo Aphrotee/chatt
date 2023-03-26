@@ -10,25 +10,23 @@ const Login = () => {
     gsap.registerPlugin()
     const user1 = useRef()
     const user2 = useRef()
+    const msg = useRef(null);
+    const loading = useRef(null);
+    const [Msg, setMsg] = useState("");
+    const [inputs, setInputs] = useState({});
+    const [Loading, setLoading] = useState(false);
+    const [loginBtn, setLoginBtn] = useState("Login")
+    const navigate = useNavigate();
 
     useEffect(() => {
         gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3})
     });
-
-    const [inputs, setInputs] = useState({});
 
     const handleChange = (event) => {
       const name = event.target.name;
       const value = event.target.value;
       setInputs(values => ({ ...values, [name]: value }));
     }
-
-    const msg = useRef(null);
-    const [Msg, setMsg] = useState("");
-    const loading = useRef(null);
-    const [Loading, setLoading] = useState(false);
-    const [loginBtn, setLoginBtn] = useState("Login")
-    const navigate = useNavigate();
 
     const applyMessage = (message, success) => {
       if (success) {
@@ -69,7 +67,9 @@ const Login = () => {
               loading.current.style.cursor = 'default';
               setLoginBtn("Login successful");
               cookies.set('X-Token', value.data['token']);
-              navigate('/messages', { replace: true });
+              cookies.set('chatt_userId', value.data['userId']);
+              cookies.set('chatt_username', value.data['username']);
+              navigate('/', { replace: true });
             })
             .catch((err) => {
               setLoading(false);

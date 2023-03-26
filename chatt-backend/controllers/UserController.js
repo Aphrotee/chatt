@@ -27,12 +27,14 @@ class UserController {
                   res.status(400).json({ error: "User with this username exists already" });
                 } else {
                   const hashedPassword = await bcrypt.hash(password, 10);
-                  Users.create({ username, email, password: hashedPassword })
+                  const quote = 'Hi!, lets connect on Chatt Instant Messaging';
+                  Users.create({ username, email, password: hashedPassword, quote })
                     .then((user) => {
                       const response = {
                         id: user._id,
                         username: user.username,
-                        email: user.email
+                        email: user.email,
+                        quote: user.quote
                        };
                       worker.welcomeNewUser.add({ email: user.email, username: user.username });
                       res.status(201).json(response);
@@ -64,6 +66,34 @@ class UserController {
       .catch((err) => {
         res.status(500).send({ error: err.toString() });
       });
+  }
+
+  updateStatus(req, res) {
+    const { userId, quote } = req.body;
+
+    if (!userId) {
+      res.status(400).json({ error: "Missing user Id" });
+    } else if (!quote) {
+      res.status(400).json({ error: "Missing status quote" });
+    } else {
+      Users.findById(new mongoose.Types.ObjectId(userId))
+        .then(async (user) => {
+          if (user) {
+            Users.findByIdAndUpdate(new mongoose.Types.ObjectId(user._id), {
+              $set: { quote }
+            })
+              .then((updated) => {
+                res.status(200).json({ message: "status quote updated" });
+              })
+              .catch((err) => {
+                res.status(500).json({ eror: err.toString() });
+              });
+          }
+        })
+        .catch((err) => {
+          res.status(500).json({ eror: err.toString() });
+        });
+    }
   }
 
   allUsers(req, res) {

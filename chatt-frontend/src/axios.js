@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
-const axios = Axios.create({
-  baseURL: 'https://chatt.up.railway.app/api/v1',
-});
+const instance = axios.create({
+    baseURL: import.meta.env.VITE_BASE_URL
+})
 
 export default axios;

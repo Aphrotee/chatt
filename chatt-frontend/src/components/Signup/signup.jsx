@@ -2,31 +2,30 @@ import './signup.scss';
 import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import cookies from '../../cookies';
 import axios from '../../axios.js';
 
 const Signup = () => {
     gsap.registerPlugin()
     const user1 = useRef()
     const user2 = useRef()
+    const msg = useRef(null);
+    const loading = useRef(null);
+    const [Msg, setMsg] = useState("");
+    const [inputs, setInputs] = useState({});
+    const [Loading, setLoading] = useState(false);
+    const [signupBtn, setSignupBtn] = useState("Sign up")
+    const navigate = useNavigate();
 
     useEffect(() => {
         gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3})
     });
-
-    const [inputs, setInputs] = useState({});
 
     const handleChange = (event) => {
       const name = event.target.name;
       const value = event.target.value;
       setInputs(values => ({ ...values, [name]: value }));
     }
-
-    const msg = useRef(null);
-    const [Msg, setMsg] = useState("");
-    const loading = useRef(null);
-    const [Loading, setLoading] = useState(false);
-    const [signupBtn, setSignupBtn] = useState("Sign up")
-    const navigate = useNavigate();
 
     const applyMessage = (message, success) => {
       if (success) {
@@ -67,6 +66,7 @@ const Signup = () => {
             })
               .then((value) => {
                 applyMessage(`Welcome ${value.data.username}`, true);
+                cookies.set('userid', value.data.id);
                 loading.current.style.opacity = 1
                 loading.current.style.cursor = 'default';
                 setSignupBtn("Sign up successful");

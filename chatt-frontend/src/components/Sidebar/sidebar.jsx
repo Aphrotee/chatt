@@ -3,13 +3,17 @@ import Navbar from '../Navbar/navbar';
 import Messages from '../Messages/messsages'
 import Pusher from 'pusher-js'
 import axios from '../../axios'
-import gsap from 'gsap';
-import cookies from '../../cookies'
-import { useEffect, useState, useRef} from 'react';
-const defaultPic = '../../src/images/profile (1).png';
+import cookies from '../../cookies';
+import { useEffect, useState, useRef } from 'react'
+const IMG1 = '../../src/images/images/profile (1).png';
 
 const Sidebar = () => {
 
+
+    const searchWrapper = useRef(null)
+    const [otherUser, setOtherUser] = useState(null);
+    const [allUsers, setAllUsers] = useState([]);
+    const [input, setInput] = useState(null);
     const loader = useRef()
     const chatt = useRef()
     const details = useRef()
@@ -30,7 +34,7 @@ const Sidebar = () => {
                 axios.get("containers/all", {
                     headers: {
                         'X-Token': cookie
-                    }
+                        }
                 }).then((response) => {
 
                 setContainers(response.data)
@@ -41,9 +45,10 @@ const Sidebar = () => {
                         'X-Token': cookie
                     }
                 }).then((response) => {
-                    setUser(response.data)
+                    setUser(response.data);
                 })
-                }, []);
+                },
+    []);
 
     useEffect(() => {
         const pusher = new Pusher('5ac65fc188cfeb946d3c', {
@@ -61,9 +66,8 @@ const Sidebar = () => {
               }
           }, [messages]);
 
-    const getMessages = (id) => {
-        const date = new Date()
-        console.log(date.toLocaleTimeString('en-US'))
+    const getMessages = (id, otheruser) => {
+        setOtherUser(otheruser);
         axios.get(`/messages/${id}/all`, {
             headers: {
                 'X-Token': cookie
@@ -118,7 +122,15 @@ const Sidebar = () => {
     console.log('onClick', messages)
     console.log('containers', containers)
         return (
+            // containers.filter((container) => {
+            //     if (container.nummberOfMessages) {
+            //         return true;
+            //     } else {
+            //         return false;
+            //     }
+            // });
             containers.map((container) => {
+
                 return (<div className="wrap" key={container._id}
                              onClick={() => {getMessages(container._id);
                                              getName(container.membersUsernames.filter(name => name !== user.username));
@@ -132,17 +144,94 @@ const Sidebar = () => {
                             <div>99</div>
                         </div>
                     </div>
-                    <div className='details'>
-                        <span>{container.membersUsernames.filter(name => name !== user.username)}</span>
+                    <div className='details
+                    
+                      <span>{container.membersUsernames.filter(name => name !== user.username)}</span>
                         <p>{container.lastMessage}</p>
                     </div>
                     <div className="timestamp">
                         <span>{container.timestamp.time}</span>
                     </div>
                 </div>)
-                }
-                )
+            })
         )
+    }
+
+    const getUsers = () => {
+        axios.get('/users/all', {
+            headers: {
+                'X-API-Key': import.meta.env.VITE_API_KEY
+            }
+        })
+          .then((response) => {
+            setAllUsers(response.data);
+          })
+          .catch((err) => {
+            console.log(err);
+            setAllUsers(['Opeyemi', 'Oreoluwa', 'Fiyin', 'Ayomide', 'odunayo', 'Ayodele', 'Oluwatobi', 'ola',
+               'joy', 'Renee', 'Bolatito', 'Aphrotee', 'Pamilerin', 'Aphrtee', 'Ibrahim', 'Idris', 'olufunmi',
+               'binta', 'pelumi', 'Funto', 'funmi', 'benita'
+            ]);
+          });
+    }
+
+    const handleChange = (event) => {
+        const query = event.target.value;
+        if (!query) {
+            setInput(null);
+        } else {
+            setInput(query);
+        }
+    }
+
+    const getContainer = (receiver) => {
+        axios.get(`/container/${receiver}`, {
+            headers: {
+                'X-Token': cookies.get('X-Token')
+            }
+        })
+          .then((response) => {
+            const containerId = response.data._id;
+            const otheruser = response.data.membersUsernames.filter((name) => name !== cookies.get('chatt_username'))[0];
+            getMessages(containerId, otheruser);
+          })
+    }
+
+    const matchedUsers = () => {
+        const match = allUsers.filter((user) => {
+            if (new RegExp(`^${input}`, 'i').test(user.username)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        if (!input) {
+            if (searchWrapper.current !== null) {
+              searchWrapper.current.style.display = 'none';
+            }
+        } else if (!match.length && input) {
+            if (searchWrapper.current !== null) {
+                searchWrapper.current.style.display = 'block';
+            }
+            return (<div className='noUser' >No users found</div>)
+        } else {
+            if (searchWrapper.current !== null) {
+                searchWrapper.current.style.display = 'block';
+            }
+            return match.map((user) => {
+                return (
+                    <div onClick={() => {getContainer(user.id)}} >
+                        <div>
+                            <img src={IMG1} alt=""/>
+                        </div>
+                        <div className='details'>
+                            <span>{user.username}</span>
+                            <p>{user.quote}</p>
+                        </div>
+                    </div>
+                )
+            });
+        }
     }
 
 
@@ -152,14 +241,17 @@ const Sidebar = () => {
             <Navbar />
             <div className='chats'>
                 <div className='menu'>
-                    <input type="search" placeholder='Search or start a converstion '/>
+                    <input type="search" placeholder='Search to start a converstion' value={input || ''} onClick={getUsers} onChange={handleChange} />
                     <ion-icon name="search-outline"></ion-icon>
+                </div>
+                <div ref={searchWrapper} className="search-wrapper">
+                    {matchedUsers()}
                 </div>
 
                 <div className='chats-wrapper'>
-                  {userDisplay()}
+                    {userDisplay()}
                 </div>
-
+                    
                 <div className="search-wrapper hidden">
                 <div>
                         <div>
@@ -177,10 +269,10 @@ const Sidebar = () => {
                         </div>
                     </div>
                 </div>
+    
 
-            </div>
             </section>
-            <Messages messages={messages} user={user} other={other} setContainers={setContainers}/>
+            <Messages messages={messages} user={user} other={other} otherUser={otherUser} setContainers={setContainers}/>
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>

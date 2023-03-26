@@ -23,7 +23,8 @@ class MessageContainerController {
                 membersUsernames: [senderUsername, Receiver.username],
                 numberOfMessages: 0,
                 lastMessage: '',
-                timestamp: {}
+                timestamp: {},
+                milliTimestamp: 0
               })
               .then((data) => {
                 res.cookie('X-Token', req.token);
@@ -48,7 +49,7 @@ class MessageContainerController {
 
     MessageContainers.aggregate([
       { $match: { members: { $all: [sender] }, numberOfMessages: { $gt: 0 } } },
-      { $sort: { timestamp: -1 } }
+      { $sort: { milliTimestamp: -1 } }
     ])
       .then((data) => {
         res.status(200).send(data);

@@ -1,4 +1,36 @@
 @use '../../index.scss' as index;
+.loading {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background: rgb(12, 2, 57);
+    z-index:1;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #dadada;
+
+    &>div {
+        opacity: 0;
+    }
+
+    p:first-child {
+        font-size: 2em;
+        font-weight: bold;
+        text-align: center;
+        margin: 0;
+    }
+
+    p:last-child {
+        color: rgb(139, 137, 137);
+        margin: 0;
+        text-align: center;
+        padding: 0 2em;
+    }
+
+
+}
 
 .sidebar {
     width:100vw;
@@ -13,13 +45,14 @@
 
         .menu {
             position: relative;
+            width: 100%;
 
             &>input {
                 outline: none;
-                border-radius: 50px;
-                width: 100%;
+                border-radius: 10px;
+                width: inherit;
                 border: 0;
-                height: 38px;
+                height: 42px;
                 padding-left: 32px;
                 margin-bottom: 1em;
             }
@@ -48,14 +81,24 @@
             overflow-y: scroll;
             width: 100%;
             height: 80%;
+            border-radius: 10px;
             background: white;
-            border-radius: 25px;
 
             .noUser {
-                display:grid;
+                display:flex;
+                text-align: center;
+                flex-direction: column;
+                height: 100%;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
+
+                p {
+                    margin: 0;
+                    font-size: 900;
+                    color: rgb(63, 59, 59);
+                    padding: 0 .6em;
+                }
             }
 
 
@@ -68,11 +111,12 @@
             cursor: pointer;
         }
 
-        .chats-wrapper > div, .search-wrapper > div {
+        .chats-wrapper .wrap {
+
             display: flex;
             gap: .8em;
             border-bottom: 1px solid rgb(219, 218, 218);
-            padding: .37em 0;
+            padding: .30em 0;
             margin: 0 .5em;
 
 

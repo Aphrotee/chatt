@@ -1,5 +1,5 @@
 $primary-color: #090C7D;
-$secondary-color:#dddcd7;
+$secondary-color:#dddcd4;
 
 body {
   margin:0;
@@ -12,12 +12,11 @@ body {
 
 ::-webkit-scrollbar {
   width: 5px;
-  background: $secondary-color;
 }
 
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(99, 97, 97);
+  background: rgba(40, 27, 27, 0.619);
   border-radius: 10px;
 }
 

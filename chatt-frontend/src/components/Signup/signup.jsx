@@ -2,8 +2,8 @@ import './signup.scss';
 import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../axios1.js';
 import cookies from '../../cookies';
+import axios from '../../axios.js';
 
 const Signup = () => {
     gsap.registerPlugin()
@@ -64,7 +64,7 @@ const Signup = () => {
               method: 'post',
               headers: { 'Content-Type': 'application/json' }
             })
-              .then((value) => {  
+              .then((value) => {
                 applyMessage(`Welcome ${value.data.username}`, true);
                 cookies.set('userid', value.data.id);
                 loading.current.style.opacity = 1

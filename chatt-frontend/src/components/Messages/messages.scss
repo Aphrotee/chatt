@@ -4,6 +4,7 @@
     width: 100%;
     height: 100vh;
     margin-bottom: 4em;
+    display:none;
     position: relative;
 
     .empty {
@@ -19,7 +20,6 @@
             img{
                 width: 300px;
                 height: 300px;
-                border-radius: 150px;
             }
 
             p {
@@ -50,6 +50,9 @@
         display:flex;
         align-items: center;
         padding: .4em 0;
+        position: fixed;
+        top: 0;
+        width: 54%;
         margin: 0 1.5em;
         border-bottom: 1px solid rgb(185, 185, 185);
 
@@ -92,14 +95,15 @@
 
 
     .default {
-        margin: 1em 1em 0 0;
+        margin: 1em .5em 0 0;
         text-align: left;
         display: flex;
-        gap: .2em;
     }
 
 
     .messages {
+        margin-top: 4em;
+        z-index: -2;
 
     .other-user-wrapper {
             @extend .default;
@@ -112,8 +116,9 @@
                 font-weight: 900;
             }
 
-            &>div:first-child {
+            &>div:last-child {
                 max-width: 80%;
+                min-width: 40px;
                 word-wrap:break-word;
                 background: index.$secondary-color;
                 padding: .5em;
@@ -139,8 +144,9 @@
             direction: ltr !important;
         }
 
-        &>div:first-child {
+        &>div:last-child {
             max-width: 80%;
+            min-width: 35px;
             color: rgb(255, 255, 255);
             font-weight: 500;
             word-wrap: break-word;
@@ -155,8 +161,8 @@
 
     .search-bar {
         position: fixed;
+        bottom:0;
         width: inherit;
-        bottom:1%;
         display:flex;
         gap: 2%;
         align-items: center;
@@ -165,7 +171,7 @@
         &>form {
             display: flex;
             width:100%;
-            padding: 10px 50px 15px 0;
+            padding: 13px 50px 13px 0;
 
             .icons {
                 display: flex;
@@ -186,8 +192,8 @@
                 padding-left: 15px;
                 background: index.$secondary-color;
                 border: 0;
-                height: 45px;
-                border-radius: 15px;
+                height: 48px;
+                border-radius: 10px;
             }
 
             & button {
@@ -195,10 +201,15 @@
                 border: 0;
                 color: index.$primary-color;
                 background: none;
+                bottom: 14px;
                 position: absolute;
-                right: 0;
-                font-size: 32px;
+                right: -5px;
+                font-size: 40px;
 
+            }
+
+            & button:hover {
+                cursor: pointer;
             }
         }
 }
@@ -210,17 +221,17 @@
         display:block;
         width: 59%;
         float: right;
+        border-left: 1px solid black;
 
         .messages {
-            padding-top: .8em;
-            height: 75%;
+            height: 77%;
             overflow-y: scroll;
             overflow-x:hidden
         }
     }
 
         .search-bar {
-            width: 57%;
+            width: inherit;
 
             form input {
                 padding-left: 10px;

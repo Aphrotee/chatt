@@ -286,6 +286,11 @@ const Sidebar = () => {
                     <p ref={chatt}> Keeping in touch with friends, family and onnecting with new people all over the world </p>
                 </div>
             </div>
+            <div className="profile-background">
+                <div className="user-profile-box" >
+                    
+                </div>
+            </div>
         </>
         );
 }

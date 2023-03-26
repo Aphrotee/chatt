@@ -32,6 +32,33 @@
 
 }
 
+.profile-background {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background: black;
+    z-index:1;
+    opacity: 0.5;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #dadada;
+}
+
+.user-profile-box {
+   box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
+   width: 80%;
+   min-height: 70%;
+   display: grid;
+   text-align: center;
+   align-items: center;
+   margin: auto auto;
+   background-color: white;
+   opacity: 1;
+
+}
+
 .sidebar {
     width:100vw;
     height: 100vh;
@@ -182,6 +209,7 @@
         }
         .search-wrapper {
             display: none;
+            box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
         }
     }
 }

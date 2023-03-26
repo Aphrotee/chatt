@@ -71,7 +71,7 @@ const Signup = () => {
                 loading.current.style.cursor = 'default';
                 setSignupBtn("Sign up successful");
                 setTimeout(() => {
-                  navigate('/login', { replace: true });
+                  navigate('/update-status-quote', { replace: true });
                 }, 1000);
               })
               .catch((err) => {

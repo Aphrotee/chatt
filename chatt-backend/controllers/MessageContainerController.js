@@ -23,7 +23,7 @@ class MessageContainerController {
                 membersUsernames: [senderUsername, Receiver.username],
                 numberOfMessages: 0,
                 lastMessage: '',
-                timestamp: ''
+                timestamp: {}
               })
               .then((data) => {
                 res.cookie('X-Token', req.token);

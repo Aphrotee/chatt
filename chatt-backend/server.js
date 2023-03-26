@@ -38,7 +38,7 @@ app.get('/api/v1/status', appController.status);
 
 app.get('/api/v1/stats', appController.stats);
 
-app.post('/api/v1/auth/register', extractCredentials, userController.register);
+app.post('/api/v1/auth/register', userController.register);
 
 app.get('/api/v1/auth/login', extractCredentials, authController.login);
 

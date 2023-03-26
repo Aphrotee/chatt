@@ -9,11 +9,10 @@ import worker from '../worker.js';
 
 class AuthController {
 
-
  login(req, res) {
-    const email = req.body.email
-    const password = req.body.password;
-    users.findOne({ email })
+    const email = req.email;
+    const password = req.password;
+    Users.findOne({ email })
       .then(async (user) => {
         if (user) {
           if (await bcrypt.compare(password, user.password)) {

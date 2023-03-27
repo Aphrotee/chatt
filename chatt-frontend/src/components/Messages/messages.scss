@@ -1,0 +1,302 @@
+@use '../../index.scss' as index;
+
+.messages-wrapper {
+    width: 100%;
+    height: 100vh;
+    margin-bottom: 4em;
+    display:none;
+    position: relative;
+
+    .empty {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding-top: 20%;
+        text-align: center;
+        align-items: center;
+
+        &>div {
+
+            img{
+                width: 300px;
+                height: 300px;
+            }
+
+            p {
+                color:rgb(61, 60, 60)
+            }
+
+            p:first-child {
+                font-size: 2em;
+                font-weight: bold;
+                margin: 0;
+            }
+
+            p:last-child {
+                margin: 0;
+                font-size: 1em;
+                padding:0 4em;
+            }
+        }
+    }
+
+    .messages::-webkit-scrollbar{
+        background: white;
+    }
+}
+
+.user-nav {
+
+        display:flex;
+        align-items: center;
+        padding: .4em 0;
+        position: fixed;
+        top: 0;
+        width: 54%;
+        margin: 0 1.5em;
+        border-bottom: 1px solid rgb(185, 185, 185);
+
+        &>div:first-child {
+            display:flex;
+            align-items: center;
+
+            img {
+                width:50px;
+                height:50px;
+                object-fit: cover;
+                border-radius: 25px;
+            }
+        }
+
+        &>div:nth-child(2) {
+            width: 100%;
+            padding-left: 20px;
+
+            p {
+                margin:0;
+            }
+
+            p:first-child {
+                font-weight: 800;
+            }
+
+            p:last-child {
+                font-size: .8em;
+                font-weight: 500;
+                color: rgb(100, 98, 98);
+            }
+        }
+
+        &>div:last-child {
+            color: index.$primary-color;
+            font-size: 1.2em;
+        }
+    }
+
+
+    .default {
+        margin: 1em .5em 0 0;
+        text-align: left;
+        display: flex;
+    }
+
+
+    .messages {
+        margin-top: 4em;
+        z-index: -2;
+
+    .other-user-wrapper {
+            @extend .default;
+            padding:0 5em 0 1em;
+            width: 80%;
+            &>.time-stamp {
+                align-self: flex-end;
+                font-size: .6em;
+                margin: 0 .4em .3em 0;
+                font-weight: 900;
+            }
+
+            &>div:last-child {
+                max-width: 80%;
+                min-width: 40px;
+                word-wrap:break-word;
+                background: index.$secondary-color;
+                padding: .5em;
+                border-radius: 0 15px 15px 15px;
+
+            &>div {
+                font-size: .75em;
+                margin-top: .7em;
+            }
+        }
+        }
+
+
+    .current-user-wrapper {
+        @extend .default;
+        direction: rtl;
+
+        &>.time-stamp {
+            align-self: flex-end;
+            font-size: .6em;
+            margin: 0 0 .3em .4em;
+            font-weight: 900;
+            direction: ltr !important;
+        }
+
+        &>div:last-child {
+            max-width: 80%;
+            min-width: 35px;
+            color: rgb(255, 255, 255);
+            font-weight: 500;
+            word-wrap: break-word;
+            justify-self: flex-end;
+            float: right;
+            background: index.$primary-color;
+            padding: .5em;
+            border-radius: 15px 0 15px 15px;
+        }
+    }
+    }
+
+    .search-bar {
+        position: fixed;
+        bottom:0;
+        width: inherit;
+        display:flex;
+        gap: 2%;
+        align-items: center;
+
+
+        &>form {
+            display: flex;
+            width:100%;
+            padding: 13px 50px 13px 0;
+
+            .icons {
+                display: flex;
+                align-items: center;
+                gap: .5em;
+                font-size: 1.8em;
+                color: rgb(99, 97, 97);
+                padding: 0 12px;
+
+                &>ion-icon[name="attach-sharp"] {
+                    transform: rotate(45deg);
+                }
+            }
+
+            &>input[type="search"] {
+                width: inherit;
+                outline: none;
+                padding-left: 15px;
+                background: index.$secondary-color;
+                border: 0;
+                height: 48px;
+                border-radius: 10px;
+            }
+
+            & button {
+                transform: rotate(270deg);
+                border: 0;
+                color: index.$primary-color;
+                background: none;
+                bottom: 14px;
+                position: absolute;
+                right: -5px;
+                font-size: 40px;
+
+            }
+
+            & button:hover {
+                cursor: pointer;
+            }
+        }
+}
+
+
+@media (min-width: 768px) {
+
+    .messages-wrapper {
+        display:block;
+        width: 59%;
+        float: right;
+        border-left: 1px solid black;
+
+        .messages {
+            height: 77%;
+            overflow-y: scroll;
+            overflow-x:hidden
+        }
+    }
+
+        .search-bar {
+            width: inherit;
+
+            form input {
+                padding-left: 10px;
+            }
+        }
+
+
+}
+
+@media (max-width: 450px) {
+    .messages-wrapper {
+
+        .search-bar > form {
+
+            input[type="search"] {
+                padding: 0 38px;
+            }
+
+            .icons > ion-icon[name=attach-sharp] {
+            position: absolute;
+            top: 40%;
+            display: block;
+            right: 15%;
+            }
+
+            .icons > ion-icon[name=happy-sharp] {
+                position: absolute;
+                top: 40%;
+                display: block;
+                left: 8%;
+                }
+        }
+    }
+}
+
+@media (max-width: 280px) {
+
+    .messages-wrapper .search-bar {
+        height: 60px;
+
+        form {
+            padding-right: 40px;
+
+            &>input[type="search"] {
+                height: 36px;
+                padding: 0 28px;
+            }
+
+            .icons {
+
+                padding:0 5px;
+
+                ion-icon[name=attach-sharp] {
+                    right: 17%;
+                    top: 35%;
+                }
+                ion-icon[name=happy-sharp] {
+                    left: 5%;
+                    top: 35%;
+                }
+            }
+
+            button {
+                padding: 0;
+            }
+        }
+    }
+}

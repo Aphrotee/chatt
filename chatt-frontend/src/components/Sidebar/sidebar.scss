@@ -1,0 +1,325 @@
+@use '../../index.scss' as index;
+.loading {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background: rgb(12, 2, 57);
+    z-index:1;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #dadada;
+
+    &>div {
+        opacity: 0;
+    }
+
+    p:first-child {
+        font-size: 2em;
+        font-weight: bold;
+        text-align: center;
+        margin: 0;
+    }
+
+    p:last-child {
+        color: rgb(139, 137, 137);
+        margin: 0;
+        text-align: center;
+        padding: 0 2em;
+    }
+
+
+}
+
+.profile-background {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background: black;
+    z-index:1;
+    opacity: 0.5;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #dadada;
+}
+
+.profile-wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index:1;
+    opacity: 1;
+    bottom: auto;
+    top: 8vh;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+}
+.user-profile-box {
+   box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
+   width: 500px;
+   min-height: 600px;
+   display: flex;
+   flex-direction: column;
+   text-align: center;
+   background-color: white;
+   position: absolute;
+   z-index: 1;
+   top: 0;
+   justify-content: center;
+   align-items: center;
+   opacity: 1;
+
+   form {
+
+    p {
+        margin: 1em 1em;
+    }
+
+    div:first-child {
+        text-align: left;
+        margin: 0 10%;
+    }
+
+    div:first-child p:first-child{
+        font-size: 1.5em;
+        color: index.$primary-color;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    div:first-child p:nth-child(2){
+        color: rgba(43, 37, 37, 0.747);
+        font-size: .8em;
+        font-weight: 800;
+        margin:0;
+    }
+
+    .quote {
+        margin-top: .8em;
+    }
+
+    .quote {
+        position: relative;
+
+        ion-icon {
+            position: absolute;
+            color: index.$primary-color;
+            bottom: 13px;
+            left: 11%
+        }
+    }
+
+    .message {
+        color: red;
+    }
+
+    &>div {
+
+        input {
+            width: 100%;
+            outline: none;
+            padding-left: 30px;
+            background: index.$secondary-color;
+            margin-top: 5%;
+            border: none;
+            height: 40px;
+            border-radius: 10px;
+        }
+    }
+
+    #button {
+        width: 58%;
+        height: 40px;
+        background: index.$primary-color;
+        border-radius: 10px;
+        color: white;
+        font-size: 1em;
+        font-weight: bold;
+        outline: none;
+        margin-top: 8%;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        justify-self: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+}
+
+.sidebar {
+    width:100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 1;
+    background: index.$secondary-color;
+
+    .chats {
+        margin: .3em .8em 0 .8em;
+        height: 100%;
+
+        .menu {
+            position: relative;
+            width: 100%;
+
+            &>input {
+                outline: none;
+                border-radius: 10px;
+                width: inherit;
+                border: 0;
+                height: 42px;
+                padding-left: 32px;
+                margin-bottom: 1em;
+            }
+
+
+            &>ion-icon[name="search-outline"] {
+                position: absolute;
+                top:10px;
+                left: 11px;
+            }
+
+
+        }
+
+        .chats-wrapper > div >div:first-child, .search-wrapper > div >div:first-child{
+            img {
+            max-width:60px;
+            min-height: 60px;
+            object-fit: cover;
+            aspect-ratio: 16/9;
+            border-radius: 30px;
+            }
+       }
+
+        .chats-wrapper, .search-wrapper {
+            overflow-y: scroll;
+            width: 100%;
+            height: 80%;
+            border-radius: 10px;
+            background: white;
+
+            .noUser {
+                display:flex;
+                text-align: center;
+                flex-direction: column;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+
+                p {
+                    margin: 0;
+                    font-size: 900;
+                    color: rgb(63, 59, 59);
+                    padding: 0 .6em;
+                }
+            }
+
+
+            &>div:first-child {
+                border-top: 0;
+            }
+        }
+
+        .chats-wrapper > div:hover, .search-wrapper > div:hover {
+            cursor: pointer;
+        }
+
+        .chats-wrapper .wrap, .search-wrapper .wrap{
+            width: 100%;
+
+            &>div:first-child {
+                width: 25%;
+            }
+
+            display: flex;
+            gap: .8em;
+            border-bottom: 1px solid rgb(219, 218, 218);
+            padding: .30em 0;
+            margin: 0 .5em;
+
+
+            &>div:first-child {
+                position: relative;
+
+                .notifications {
+                    position: absolute;
+                    display: flex;
+                    width: 20px;
+                    height: 20px;
+                    justify-content: center;
+                    border-radius: 10px;
+                    align-items: center;
+                    background: index.$primary-color;
+                    color: rgb(255, 255, 255);
+                    top: 0;
+                    right: -2px;
+
+                    &>div {
+                        font-weight: bold;
+                        font-size: .7em;
+                    }
+                }
+
+            }
+
+            .details {
+                width: 100%;
+                padding-top: .3em;
+
+                span {
+                    font-weight: bolder;
+                    color:rgb(37, 36, 36)
+                }
+
+                p {
+                    margin: 0;
+                    font-weight: 500;
+                    width:inherit;
+                    color:rgb(110, 110, 110);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+            }
+
+            .timestamp {
+                width: 30%;
+                font-weight: bold;
+                font-size: small;
+
+                span {
+                    float: right;
+                }
+            }
+        }
+        .search-wrapper {
+            display: none;
+            box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        width:41%;
+
+        .chats {
+
+            .chats-wrapper > div {
+
+                .details {
+                    width: 60%;
+                }
+            }
+
+        }
+    }
+}

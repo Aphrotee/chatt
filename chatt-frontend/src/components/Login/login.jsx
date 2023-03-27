@@ -69,7 +69,7 @@ const Login = () => {
               cookies.set('X-Token', value.data['token']);
               cookies.set('chatt_userId', value.data['userId']);
               cookies.set('chatt_username', value.data['username']);
-              navigate('/', { replace: true });
+              navigate('/messages', { replace: true });
             })
             .catch((err) => {
               setLoading(false);

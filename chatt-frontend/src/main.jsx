@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import dotenv from 'dotenv';
 import Signup from './components/Signup/signup';
 import Login from './components/Login/login';
 import ResetPassword from './components/Reset-password/resetPassword';

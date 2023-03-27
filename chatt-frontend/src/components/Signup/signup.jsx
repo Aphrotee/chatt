@@ -18,7 +18,7 @@ const Signup = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3})
+        gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3});
     });
 
     const handleChange = (event) => {

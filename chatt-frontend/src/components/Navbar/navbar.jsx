@@ -4,6 +4,8 @@ import './navbar.scss';
 import cookies from '../../cookies';
 import { useNavigate } from 'react-router-dom';
 
+let profile;
+
 function Navbar() {
 
     // browser cookie
@@ -12,6 +14,7 @@ function Navbar() {
     const [state, setState] = useState(false)
     const visible = () => setState(!state)
     const navigate = useNavigate();
+    const [profileState, setProfileState] = useState(false);
 
     const logout = () => {
         axios.delete('/auth/logout', {
@@ -38,7 +41,7 @@ function Navbar() {
                 </div>
                 <div className={state ? "dropdown": "hidden"}>
                 <ul>
-                    <li>Profile</li>
+                    <li onClick={() => {setProfileState(true); profile = profileState}}>Profile</li>
                     <li onClick={logout}>Log Out</li>
                 </ul>
             </div>
@@ -47,4 +50,4 @@ function Navbar() {
      );
 }
 
-export default Navbar;
+export { Navbar, profile };

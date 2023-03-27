@@ -14,11 +14,11 @@ const Signup = () => {
     const [Msg, setMsg] = useState("");
     const [inputs, setInputs] = useState({});
     const [Loading, setLoading] = useState(false);
-    const [signupBtn, setSignupBtn] = useState("Sign up")
+    const [signupBtn, setSignupBtn] = useState("Sign up");
     const navigate = useNavigate();
 
     useEffect(() => {
-        gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3})
+        gsap.fromTo(user1, {opacity: 0}, {opacity: 1, duration: 3});
     });
 
     const handleChange = (event) => {
@@ -71,7 +71,7 @@ const Signup = () => {
                 loading.current.style.cursor = 'default';
                 setSignupBtn("Sign up successful");
                 setTimeout(() => {
-                  navigate('/login', { replace: true });
+                  navigate('/update-status-quote', { replace: true });
                 }, 1000);
               })
               .catch((err) => {

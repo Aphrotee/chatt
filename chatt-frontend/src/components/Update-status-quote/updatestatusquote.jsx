@@ -89,7 +89,6 @@ const UpdateStatusQuote = () => {
                             <p>Update status quote</p>
                         </div>
                         <div className='quote'>
-                            <ion-icon name="letter"></ion-icon>
                             <input type="text" name="quote" placeholder="Hi!, lets connect on Chatt Instant Messaging" value={inputs.quote} onChange={handleChange} /></div>
                         <input id="button" ref={loading} type="submit" value={updateBtn} />
                         <input value="Skip" id="skip" onClick={() => {navigate("/login")}} />

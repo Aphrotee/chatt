@@ -29,14 +29,14 @@ class UserController {
                   const hashedPassword = await bcrypt.hash(password, 10);
                   const quote = 'Hi!, lets connect on Chatt Instant Messaging';
                   Users.create({ username, email, password: hashedPassword, quote })
-                    .then((user) => {
+                    .then(async (user) => {
                       const response = {
                         id: user._id,
                         username: user.username,
                         email: user.email,
                         quote: user.quote
                        };
-                      worker.welcomeNewUser.add({ email: user.email, username: user.username });
+                      await worker.welcomeNewUser({ email: user.email, username: user.username });
                       res.status(201).json(response);
                     })
                     .catch((err) => {

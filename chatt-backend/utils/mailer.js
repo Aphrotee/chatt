@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import sendGrid from '@sendgrid/mail';
 
-const mailer = (email, subject, body) => {
+const mailer = async (email, subject, body) => {
   // const transporter = nodemailer.createTransport({
   //   service: 'gmail',
   //   auth: {
@@ -17,13 +17,13 @@ const mailer = (email, subject, body) => {
     subject: subject,
     html: body,
   }
-  sendGrid.send(message)
-    .then(() => {
-      console.log('Email sent')
-    })
-    .catch((error) => {
-      console.error(error)
-    });
+  await sendGrid.send(message, (error, result) => {
+    if (error) {
+      console.log(error);
+     } else {
+      console.error('Email sent!', result);
+     }
+  });
 
   // const mailOptions = {
   //   from: 'Chatt Instant Messaging',

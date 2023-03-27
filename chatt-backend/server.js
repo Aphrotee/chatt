@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 dotenv.config();
 import db from './utils/db.js';
-import socketIO from './utils/socketio.js';
+import socketIO from './utils/socketio.cjs';
 import extractCredentials from './middlewares/extractCredentials.js';
 import verifyToken from './middlewares/verifyToken.js';
 import verifyApiKey from './middlewares/verifyApiKey.js';

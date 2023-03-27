@@ -1,9 +1,7 @@
-import { socketio } from 'socket.io';
-
 class SocketIO {
 
     socketConnection (server) {
-        this.io = socketio(server, {
+        this.io = require('socket.io')(server, {
             pingTimeout: 60000,
             cors: {
                 origin: '0.0.0.0/0'
@@ -16,4 +14,4 @@ class SocketIO {
 }
 
 const socketIO = new SocketIO();
-export default socketIO;
+module.exports = socketIO;

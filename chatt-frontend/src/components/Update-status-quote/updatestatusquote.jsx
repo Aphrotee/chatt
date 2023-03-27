@@ -77,8 +77,6 @@ const UpdateStatusQuote = () => {
         <section className="updatestatusquote">
            <div>
             <p>CHATT</p>
-            <div ref={user1} className="user user1">What time are you <br/> coming over today?</div>
-            <div ref={user2} className="user user2">I'll be right there <br/> after I see my mom off</div>
            </div>
 
            <div>

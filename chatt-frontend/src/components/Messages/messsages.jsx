@@ -4,21 +4,24 @@ import cookies from '../../cookies'
 import { useState, useRef, useEffect} from 'react'
 
 
-const Messages = ({ messages, user, other, otherUser, setContainers}) => {
+const Messages = ({ messages, user, other, otherUser, setContainers, setState, setSearchInput}) => {
 
     const [input, setInput] = useState('')
     const scrollbar = useRef(null)
     const cookie = cookies.get('X-Token')
+    console.log('otherId', other.otherId)
+
 
     const sendMessage = async (e) => {
         e.preventDefault()
         const data =  {
             message: input,
             containerId: other.id,
-            receiverId: other.otherId[0],
+            receiverId: other.otherId,
             senderId: user.id,
             type: "text",
         }
+
 
         await axios.post('/messages/new', data,
         { headers: {
@@ -26,6 +29,8 @@ const Messages = ({ messages, user, other, otherUser, setContainers}) => {
                     }
                 }
         )
+
+        setState(true)
 
         axios.get("containers/all", {
             headers: {
@@ -36,6 +41,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers}) => {
         setContainers(response.data)
         })
         setInput("")
+        setSearchInput("")
     }
 
 
@@ -102,11 +108,6 @@ const Messages = ({ messages, user, other, otherUser, setContainers}) => {
         )
     }
 
-
-
-    // useEffect(() => {
-    //     console.log(scrollbar.getBoundingClientRect().height)
-    // }, [])
 
     return (
         <section className='messages-wrapper'>

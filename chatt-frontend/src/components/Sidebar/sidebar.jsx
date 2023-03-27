@@ -16,6 +16,7 @@ const Sidebar = () => {
     const chatt = useRef()
     const loader = useRef()
     const details = useRef()
+    const currentCon = useRef()
     const searchWrapper = useRef(null)
 
     // State variables
@@ -94,13 +95,6 @@ const Sidebar = () => {
         }
 
         return (
-            // containers.filter((container) => {
-            //     if (container.nummberOfMessages) {
-            //         return true;
-            //     } else {
-            //         return false;
-            //     }
-            // });
             containers.map((container) => {
 
                 return (<div className="wrap" key={container._id}
@@ -109,6 +103,7 @@ const Sidebar = () => {
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
                                              get_id(container.members.filter(member => member !== user.id));
+                                             setBorder();
                                              }}>
                     <div>
                         <img src={defaultPic} alt="" />
@@ -151,6 +146,11 @@ const Sidebar = () => {
     }
 
     const get_id = (_id) => {
+
+        if (Array.isArray(_id)) {
+            _id = _id[0]
+        }
+
         setOther(existingValues => ({
             ...existingValues,
             otherId:_id
@@ -174,6 +174,10 @@ const Sidebar = () => {
                'binta', 'pelumi', 'Funto', 'funmi', 'benita'
             ]);
           });
+    }
+
+    const setBorder = () => {
+
     }
 
     const handleChange = (event) => {
@@ -200,8 +204,11 @@ const Sidebar = () => {
             const containerId = response.data._id;
             const otheruser = response.data.membersUsernames.filter((name) => name !== cookies.get('chatt_username'))[0];
             getMessages(containerId, otheruser);
+            getId(containerId);
+
           })
     }
+
 
     const matchedUsers = () => {
         const match = allUsers.filter((user) => {
@@ -211,22 +218,17 @@ const Sidebar = () => {
                 return false;
             }
         });
-        if (!input) {
-            if (searchWrapper.current !== null) {
-              searchWrapper.current.style.display = 'none';
-            }
-        } else if (!match.length && input) {
-            if (searchWrapper.current !== null) {
-                searchWrapper.current.style.display = 'block';
-            }
+        if (!match.length && input) {
             return (<div className='noUser' >No users found</div>)
         } else {
-            if (searchWrapper.current !== null) {
-                searchWrapper.current.style.display = 'block';
-            }
+
             return match.map((user) => {
                 return (
-                    <div className='wrap' onClick={() => {getContainer(user.id)}} >
+                    <div className='wrap' onClick={() => {
+                        getContainer(user.id);
+                        getName(user.username);
+                        get_id(user.id);
+                        }} >
                         <div>
                             <img src={defaultPic} alt=""/>
                         </div>
@@ -241,6 +243,8 @@ const Sidebar = () => {
     }
 
 
+
+
     return (
         <>
             <section className='sidebar'>
@@ -251,7 +255,7 @@ const Sidebar = () => {
                     <ion-icon name="search-outline"></ion-icon>
                 </div>
 
-                <div ref={searchWrapper} className="search-wrapper">
+                <div ref={searchWrapper} className={state? 'hidden' : 'search-wrapper'}>
                     {matchedUsers()}
                 </div>
 
@@ -259,27 +263,16 @@ const Sidebar = () => {
                     {userDisplay()}
                 </div>
 
-                <div className="search-wrapper hidden">
-                <div>
-                        <div>
-                            <img src={defaultPic} alt="" />
-                            <div className='notifications'>
-                                <div>99</div>
-                            </div>
-                        </div>
-                        <div className='details'>
-                            <span>Cecilia Atabong</span>
-                            <p>This is the last time it is yes it is</p>
-                        </div>
-                        <div className="timestamp">
-                            <span>3:45</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             </section>
 
-            <Messages messages={messages} user={user} other={other} otherUser={otherUser} setContainers={setContainers}/>
+            <Messages   messages={messages}
+                        user={user}
+                        other={other}
+                        otherUser={otherUser}
+                        setContainers={setContainers}
+                        setState={setState}
+                        setSearchInput={setInput}/>
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>

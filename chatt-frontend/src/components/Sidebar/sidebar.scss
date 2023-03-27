@@ -81,6 +81,7 @@
             overflow-y: scroll;
             width: 100%;
             height: 80%;
+            overflow-x: hidden;
             border-radius: 10px;
             background: white;
 
@@ -109,20 +110,16 @@
 
         .chats-wrapper > div:hover, .search-wrapper > div:hover {
             cursor: pointer;
+            border-left:3px solid index.$primary-color;
         }
 
         .chats-wrapper .wrap, .search-wrapper .wrap{
-            width: 100%;
-
-            &>div:first-child {
-                width: 25%;
-            }
-
+            border-left:3px solid rgb(255, 255, 255);
+            width:inherit;
             display: flex;
-            gap: .8em;
             border-bottom: 1px solid rgb(219, 218, 218);
-            padding: .30em 0;
-            margin: 0 .5em;
+            padding: .30em .5em;
+
 
 
             &>div:first-child {
@@ -150,8 +147,8 @@
             }
 
             .details {
-                width: 100%;
-                padding-top: .3em;
+                padding: .3em 0 0 .6em ;
+                max-width: 65%;
 
                 span {
                     font-weight: bolder;
@@ -171,34 +168,35 @@
             }
 
             .timestamp {
-                width: 30%;
                 font-weight: bold;
                 font-size: small;
+                width: 100%;
+                margin-right: 4%;
 
                 span {
                     float: right;
                 }
             }
         }
-        .search-wrapper {
-            display: none;
-        }
+
+
+
     }
 }
 
 @media (min-width: 768px) {
     .sidebar {
-        width:41%;
+        max-width:41%;
 
-        .chats {
-
-            .chats-wrapper > div {
-
-                .details {
-                    width: 60%;
-                }
-            }
-
+        .chats .chats-wrapper .wrap .details {
+            min-width: 55%;
         }
+    }
+}
+
+
+@media (max-width: 470px) {
+    .sidebar .chats .chats-wrapper .wrap .details {
+        min-width: 44%;
     }
 }

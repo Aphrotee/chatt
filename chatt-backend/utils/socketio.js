@@ -1,4 +1,4 @@
-import socketio from 'socket.io';
+import { socketio } from 'socket.io';
 
 class SocketIO {
 

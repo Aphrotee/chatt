@@ -60,7 +60,7 @@ class UserController {
     const email = req.userPayload.email;
     Users.findOne({ _id: userId, email: email })
       .then((user) => {
-        const response = {id: user._id, username: user.username , email }
+        const response = {id: user._id, username: user.username , email, quote: user.quote }
         res.status(200).send(response);
       })
       .catch((err) => {

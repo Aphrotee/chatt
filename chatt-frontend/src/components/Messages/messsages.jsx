@@ -2,18 +2,26 @@ import './messages.scss';
 import axios from '../../axios'
 import cookies from '../../cookies'
 import { useState, useRef, useEffect} from 'react'
+import { Members } from 'pusher-js';
 
 
-const Messages = ({ messages, user, other, otherUser, setContainers, setState, setSearchInput}) => {
+const Messages = ({ messages,
+                    user,
+                    other,
+                    otherUser,
+                    setContainers,
+                    setState,
+                    setSearchInput,
+                    members}) => {
 
     const [input, setInput] = useState('')
     const scrollbar = useRef(null)
     const cookie = cookies.get('X-Token')
-    console.log('otherId', other.otherId)
 
 
     const sendMessage = async (e) => {
         e.preventDefault()
+
         const data =  {
             message: input,
             containerId: other.id,
@@ -59,34 +67,30 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
             </div>)
         }
 
-        return (
-            <>
-            <div className="user-nav">
-
-                    <div><img src="../../src/images/profile (1).png" alt="" /></div>
-                    <div>
-                        <p>{other.name}</p>
-                        <p>Last reply at {other.lastSeen}</p>
-                    </div>
-                    <div>
-                        <ion-icon name="call-outline"></ion-icon>
-                    </div>
-            </div>
-
-            <div ref={scrollbar} className='messages'>
-            {messages.map((message) => {
-
-            if (Object.keys(message).length !== 0 && user !== undefined) {
+        if (members.includes(user.id) && members.includes(other.otherId)) {
             return (
-            <div key={message._id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
-                <div className='time-stamp'>{message.timestamp.time}</div>
-                <div>{message.message}</div>
-            </div>)
-                }
-            })}
-            </div>
+                <>
+                <div className="user-nav">
+                    <div><img src="../../src/images/profile (1).png" alt="" /></div>
+                        <div>
+                            <p>{other.name}</p>
+                            <p>Last reply at {other.lastSeen}</p>
+                        </div>
+                    <div><ion-icon name="call-outline"></ion-icon></div>
+                </div>
 
-            <div className="search-bar">
+                <div ref={scrollbar} className='messages'>
+                {messages.map((message) => {
+                return (
+                <div key={message._id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
+                    <div className='time-stamp'>{message.timestamp.time}</div>
+                    <div>{message.message}</div>
+                </div>)
+
+                })}
+                </div>
+
+                <div className="search-bar">
                 <form onSubmit={sendMessage}>
                     <div className="icons">
                         <ion-icon name="happy-outline"></ion-icon>
@@ -103,15 +107,18 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
                         <ion-icon name="navigate-circle"></ion-icon>
                     </button>
                 </form>
-            </div>
-            </>
-        )
+                </div>
+                </>
+            )
+        }
     }
 
 
     return (
         <section className='messages-wrapper'>
+
             {display()}
+
         </section>
         );
 }

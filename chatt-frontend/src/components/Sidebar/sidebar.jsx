@@ -36,6 +36,7 @@ const Sidebar = () => {
     const [messages, setMessages] = useState([])
     const [allUsers, setAllUsers] = useState([]);
     const [Loading, setLoading] = useState(false);
+    const [members, setMembers] = useState([])
     const [state, setState] = useState(true);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
@@ -75,16 +76,20 @@ const Sidebar = () => {
             cluster: 'mt1'
           });
 
-            const channel = pusher.subscribe('messages');
-            channel.bind('inserted', function(data) {
+        const channel = pusher.subscribe('messages');
+        channel.bind('inserted', function(data) {
+            if (data.containerId === other.id) {
                 setMessages([...messages, data])
-            })
+            }
+        })
 
-            return () => {
-                channel.unbind_all()
-                channel.unsubscribe()
-              }
+        return () => {
+            channel.unbind_all()
+            channel.unsubscribe()
+        }
+
           }, [messages]);
+
 
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
@@ -113,6 +118,7 @@ const Sidebar = () => {
     }
 
 
+
     const userDisplay = () => {
 
         if (containers.length === 0) {
@@ -132,7 +138,8 @@ const Sidebar = () => {
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
                                              get_id(container.members.filter(member => member !== user.id));
-                                             setBorder();
+                                             getContainer(container);
+                                             setMembers(container.members)
                                              }}>
                     <div>
                         <img src={defaultPic} alt="" />
@@ -240,14 +247,14 @@ const Sidebar = () => {
             const otheruser = response.data.membersUsernames.filter((name) => name !== cookies.get('chatt_username'))[0];
             getMessages(containerId, otheruser);
             getId(containerId);
-
+            setMembers(response.data.members)
           })
     }
 
 
     const matchedUsers = () => {
         const match = allUsers.filter((user) => {
-            if (new RegExp(`^${input}`, 'i').test(user.username)) {
+            if (new RegExp(`\^${input}`, 'i').test(user.username)) {
                 return true;
             } else {
                 return false;
@@ -258,6 +265,7 @@ const Sidebar = () => {
         } else {
 
             return match.map((user) => {
+                console.log('user', user)
                 return (
                     <div className='wrap' onClick={() => {
                         getContainer(user.id);
@@ -374,7 +382,9 @@ const Sidebar = () => {
                         otherUser={otherUser}
                         setContainers={setContainers}
                         setState={setState}
-                        setSearchInput={setInput}/>
+                        setSearchInput={setInput}
+                        members={members}/>
+
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>

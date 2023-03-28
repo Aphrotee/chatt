@@ -4,12 +4,15 @@ import Pusher from 'pusher-js'
 import axios from '../../axios'
 import cookies from '../../cookies';
 import gsap from 'gsap';
+import io from 'socket.io-client';
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 const defaultPic = '../../src/images/profile (1).png';
 
 
 const Sidebar = () => {
+    // socket instance
+    let socket = io('http://127.0.0.1:9000');
     // browser cookie
     const cookie = cookies.get('X-Token');
 
@@ -37,11 +40,16 @@ const Sidebar = () => {
     const [allUsers, setAllUsers] = useState([]);
     const [Loading, setLoading] = useState(false);
     const [state, setState] = useState(true);
+    const [userConnected, setUserConnected] = useState(false);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
     const [updateBtn, setUpdateBtn] = useState("Update");
     const [profileState, setProfileState] = useState(false);
     const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
+
+    useEffect(() => {
+        socket = io('http://127.0.0.1:9000');
+    }, []);
 
     useEffect(() => {
         gsap.fromTo(loader.current, {display: 'block'}, {display: 'none', duration: 3})
@@ -66,25 +74,31 @@ const Sidebar = () => {
                     }
                 }).then((response) => {
                     setUser(response.data);
+                    socket.emit('user connect', response.data.id);
+                    socket.on('user connected', (userId) => {
+                        console.log(userConnected);
+                        if (userId === response.data.id) setUserConnected(true);
+                        console.log(userConnected);
+                    });
                 })
-                },
+            },
     []);
 
-    useEffect(() => {
-        const pusher = new Pusher('5ac65fc188cfeb946d3c', {
-            cluster: 'mt1'
-          });
+    // useEffect(() => {
+    //     const pusher = new Pusher('5ac65fc188cfeb946d3c', {
+    //         cluster: 'mt1'
+    //       });
 
-            const channel = pusher.subscribe('messages');
-            channel.bind('inserted', function(data) {
-                setMessages([...messages, data])
-            })
+    //         const channel = pusher.subscribe('messages');
+    //         channel.bind('inserted', function(data) {
+    //             setMessages([...messages, data])
+    //         })
 
-            return () => {
-                channel.unbind_all()
-                channel.unsubscribe()
-              }
-          }, [messages]);
+    //         return () => {
+    //             channel.unbind_all()
+    //             channel.unsubscribe()
+    //           }
+    //       }, [messages]);
 
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
@@ -95,6 +109,11 @@ const Sidebar = () => {
         }).then((response) => {
             setMessages(response.data)
         })
+    }
+
+    const openContainer = (containerId) => {
+        // joins contaier
+        socket.emit('open container', containerId);
     }
 
     const logout = () => {
@@ -108,7 +127,6 @@ const Sidebar = () => {
             cookies.remove('X-Token');
             cookies.remove('chatt_userId');
             cookies.remove('chatt_username');
-
         });
     }
 
@@ -127,7 +145,8 @@ const Sidebar = () => {
             containers.map((container) => {
 
                 return (<div className="wrap" key={container._id}
-                             onClick={() => {getMessages(container._id);
+                             onClick={(e) => {openContainer(container._id);
+                                             getMessages(container._id);
                                              getName(container.membersUsernames.filter(name => name !== user.username));
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
@@ -373,8 +392,10 @@ const Sidebar = () => {
                         other={other}
                         otherUser={otherUser}
                         setContainers={setContainers}
+                        setMessages={setMessages}
                         setState={setState}
-                        setSearchInput={setInput}/>
+                        setSearchInput={setInput}
+                        socket={socket}/>
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>

@@ -4,13 +4,23 @@ import cookies from '../../cookies'
 import { useState, useRef, useEffect} from 'react'
 
 
-const Messages = ({ messages, user, other, otherUser, setContainers, setState, setSearchInput}) => {
+const Messages = ({ messages, user, other, otherUser, setContainers, setState, setSearchInput, socket, setMessages}) => {
 
     const [input, setInput] = useState('')
-    const scrollbar = useRef(null)
-    const cookie = cookies.get('X-Token')
-    console.log('otherId', other.otherId)
+    const scrollbar = useRef(null);
+    const cookie = cookies.get('X-Token');
+    console.log('otherId', other.otherId);
 
+    const setContainersOnly = (containers, updatedContainer) => {
+        const newContainers = containers.filter(container => {
+            if (container._id !== updatedContainer._id) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [updatedContainer, ...newContainers];
+    }
 
     const sendMessage = async (e) => {
         e.preventDefault()
@@ -21,16 +31,15 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
             senderId: user.id,
             type: "text",
         }
+        setMessages((messages) => [...messages, data])
 
 
-        await axios.post('/messages/new', data,
-        { headers: {
+        await axios.post('/messages/new', data, {
+            headers: {
                         'X-Token': cookie
-                    }
-                }
-        )
-
-        setState(true)
+                     }
+        })
+        setState(true);
 
         axios.get("containers/all", {
             headers: {
@@ -41,9 +50,25 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
         setContainers(response.data)
         })
         setInput("")
-        setSearchInput("")
+        setSearchInput("");
     }
 
+    socket.on('new message', (message) => {
+        setMessages((messages) => [...messages, message]);
+        // axios.get("containers/all", {
+        //     headers: {
+        //         'X-Token': cookie
+        //     }
+        // }).then((response) => {
+
+        // // setContainers(response.data)
+        // });
+    });
+
+    socket.on('continer updated', (container) => {
+        if (container.members.includes(user.id))
+        setContainers((containers) => setContainersOnly(containers, container));
+    });
 
     const display = () => {
         if (messages.length === 0 && otherUser === null) {
@@ -79,7 +104,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
             if (Object.keys(message).length !== 0 && user !== undefined) {
             return (
             <div key={message._id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
-                <div className='time-stamp'>{message.timestamp.time}</div>
+                <div className='time-stamp'>{message.timestamp.time ? message.timestamp.time : 'sending'}</div>
                 <div>{message.message}</div>
             </div>)
                 }
@@ -99,8 +124,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
                            placeholder='Send a Message'/>
 
                     <button onClick={sendMessage} type="button">
-
-                        <ion-icon name="navigate-circle"></ion-icon>
+                        <ion-icon name="paper-plane-outline"></ion-icon>
                     </button>
                 </form>
             </div>

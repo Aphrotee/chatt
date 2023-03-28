@@ -27,9 +27,6 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(cookieParser());
 
-//Connect DB
-db.connectDB();
-
 // api routes
 
 app.get('/', appController.home);
@@ -72,5 +69,5 @@ const server = app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-// socket connection
-socketIO.socketConnection(server);
+// DB and socket connection and 
+db.connectDB(socketIO.socketConnection(server));

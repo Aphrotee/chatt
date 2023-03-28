@@ -11,10 +11,21 @@ const defaultPic = '../../src/images/profile (1).png';
 
 
 const Sidebar = () => {
-    // socket instance
-    let socket = io('http://127.0.0.1:9000');
     // browser cookie
     const cookie = cookies.get('X-Token');
+    const userId = cookies.get('chatt_userId');
+
+    // socket instance
+    let socket = io('http://127.0.0.1:9000');
+    socket.emit('user connect', userId);
+    // socket.on('connected to socket', () => {
+    //     alert('connected to socket');
+    // })
+    socket.on('user connected', (userid) => {
+        // alert('user connected?', userConnected);
+        if (userId === userid) setUserConnected(true);
+        console.log('user connected?', userConnected);
+    });
 
     // DOM references
     const chatt = useRef()
@@ -49,6 +60,7 @@ const Sidebar = () => {
 
     useEffect(() => {
         socket = io('http://127.0.0.1:9000');
+        socket.emit('user connect', userId);
     }, []);
 
     useEffect(() => {
@@ -230,7 +242,6 @@ const Sidebar = () => {
 
     const handleChange = (event) => {
         const query = event.target.value;
-        console.log(query)
 
         if (!query) {
             console.log(query)

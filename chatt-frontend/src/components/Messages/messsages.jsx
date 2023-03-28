@@ -22,6 +22,17 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
         return [updatedContainer, ...newContainers];
     }
 
+    const setMessagesOnly = (messages, newMessage) => {
+        const newMessages = messages.filter(message => {
+            if (message._id !== newMessage._id) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [...newMessages, newMessage];
+    }
+
     const sendMessage = async (e) => {
         e.preventDefault()
         const data =  {
@@ -32,6 +43,8 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
             type: "text",
         }
         setMessages((messages) => [...messages, data])
+        setInput("")
+        setSearchInput("");
 
 
         await axios.post('/messages/new', data, {
@@ -41,20 +54,19 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
         })
         setState(true);
 
-        axios.get("containers/all", {
-            headers: {
-                'X-Token': cookie
-            }
-        }).then((response) => {
+        // axios.get("containers/all", {
+        //     headers: {
+        //         'X-Token': cookie
+        //     }
+        // }).then((response) => {
 
-        setContainers(response.data)
-        })
-        setInput("")
-        setSearchInput("");
+        // setContainers(response.data)
+        // })
     }
 
     socket.on('new message', (message) => {
-        setMessages((messages) => [...messages, message]);
+        // setMessages((messages) => [...messages, message]);
+        setMessages((messages) => setMessagesOnly(messages, message));
         // axios.get("containers/all", {
         //     headers: {
         //         'X-Token': cookie
@@ -103,8 +115,8 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
 
             if (Object.keys(message).length !== 0 && user !== undefined) {
             return (
-            <div key={message._id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
-                <div className='time-stamp'>{message.timestamp.time ? message.timestamp.time : 'sending'}</div>
+            <div /**key={message._id}*/ className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
+                <div className='time-stamp'>{message.timestamp ? message.timestamp.time : 'sending'}</div>
                 <div>{message.message}</div>
             </div>)
                 }

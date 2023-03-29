@@ -260,9 +260,6 @@
         }
     }
 
-    .hidden {
-        display: none;
-    }
     width:100vw;
     height: 100vh;
     position: fixed;
@@ -409,6 +406,10 @@
             }
         }
     }
+}
+
+.hidden {
+    display: none;
 }
 
 @media (min-width: 768px) {

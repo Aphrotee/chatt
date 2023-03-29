@@ -12,12 +12,29 @@ const Messages = ({ messages,
                     setContainers,
                     setState,
                     setSearchInput,
-                    members}) => {
+                    members,
+                    sidebar,
+                    media,
+                    setMedia}) => {
 
     const [input, setInput] = useState('')
     const scrollbar = useRef(null)
     const cookie = cookies.get('X-Token')
+    const message = useRef()
 
+    const hideMessage = () => {
+        message.current.style.display = 'none';
+        sidebar.current.style.display = 'block';
+        setMedia(!media)
+    }
+
+
+    useEffect(() => {
+        const query = window.matchMedia("(max-width: 768px)");
+        if (query.matches || !media) {
+            message.current.style.display = 'block';
+        }
+    }, [])
 
     const sendMessage = async (e) => {
         e.preventDefault()
@@ -71,18 +88,19 @@ const Messages = ({ messages,
             return (
                 <>
                 <div className="user-nav">
+                    {window.matchMedia("(max-width: 768px)").matches? <span onClick={hideMessage}> <ion-icon name="arrow-back-sharp"></ion-icon></span>: null}
                     <div><img src="../../src/images/profile (1).png" alt="" /></div>
                         <div>
                             <p>{other.name}</p>
                             <p>Last reply at {other.lastSeen}</p>
                         </div>
-                    <div><ion-icon name="call-outline"></ion-icon></div>
+                    <div><ion-icon name="camera"></ion-icon></div>
                 </div>
 
                 <div ref={scrollbar} className='messages'>
                 {messages.map((message) => {
                 return (
-                <div key={message._id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
+                <div key={message.id} className={message.receiverId !==  user.id ? 'current-user-wrapper': 'other-user-wrapper'}>
                     <div className='time-stamp'>{message.timestamp.time}</div>
                     <div>{message.message}</div>
                 </div>)
@@ -115,7 +133,7 @@ const Messages = ({ messages,
 
 
     return (
-        <section className='messages-wrapper'>
+        <section ref={message} className='messages-wrapper'>
 
             {display()}
 

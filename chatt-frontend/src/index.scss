@@ -7,10 +7,6 @@ body {
   box-sizing: border-box;
   color: #2b2b2b;
   overflow: hidden;
-
-  &> * {
-    scrollbar-width: thin;
-  }
 }
 
 

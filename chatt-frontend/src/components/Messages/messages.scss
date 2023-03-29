@@ -4,8 +4,8 @@
     width: 100%;
     height: 100vh;
     margin-bottom: 4em;
-    display:none;
     position: relative;
+    display: none;
 
     .empty {
         display: flex;
@@ -52,12 +52,23 @@
         padding: .4em 0;
         position: fixed;
         top: 0;
-        width: 54%;
-        margin: 0 1.5em;
+        width: 100%;
+        margin-right: 10em;
         border-bottom: 1px solid rgb(185, 185, 185);
 
-        &>div:first-child {
+        span {
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        span:hover {
+            cursor: pointer;
+        }
+
+        &>div:first-of-type{
             display:flex;
+            padding-left: .5em;
             align-items: center;
 
             img {
@@ -68,7 +79,7 @@
             }
         }
 
-        &>div:nth-child(2) {
+        &>div:nth-of-type(2) {
             width: 100%;
             padding-left: 20px;
 
@@ -89,13 +100,14 @@
 
         &>div:last-child {
             color: index.$primary-color;
+            padding-right: .5em;
             font-size: 1.2em;
         }
     }
 
 
     .default {
-        margin: 1em .5em 0 0;
+        margin: 1em .5em 0 .5em;
         text-align: left;
         display: flex;
     }
@@ -104,10 +116,20 @@
     .messages {
         margin-top: 4em;
         z-index: -2;
+        height: 100%;
+        overflow-y: scroll;
+        overflow-x:hidden;
+        scrollbar-width: 5px;
+        scrollbar-color: darkgray;
+        scrollbar-base-color: aqua;
+
+        &>div:last-child {
+            padding-bottom: 10em;
+        }
 
     .other-user-wrapper {
             @extend .default;
-            padding:0 5em 0 1em;
+            padding-right:5em;
             width: 80%;
             &>.time-stamp {
                 align-self: flex-end;
@@ -163,6 +185,7 @@
         position: fixed;
         bottom:0;
         width: inherit;
+        background: white;
         display:flex;
         gap: 2%;
         align-items: center;
@@ -197,7 +220,7 @@
             }
 
             & button {
-                transform: rotate(270deg);
+                transform: rotate(4deg);
                 border: 0;
                 color: index.$primary-color;
                 background: none;
@@ -222,13 +245,12 @@
         width: 59%;
         float: right;
         border-left: 1px solid black;
-
-        .messages {
-            height: 77%;
-            overflow-y: scroll;
-            overflow-x:hidden
-        }
     }
+
+        .user-nav {
+            width: 54%;
+            margin: 0 1.5em;
+        }
 
         .search-bar {
             width: inherit;
@@ -252,7 +274,7 @@
 
             .icons > ion-icon[name=attach-sharp] {
             position: absolute;
-            top: 40%;
+            top: 34%;
             display: block;
             right: 15%;
             }
@@ -277,7 +299,7 @@
 
             &>input[type="search"] {
                 height: 36px;
-                padding: 0 28px;
+                padding: 0 10px;
             }
 
             .icons {
@@ -286,7 +308,7 @@
 
                 ion-icon[name=attach-sharp] {
                     right: 17%;
-                    top: 35%;
+                    top: 29%;
                 }
                 ion-icon[name=happy-sharp] {
                     left: 5%;
@@ -296,6 +318,8 @@
 
             button {
                 padding: 0;
+                bottom: 0;
+                right: 0
             }
         }
     }

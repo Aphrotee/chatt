@@ -17,8 +17,8 @@ const Sidebar = () => {
     const chatt = useRef()
     const loader = useRef()
     const details = useRef()
-    const currentCon = useRef()
     const loading = useRef(null);
+    const sidebar = useRef()
     const searchWrapper = useRef(null)
     const profileWrapper = useRef(null);
     const profileBackground = useRef(null);
@@ -38,6 +38,7 @@ const Sidebar = () => {
     const [Loading, setLoading] = useState(false);
     const [members, setMembers] = useState([])
     const [state, setState] = useState(true);
+    const [media, setMedia] =  useState(true)
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
     const [updateBtn, setUpdateBtn] = useState("Update");
@@ -68,6 +69,10 @@ const Sidebar = () => {
                 }).then((response) => {
                     setUser(response.data);
                 })
+
+                if (media) {
+                    sidebar.current.style.display = 'block';
+                }
                 },
     []);
 
@@ -82,6 +87,7 @@ const Sidebar = () => {
                 setMessages([...messages, data])
             }
         })
+        console.log(media)
 
         return () => {
             channel.unbind_all()
@@ -90,6 +96,14 @@ const Sidebar = () => {
 
           }, [messages]);
 
+
+    const mediaQuery = () => {
+        const query = window.matchMedia("(max-width: 768px)");
+        if (query.matches && media) {
+            sidebar.current.style.display = 'none';
+            setMedia(!state)
+        }
+    }
 
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
@@ -139,7 +153,8 @@ const Sidebar = () => {
                                              getId(container._id);
                                              get_id(container.members.filter(member => member !== user.id));
                                              getContainer(container);
-                                             setMembers(container.members)
+                                             setMembers(container.members);
+                                             mediaQuery()
                                              }}>
                     <div>
                         <img src={defaultPic} alt="" />
@@ -344,7 +359,7 @@ const Sidebar = () => {
 
     return (
         <>
-            <section className='sidebar'>
+            <section ref={sidebar} className='sidebar'>
             <nav>
                 <div> Chatt </div>
                     <div>
@@ -383,7 +398,10 @@ const Sidebar = () => {
                         setContainers={setContainers}
                         setState={setState}
                         setSearchInput={setInput}
-                        members={members}/>
+                        members={members}
+                        sidebar={sidebar}
+                        media={media}
+                        setMedia={setMedia}/>
 
             <div ref={loader} className='loading'>
                 <div ref={details}>

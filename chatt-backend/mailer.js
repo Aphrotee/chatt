@@ -1,7 +1,5 @@
-// using Twilio SendGrid's v3 Node.js Library
-// https://github.com/sendgrid/sendgrid-nodejs
 
-import sGrid from '@sendgrid/mail';
+import sGrid from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();

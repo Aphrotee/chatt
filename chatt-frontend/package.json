@@ -23,7 +23,8 @@
     "react-router-dom": "^6.9.0",
     "react-select": "^5.7.2",
     "socket.io-client": "^4.6.1",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^4.0.4",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",

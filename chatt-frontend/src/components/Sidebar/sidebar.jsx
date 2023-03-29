@@ -8,6 +8,7 @@ import io from 'socket.io-client';
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 const defaultPic = '../../src/images/profile (1).png';
+let socket;
 
 
 const Sidebar = () => {
@@ -16,16 +17,21 @@ const Sidebar = () => {
     const userId = cookies.get('chatt_userId');
 
     // socket instance
-    let socket = io('http://127.0.0.1:9000');
-    socket.emit('user connect', userId);
-    // socket.on('connected to socket', () => {
-    //     alert('connected to socket');
-    // })
-    socket.on('user connected', (userid) => {
-        // alert('user connected?', userConnected);
-        if (userId === userid) setUserConnected(true);
-        console.log('user connected?', userConnected);
-    });
+    useEffect(() => {
+        socket = io('http://192.168.21.84:9000');
+        socket.emit('user connect', userId);
+        console.log('connecting')
+        return () => socket.disconnect();
+    }, []);
+
+
+    
+    // useEffect(() => {
+    //     socket.emit('user connect', userId);
+    //     // socket.on('connected to socket', () => {
+    //     //     alert('connected to socket');
+    //     // })
+    // }, [socket]);
 
     // DOM references
     const chatt = useRef()
@@ -59,42 +65,43 @@ const Sidebar = () => {
     const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
 
     useEffect(() => {
-        socket = io('http://127.0.0.1:9000');
-        socket.emit('user connect', userId);
-    }, []);
-
-    useEffect(() => {
         gsap.fromTo(loader.current, {display: 'block'}, {display: 'none', duration: 3})
         gsap.fromTo(chatt.current, {opacity: 0}, {opacity: 1, duration: 1, delay: 1.5})
         gsap.fromTo(details.current, {opacity: 0, y: 200}, {opacity: 1, y: 280, duration: 1})
     }, []);
 
     useEffect(() => {
+        socket.on('user connected', (userid) => {
+            // alert('user connected?', userConnected);
+            if (userId === userid) setUserConnected(true);
+        });
+        return () => socket.off('user connected');
+    });
 
-                axios.get("containers/all", {
-                    headers: {
-                        'X-Token': cookie
-                        }
-                }).then((response) => {
+    useEffect(() => {
+        axios.get("containers/all", {
+            headers: {
+                'X-Token': cookie
+                }
+        }).then((response) => {
 
                 setContainers(response.data)
                 })
 
-                axios.get('/users/me', {
-                    headers: {
-                        'X-Token': cookie
-                    }
-                }).then((response) => {
-                    setUser(response.data);
-                    socket.emit('user connect', response.data.id);
-                    socket.on('user connected', (userId) => {
-                        console.log(userConnected);
-                        if (userId === response.data.id) setUserConnected(true);
-                        console.log(userConnected);
-                    });
-                })
-            },
-    []);
+        axios.get('/users/me', {
+            headers: {
+                'X-Token': cookie
+            }
+        }).then((response) => {
+            setUser(response.data);
+            // socket.emit('user connect', response.data.id);
+            // socket.on('user connected', (userId) => {
+            //     console.log(userConnected);
+            //     if (userId === response.data.id) setUserConnected(true);
+            //     console.log(userConnected);
+            // });
+        })
+    }, []);
 
     // useEffect(() => {
     //     const pusher = new Pusher('5ac65fc188cfeb946d3c', {
@@ -112,20 +119,71 @@ const Sidebar = () => {
     //           }
     //       }, [messages]);
 
+    const setContainersOnly = (oldContainers, updatedContainer) => {
+        const newContainers = oldContainers.filter(container => {
+            if (container._id !== updatedContainer._id) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [updatedContainer, ...newContainers];
+    }
+
+    const setMessagesOnly = (messages, newMessage) => {
+        const newMessages = messages.filter(message => {
+            if (message.dummyId !== newMessage.dummyId) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [...newMessages, newMessage];
+    }
+
+    useEffect(() => {
+        socket.on('new message', (message) => {
+            // setMessages((messages) => [...messages, message]);
+            if (message.containerId === other.id) {
+                setMessages((messages) => setMessagesOnly(messages, message));
+            }
+            // axios.get("containers/all", {
+            //     headers: {
+            //     'X-Token': cookie
+            //     }
+            // }).then((response) => {
+
+            // // setContainers(response.data)
+            // });
+        });
+        return () => socket.off('new message');
+    });
+
+
+    useEffect(() => {
+        socket.once('container updated', (container) => {
+            // alert('update container';)
+            container.members.forEach(memberId => {
+                if (memberId.toString() === userId.toString()) {
+                    // alert(container.container._id);
+                    setContainers((containers) => setContainersOnly(containers, container.container));
+                }
+            });
+        });
+
+        return () => socket.off('container updated');
+    });
+
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
+        socket.emit('open container', id);
         axios.get(`/messages/${id}/all`, {
             headers: {
                 'X-Token': cookie
             }
         }).then((response) => {
-            setMessages(response.data)
-        })
-    }
-
-    const openContainer = (containerId) => {
-        // joins contaier
-        socket.emit('open container', containerId);
+            setMessages(response.data);
+        });
     }
 
     const logout = () => {
@@ -157,8 +215,7 @@ const Sidebar = () => {
             containers.map((container) => {
 
                 return (<div className="wrap" key={container._id}
-                             onClick={(e) => {openContainer(container._id);
-                                             getMessages(container._id);
+                             onClick={(e) => {getMessages(container._id);
                                              getName(container.membersUsernames.filter(name => name !== user.username));
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
@@ -167,7 +224,7 @@ const Sidebar = () => {
                                              }}>
                     <div>
                         <img src={defaultPic} alt="" />
-                        <div className='notifications'>
+                        <div className={'notifications'}>
                             <div>99</div>
                         </div>
                     </div>
@@ -244,11 +301,10 @@ const Sidebar = () => {
         const query = event.target.value;
 
         if (!query) {
-            console.log(query)
-            setState(true)
+            searchWrapper.current.style.display = 'none';
             setInput(null);
         } else {
-            setState(false)
+            searchWrapper.current.style.display = 'flex';
             setInput(query);
         }
     }
@@ -360,7 +416,9 @@ const Sidebar = () => {
           }
         }
       }
-
+    useEffect(() => {
+        // socket.disconnect();
+    }, []);
 
 
 
@@ -387,7 +445,7 @@ const Sidebar = () => {
                     <ion-icon name="search-outline"></ion-icon>
                 </div>
 
-                <div ref={searchWrapper} className={state? 'hidden' : 'search-wrapper'}>
+                <div ref={searchWrapper} className='search-wrapper'>
                     {matchedUsers()}
                 </div>
 

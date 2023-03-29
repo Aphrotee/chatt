@@ -17,15 +17,17 @@ class DBClient {
         this.alive = true;
         console.log('DB connection established');
         const db = mongoose.connection;
+        io.disconnectSockets();
         io.on('connection', (socket) => {
           console.log('Connected to socket');
           socket.emit('connected to socket');
           socket.on('user connect', (userId) => {
             socket.join(userId);
             console.log('user connected', userId);
-            socket.in(userId).emit('user connected', userId);
+            socket.emit('user connected', userId);
           });
     
+          // socket.off('user connect');
           socket.on('open container', (containerId) => {
             socket.join(containerId);
             console.log('user opened container', containerId);
@@ -39,7 +41,8 @@ class DBClient {
             if (change.operationType === 'insert') {
               const messageDetails = change.fullDocument;
               const container = messageDetails.containerId;
-              socket.in(container).emit('new message', messageDetails);
+              socket.emit('new message', messageDetails);
+              console.log('new message emitted');
             }
           });
           msgContChangeStream.on('change', async (change) => {
@@ -50,11 +53,16 @@ class DBClient {
               const { default: MessageContainerController } = await import('../models/MessageContainers.js');
               MessageContainerController.findById(new mongoose.Types.ObjectId(id))
                 .then((container) => {
-                  container.members.forEach((member) => {
-                    socket.in(member).emit('container updated', container);
-                  });
+                  const members = container.members;
+                  console.log('emitting update in container:', container._id);
+                  socket.emit('container updated', { members, container });
                 })
             }
+          });
+
+          socket.off('user connect', (userId) => {
+            console.log('user diconnected');
+            socket.leave(userId);
           })
         });
         // this.dbConnection = db;

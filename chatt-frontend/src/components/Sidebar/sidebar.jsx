@@ -4,14 +4,34 @@ import Pusher from 'pusher-js'
 import axios from '../../axios'
 import cookies from '../../cookies';
 import gsap from 'gsap';
+import io from 'socket.io-client';
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 const defaultPic = '../../src/images/profile (1).png';
+let socket;
 
 
 const Sidebar = () => {
     // browser cookie
     const cookie = cookies.get('X-Token');
+    const userId = cookies.get('chatt_userId');
+
+    // socket instance
+    useEffect(() => {
+        socket = io('http://192.168.21.84:9000');
+        socket.emit('user connect', userId);
+        console.log('connecting')
+        return () => socket.disconnect();
+    }, []);
+
+
+
+    // useEffect(() => {
+    //     socket.emit('user connect', userId);
+    //     // socket.on('connected to socket', () => {
+    //     //     alert('connected to socket');
+    //     // })
+    // }, [socket]);
 
     // DOM references
     const chatt = useRef()
@@ -38,7 +58,7 @@ const Sidebar = () => {
     const [Loading, setLoading] = useState(false);
     const [members, setMembers] = useState([])
     const [state, setState] = useState(true);
-    const [media, setMedia] =  useState(true)
+    const [userConnected, setUserConnected] = useState(false);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
     const [updateBtn, setUpdateBtn] = useState("Update");
@@ -52,49 +72,87 @@ const Sidebar = () => {
     }, []);
 
     useEffect(() => {
+        socket.on('user connected', (userid) => {
+            // alert('user connected?', userConnected);
+            if (userId === userid) setUserConnected(true);
+        });
+        return () => socket.off('user connected');
+    });
 
-                axios.get("containers/all", {
-                    headers: {
-                        'X-Token': cookie
-                        }
-                }).then((response) => {
+    useEffect(() => {
+        axios.get("containers/all", {
+            headers: {
+                'X-Token': cookie
+                }
+        }).then((response) => {
 
                 setContainers(response.data)
                 })
 
-                axios.get('/users/me', {
-                    headers: {
-                        'X-Token': cookie
-                    }
-                }).then((response) => {
-                    setUser(response.data);
-                })
+        axios.get('/users/me', {
+            headers: {
+                'X-Token': cookie
+            }
+        }).then((response) => {
+            setUser(response.data);
+        })
+    }, []);
 
-                if (media) {
-                    sidebar.current.style.display = 'block';
-                }
-                },
-    []);
+
+    const setContainersOnly = (oldContainers, updatedContainer) => {
+        const newContainers = oldContainers.filter(container => {
+            if (container._id !== updatedContainer._id) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [updatedContainer, ...newContainers];
+    }
+
+    const setMessagesOnly = (messages, newMessage) => {
+        const newMessages = messages.filter(message => {
+            if (message.dummyId !== newMessage.dummyId) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [...newMessages, newMessage];
+    }
 
     useEffect(() => {
-        const pusher = new Pusher('5ac65fc188cfeb946d3c', {
-            cluster: 'mt1'
-          });
-
-        const channel = pusher.subscribe('messages');
-        channel.bind('inserted', function(data) {
-            if (data.containerId === other.id) {
-                setMessages([...messages, data])
+        socket.on('new message', (message) => {
+            // setMessages((messages) => [...messages, message]);
+            if (message.containerId === other.id) {
+                setMessages((messages) => setMessagesOnly(messages, message));
             }
-        })
-        console.log(media)
+            // axios.get("containers/all", {
+            //     headers: {
+            //     'X-Token': cookie
+            //     }
+            // }).then((response) => {
 
-        return () => {
-            channel.unbind_all()
-            channel.unsubscribe()
-        }
+            // // setContainers(response.data)
+            // });
+        });
+        return () => socket.off('new message');
+    });
 
-          }, [messages]);
+
+    useEffect(() => {
+        socket.once('container updated', (container) => {
+            // alert('update container';)
+            container.members.forEach(memberId => {
+                if (memberId.toString() === userId.toString()) {
+                    // alert(container.container._id);
+                    setContainers((containers) => setContainersOnly(containers, container.container));
+                }
+            });
+        });
+
+        return () => socket.off('container updated');
+    });
 
 
     const mediaQuery = () => {
@@ -107,13 +165,14 @@ const Sidebar = () => {
 
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
+        socket.emit('open container', id);
         axios.get(`/messages/${id}/all`, {
             headers: {
                 'X-Token': cookie
             }
         }).then((response) => {
-            setMessages(response.data)
-        })
+            setMessages(response.data);
+        });
     }
 
     const logout = () => {
@@ -127,7 +186,6 @@ const Sidebar = () => {
             cookies.remove('X-Token');
             cookies.remove('chatt_userId');
             cookies.remove('chatt_username');
-
         });
     }
 
@@ -147,7 +205,7 @@ const Sidebar = () => {
             containers.map((container) => {
 
                 return (<div className="wrap" key={container._id}
-                             onClick={() => {getMessages(container._id);
+                             onClick={(e) => {getMessages(container._id);
                                              getName(container.membersUsernames.filter(name => name !== user.username));
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
@@ -158,7 +216,7 @@ const Sidebar = () => {
                                              }}>
                     <div>
                         <img src={defaultPic} alt="" />
-                        <div className='notifications'>
+                        <div className={'notifications'}>
                             <div>99</div>
                         </div>
                     </div>
@@ -233,14 +291,12 @@ const Sidebar = () => {
 
     const handleChange = (event) => {
         const query = event.target.value;
-        console.log(query)
 
         if (!query) {
-            console.log(query)
-            setState(true)
+            searchWrapper.current.style.display = 'none';
             setInput(null);
         } else {
-            setState(false)
+            searchWrapper.current.style.display = 'flex';
             setInput(query);
         }
     }
@@ -353,7 +409,9 @@ const Sidebar = () => {
           }
         }
       }
-
+    useEffect(() => {
+        // socket.disconnect();
+    }, []);
 
 
 
@@ -380,7 +438,7 @@ const Sidebar = () => {
                     <ion-icon name="search-outline"></ion-icon>
                 </div>
 
-                <div ref={searchWrapper} className={state? 'hidden' : 'search-wrapper'}>
+                <div ref={searchWrapper} className='search-wrapper'>
                     {matchedUsers()}
                 </div>
 
@@ -396,13 +454,10 @@ const Sidebar = () => {
                         other={other}
                         otherUser={otherUser}
                         setContainers={setContainers}
+                        setMessages={setMessages}
                         setState={setState}
                         setSearchInput={setInput}
-                        members={members}
-                        sidebar={sidebar}
-                        media={media}
-                        setMedia={setMedia}/>
-
+                        socket={socket}/>
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>
@@ -423,14 +478,6 @@ const Sidebar = () => {
                     <div><p>{'@' + user.username}</p></div>
                     <div><p>{user.quote}</p></div>
                     <div><p>{user.email}</p></div>
-                    {/* <div>
-                        <form name="updateStatusQuoteForm" onSubmit={updateStatus}>
-                            <div className='quote'>
-                                <input type="text" name="quote" placeholder={user.quote} value={inputs.quote} onChange={handleStatusChange} /></div>
-                            <input id="button" ref={loading} type="submit" value={updateBtn} />
-                            <p class='message' ref={msg} >{Msg}</p>
-                        </form>
-                    </div> */}
                     <p><u className="other-options" >Update username</u></p>
                     <p><u className="other-options" >Update email</u></p>
                     <p><u className="other-options" >Update password</u></p>

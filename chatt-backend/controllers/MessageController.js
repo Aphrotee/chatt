@@ -13,7 +13,8 @@ class MessageController{
       message,
       type,
       receiverId,
-      containerId
+      containerId,
+      dummyId
     } = req.body
 
     const senderId = new mongoose.Types.ObjectId(req.userPayload._id);
@@ -54,7 +55,8 @@ class MessageController{
                           milliTimestamp: Date.now(),
                           senderId,
                           receiverId,
-                          containerId
+                          containerId,
+                          dummyId
                         })
                           .then((sentMessage) => {
                             messagecontainers.findByIdAndUpdate(new mongoose.Types.ObjectId(containerId), {

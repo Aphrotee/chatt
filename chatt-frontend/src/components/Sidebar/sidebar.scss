@@ -294,7 +294,7 @@
 
         }
 
-        .chats-wrapper > div >div:first-child, .search-wrapper > div >div:first-child{
+        .chats-wrapper > div >div:first-child, .search-wrapper > div >div:first-child {
             img {
             max-width:60px;
             min-height: 60px;
@@ -313,7 +313,7 @@
             background: white;
 
             .noUser {
-                display:flex;
+                display: flex;
                 text-align: center;
                 flex-direction: column;
                 height: 100%;
@@ -404,6 +404,13 @@
                     float: right;
                 }
             }
+        }
+        .search-wrapper {
+            display: none;
+            position: absolute;
+            flex-direction: column;
+            z-index: 1;
+            box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
         }
     }
 }

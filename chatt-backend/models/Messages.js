@@ -8,7 +8,8 @@ const MessageSchema = mongoose.Schema({
   milliTimestamp: Number,
   senderId: mongoose.Types.ObjectId,
   receiverId: mongoose.Types.ObjectId,
-  containerId: mongoose.Types.ObjectId
+  containerId: mongoose.Types.ObjectId,
+  dummyId: String
 });
 
 export default mongoose.model('messages', MessageSchema);

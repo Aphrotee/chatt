@@ -10,13 +10,13 @@ const mailer = async (email, subject, body) => {
     }
   });
 
-  sendGrid.setApiKey(process.env.SENDGRID_API_KEY)
-  const message = {
-    to: email,
-    from: 'web.chattmessaging@gmail.com',
-    subject: subject,
-    html: body,
-  }
+  // sendGrid.setApiKey(process.env.SENDGRID_API_KEY)
+  // const message = {
+  //   to: email,
+  //   from: 'web.chattmessaging@gmail.com',
+  //   subject: subject,
+  //   html: body,
+  // }
 
   const mailOptions = {
     from: 'Chatt Instant Messaging',
@@ -55,14 +55,6 @@ const mailer = async (email, subject, body) => {
     })
     .catch((err) => {
       console.log(err);
-    });
-
-    await sendGrid.send(message, (error, result) => {
-      if (error) {
-        console.log(error);
-       } else {
-        console.error('Email sent!', result);
-       }
     });
 }
 

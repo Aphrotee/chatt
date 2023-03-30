@@ -60,7 +60,7 @@ class UserController {
     const email = req.userPayload.email;
     Users.findOne({ _id: userId, email: email })
       .then((user) => {
-        const response = {id: user._id, username: user.username , email, quote: user.quote }
+        const response = {id: user._id, username: user.username , email: user.email, quote: user.quote }
         res.status(200).send(response);
       })
       .catch((err) => {
@@ -68,12 +68,43 @@ class UserController {
       });
   }
 
-  updateStatus(req, res) {
-    const { userId, quote } = req.body;
+  updateUsername(req, res, next) {
+    const userId = new mongoose.Types.ObjectId(req.userPayload._id);
+    const { username } = req.body;
 
-    if (!userId) {
-      res.status(400).json({ error: "Missing user Id" });
-    } else if (!quote) {
+    if (!username) {
+      res.status(400).json({ error: "Missing status username" });
+    } else {
+      Users.findById(new mongoose.Types.ObjectId(userId))
+        .then(async (user) => {
+          Users.find({ username })
+            .then((existingUser) => {
+              if (existingUser.length !== 0) {
+                Users.findByIdAndUpdate(new mongoose.Types.ObjectId(user._id), {
+                  $set: { username }
+                })
+                  .then((updated) => {
+                    next();
+                  })
+                  .catch((err) => {
+                    res.status(500).json({ eror: err.toString() });
+                  });
+              } else {
+                res.status(403).json({ error: "username taken already" });
+              }
+            })
+        })
+        .catch((err) => {
+          res.status(500).json({ eror: err.toString() });
+        });
+    }
+  }
+
+  updateBio(req, res, next) {
+    const userId = new mongoose.Types.ObjectId(req.userPayload._id);
+    const { quote } = req.body;
+
+    if (!quote) {
       res.status(400).json({ error: "Missing status quote" });
     } else {
       Users.findById(new mongoose.Types.ObjectId(userId))
@@ -83,7 +114,7 @@ class UserController {
               $set: { quote }
             })
               .then((updated) => {
-                res.status(200).json({ message: "status quote updated" });
+                next();
               })
               .catch((err) => {
                 res.status(500).json({ eror: err.toString() });

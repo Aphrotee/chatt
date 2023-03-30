@@ -52,7 +52,9 @@ app.get('/api/v1/users/me', verifyToken, userController.userProfile);
 
 app.get('/api/v1/users/all', verifyApiKey, userController.allUsers);
 
-app.put('/api/v1/users/update-status-quote', verifyApiKey, userController.updateStatus);
+app.put('/api/v1/users/update-bio', verifyToken, userController.updateBio, userController.userProfile);
+
+app.put('/api/v1/users/update-username', verifyToken, userController.updateUsername, userController.userProfile);
 
 app.post('/api/v1/messages/new', verifyToken, messageController.newMessage);
 

@@ -102,21 +102,55 @@
         }
 
         &>.header-text {
-            align-self: flex-start;            font-size: 20px;
+            align-self: flex-start;
+            font-size: 20px;
             margin-left: 25px;
             padding-top: 8px;
         }
+
    }
 
-   &>p{
-        &>.other-options {
-            color: blue;
-            cursor: pointer;
-            &:hover {
-                text-decoration: underline;
-                color: red;
-            }
+   .message {
+        color: red;
+        justify-self: center;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+   &>.info {
+        display: flex;
+        flex-direction: row;
+
+        &>.username-text, &>.username-edit, &>.quote-text, &>.quote-edit {
+            margin-right: 8px;
         }
+        .username-edit, .quote-edit {
+            cursor: pointer;
+        }
+        .updateForm {
+            display: none;
+            flex-direction: row;
+        }
+    }
+    &>.other-options {
+        display: flex;
+        align-self: flex-start;
+
+        &>.upload-profile-photo {
+            display: flex;
+            flex-direction: row;
+        }
+    }
+
+   &>p {
+        // &>.other-options {
+        //     color: blue;
+        //     cursor: pointer;
+        //     &:hover {
+        //         text-decoration: underline;
+        //         color: red;
+        //     }
+        // }
         margin-top: 0;
         margin-left: 5%;
         align-self: flex-start;
@@ -151,9 +185,9 @@
         margin-top: .8em;
     }
 
-    .quote {
+    .quote, .username {
         position: relative;
-
+        right: 10px;
         ion-icon {
             position: absolute;
             color: index.$primary-color;
@@ -162,40 +196,70 @@
         }
     }
 
-    .message {
-        color: red;
-    }
-
     &>div {
 
         input {
             width: 100%;
             outline: none;
-            padding-left: 30px;
+            padding-left: 10px;
             background: index.$secondary-color;
-            margin-top: 5%;
+            // margin-top: 5%;
             border: none;
-            height: 40px;
+            height: 30px;
             border-radius: 10px;
+        }
+
+        &>.quote {
+            &>input{
+                width: 30px;
+            }
         }
     }
 
+    // .buttons {
+
+    // }
+
     #button {
-        width: 58%;
-        height: 40px;
+        width: 40px;
+        height: 28px;
         background: index.$primary-color;
         border-radius: 10px;
         color: white;
         font-size: 1em;
         font-weight: bold;
         outline: none;
-        margin-top: 8%;
+        right: 1px;
         border: none;
         cursor: pointer;
         position: relative;
         justify-self: center;
-        margin-left: auto;
-        margin-right: auto;
+        padding: 2px;
+        &>ion-icon {
+            font-size: 28px;
+        }
+        // &>.updateBtn {}
+    }
+    #cancel {
+        background: index.$secondary-color;
+        width: 40px;
+        height: 28px;
+        border-radius: 10px;
+        color: rgb(27, 27, 27);
+        font-size: 1em;
+        font-weight: bold;
+        outline: none;
+        padding-left: 0;
+        left: 10px;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        justify-self: center;
+        text-align: center;
+        padding: 2px;
+        &>ion-icon {
+            font-size: 30px;
+        }
     }
 }
 }
@@ -278,7 +342,7 @@
 
             &>input {
                 outline: none;
-                border-radius: 10px;
+                border-radius: 20px;
                 width: inherit;
                 border: 0;
                 height: 42px;

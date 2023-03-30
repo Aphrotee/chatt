@@ -10,6 +10,7 @@ import {
           Route
         } from 'react-router-dom'
 import Sidebar from './components/Sidebar/sidebar'
+import Home from './components/Home/home';
 import './index.scss';
 
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Router>
       <Routes>
+        <Route path="/" element={<Home />}></Route>
         <Route path="/messages" element={<Sidebar />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
         <Route path="/login" element={<Login />}></Route>

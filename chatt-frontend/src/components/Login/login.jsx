@@ -76,7 +76,12 @@ const Login = () => {
               setLoginBtn("Login");
               loading.current.style.opacity = 1
               loading.current.style.cursor = 'pointer';
-              applyMessage(`${err.response.data['error']}`, false);
+              if (err.response.status === 500) {
+                console.log(err.response.data);
+                applyMessage('Network error, please try again later', false);
+              } else {
+                applyMessage(`${err.response.data['error']}`, false);
+              }
             });
 
         }
@@ -116,7 +121,12 @@ const Login = () => {
               setLoading(false);
               loading.current.style.opacity = 1
               loading.current.style.cursor = 'pointer';
-              applyMessage(`${err.response.data['error']}`, false);
+              if (err.response.status === 500) {
+                console.log(err.response.data);
+                applyMessage('Network error, please try again later', false);
+              } else {
+                applyMessage(`${err.response.data['error']}`, false);
+              }
             });
         }
       }

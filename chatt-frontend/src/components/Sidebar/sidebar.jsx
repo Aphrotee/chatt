@@ -17,7 +17,14 @@ const Sidebar = () => {
     const chatt = useRef()
     const loader = useRef()
     const details = useRef()
-    const loading = useRef(null);
+    const uloading = useRef(null);
+    const qloading = useRef(null);
+    const usernameRef = useRef(null);
+    const UsernameRef = useRef(null);
+    const usernameEditRef = useRef(null);
+    const quoteRef = useRef(null);
+    const QuoteRef = useRef(null);
+    const quoteEditRef = useRef(null);
     const searchWrapper = useRef(null)
     const profileWrapper = useRef(null);
     const profileBackground = useRef(null);
@@ -28,17 +35,19 @@ const Sidebar = () => {
 
     // State variables
     const [user, setUser] = useState([])
-    const msg = useRef(null);
-    const [Msg, setMsg] = useState("");
+    const umsg = useRef(null);
+    const [UMsg, setUMsg] = useState("");
+    const qmsg = useRef(null);
+    const [QMsg, setQMsg] = useState("");
     const [input, setInput] = useState(null);
     const [inputs, setInputs] = useState({});
     const [messages, setMessages] = useState([])
     const [allUsers, setAllUsers] = useState([]);
-    const [Loading, setLoading] = useState(false);
+    const [uLoading, setULoading] = useState(false);
+    const [qLoading, setQLoading] = useState(false);
     const [state, setState] = useState(true);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
-    const [updateBtn, setUpdateBtn] = useState("Update");
     const [profileState, setProfileState] = useState(false);
     const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
 
@@ -219,7 +228,7 @@ const Sidebar = () => {
         }
     }
 
-    const handleStatusChange = (event) => {
+    const handleEditChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value }));
@@ -285,49 +294,141 @@ const Sidebar = () => {
         profileWrapper.current.style.display = 'flex';
     }
 
+    const applyUMessage = (message, success) => {
+        if (success) {
+          umsg.current.style.color = 'green';
+        } else {
+          umsg.current.style.color = 'red';
+        }
+        setUMsg(message);
+      }
+    
+      const applyQMessage = (message, success) => {
+        if (success) {
+          qmsg.current.style.color = 'green';
+        } else {
+          qmsg.current.style.color = 'red';
+        }
+        setQMsg(message);
+      }
+      
+
     const updateStatus = (event) => {
         event.preventDefault();
-        console.log(Loading);
-        if (!Loading) {
+        console.log(qLoading);
+        if (!qLoading) {
           const { quote } = inputs;
   
-          setMsg("");
+          setQMsg("");
           if (!quote) {
-            applyMessage("Please enter status quote", false)
+            applyQMessage("Please enter status quote", false)
           }  else {
-              setLoading(!Loading);
-              setUpdateBtn("Updating...");
-              loading.current.style.opacity = 0.6
-              loading.current.style.cursor = 'not-allowed';
+              setQLoading(!qLoading);
+              qloading.current.style.opacity = 0.6
+              qloading.current.style.cursor = 'not-allowed';
               const userId = cookies.get('chatt_userId');
-              cookies.remove('userid');
-              axios.put('/users/update-status-quote',
-              {
-                userId, quote
-              },
+              axios.put('/users/update-bio',
+              { quote },
               {
                 method: 'put',
                 headers: {
                   'Content-Type': 'application/json',
-                  'X-API-Key': import.meta.env.VITE_API_KEY
+                  'X-Token': token
                 }
               })
-                .then((value) => {
-                  loading.current.style.opacity = 1
-                  loading.current.style.cursor = 'default';
-                  setUpdateBtn("Update");
-                  navigate('/login', { replace: true });
+                .then((response) => {
+                  applyQMessage(`updated bio`, true);
+                  setUser(response.data);
+                  qloading.current.style.opacity = 1
+                  qloading.current.style.cursor = 'default';
+                  setTimeout(() => {
+                    closeNameEdit();
+                  }, 1500)
                 })
                 .catch((err) => {
-                  setLoading(false);
-                  setUpdateBtn("Update");
-                  loading.current.style.opacity = 1
-                  loading.current.style.cursor = 'pointer';
-                  applyMessage(`${err.response.data['error']}`, false);
+                  setQLoading(false);
+                  qloading.current.style.opacity = 1
+                  qloading.current.style.cursor = 'pointer';
+                  if (err.response.status === 500) {
+                    console.log(err.response.data);
+                    applyQMessage('Network error, please try again later', false);
+                  } else {
+                    applyQMessage(`${err.response.data['error']}`, false);
+                  }
+                });
+          }
+        }
+    }
+
+    const updateUsername = (event) => {
+        event.preventDefault();
+        if (!uLoading) {
+          const { username } = inputs;
+  
+          setUMsg("");
+          if (!username) {
+            applyUMessage("Please enter status quote", false)
+          }  else {
+              setULoading(!uLoading);
+              uloading.current.style.opacity = 0.6
+              uloading.current.style.cursor = 'not-allowed';
+              axios.put('/users/update-username',
+              { username },
+              {
+                method: 'put',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Token': token
+                }
+              })
+                .then((response) => {
+                  applyUMessage(`updated username`, true);
+                  setUser(response.data);
+                  uloading.current.style.opacity = 1
+                  uloading.current.style.cursor = 'default';
+                  setTimeout(() => {
+                    closeNameEdit();
+                  }, 1500)
+                })
+                .catch((err) => {
+                  setULoading(false);
+                  uloading.current.style.opacity = 1
+                  uloading.current.style.cursor = 'pointer';
+                  if (err.response.status === 500) {
+                    console.log(err.response.data);
+                    applyUMessage('Network error, please try again later', false);
+                  } else {
+                    applyUMessage(`${err.response.data['error']}`, false);
+                  }
                 });
           }
         }
       }
+
+    const openNameEdit = () => {
+        UsernameRef.current.style.display = 'none';
+        usernameRef.current.style.display = 'none';
+        usernameEditRef.current.style.display = 'flex';
+        
+    }
+
+    const openQuoteEdit = () => {
+        quoteRef.current.style.display = 'none';
+        QuoteRef.current.style.display = 'none';
+        quoteEditRef.current.style.display = 'flex';
+    }
+    const closeNameEdit = () => {
+        UsernameRef.current.style.display = 'block';
+        usernameRef.current.style.display = 'block';
+        usernameEditRef.current.style.display = 'none';
+    }
+
+    const closeQuoteEdit = () => {
+        quoteRef.current.style.display = 'block';
+        QuoteRef.current.style.display = 'block';
+        quoteEditRef.current.style.display = 'none';
+    }
+
 
 
     return (
@@ -398,10 +499,40 @@ const Sidebar = () => {
                             <ion-icon name="close-outline"></ion-icon>
                         </div>
                     </div>
-                    <img src={defaultPic} alt="" />
-                    <div><p>{'@' + user.username}</p></div>
-                    <div><p>{user.quote}</p></div>
-                    <div><p>{user.email}</p></div>
+                    <img src={defaultPic} alt="No profile photo" />
+                    <div className='info'>
+                        <div className='username-text' ref={UsernameRef}>{'@' + user.username}</div>
+                        <div className='username-edit' ref={usernameRef} onClick={openNameEdit} ><ion-icon name="create"></ion-icon></div>
+                        <div>
+                            <form name="updateUsernameForm" onSubmit={updateUsername}>
+                                <div className='updateForm' ref={usernameEditRef}>
+                                    <div className='username'>
+                                        <input type="text" name="username" placeholder={user.username} value={inputs.quote} onChange={handleEditChange} /></div>
+                                    <div className='buttons' id="button" ref={uloading} type="submit" onClick={updateUsername}><ion-icon name="checkmark-outline"></ion-icon></div>
+                                    <div className='buttons' id="cancel"  onClick={closeNameEdit} > <ion-icon name="close-outline" ></ion-icon></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class='message' ref={umsg}>{UMsg}</div>
+                    <div className='info'>
+                        <div className='quote-text' ref={QuoteRef}>{user.quote}</div>
+                        <div className='quote-edit' ref={quoteRef} onClick={openQuoteEdit} ><ion-icon ame="create"></ion-icon></div>
+                        <div>
+                            <form name="updateQuoteForm" onSubmit={updateStatus}>
+                                <div className='updateForm' ref={quoteEditRef}>
+                                    <div className='quote'>
+                                        <input type="text" name="quote" placeholder={user.quote} value={inputs.quote} onChange={handleEditChange} /></div>
+                                    <div className='buttons' id="button" ref={qloading} type="submit" onClick={updateStatus}><ion-icon name="checkmark-outline"></ion-icon></div>
+                                    <div className='buttons' id="cancel"  onClick={closeQuoteEdit} > <ion-icon name="close-outline" ></ion-icon></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class='message' ref={qmsg}>{QMsg}</div>
+                    <div className='info'>
+                        <div>{user.email}</div>
+                    </div>
                     {/* <div>
                         <form name="updateStatusQuoteForm" onSubmit={updateStatus}>
                             <div className='quote'>
@@ -410,10 +541,17 @@ const Sidebar = () => {
                             <p class='message' ref={msg} >{Msg}</p>
                         </form>
                     </div> */}
-                    <p><u className="other-options" >Update username</u></p>
-                    <p><u className="other-options" >Update email</u></p>
-                    <p><u className="other-options" >Update password</u></p>
-                    <p><u className="other-options" >Update status quote</u></p>
+                    {/* <div className='other-options'>
+                        <form name="updateProfilePhotoForm">
+                            <div className="update-profile-photo">
+                                <div className='UpdateBtn' type="button" id="button" placeholder="Update profile photo" value={inputs.quote} onChange={handleEditChange} >Update profile photo</div>
+                                <div className="updateForm">
+                                    <div><input type="file" name="profilephoto" placeholder={'upload image'} value={inputs.profilephoto} onChange={handleEditChange} /></div>
+                                    <div className='buttons' id="button" ref={qloading} type="submit" onClick={updateStatus}><ion-icon name="checkmark-outline"></ion-icon></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div> */}
                 </div>
             </div>
         </>

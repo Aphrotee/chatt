@@ -84,6 +84,7 @@
         justify-content: space-between;
         border-top-right-radius: 10px;
         border-top-left-radius: 10px;
+        margin-bottom:20px;
 
         &>.exit {
             padding-right: 10px;
@@ -108,7 +109,7 @@
             padding-top: 8px;
         }
 
-   }
+    }
 
    .message {
         color: red;
@@ -130,15 +131,37 @@
         .updateForm {
             display: none;
             flex-direction: row;
+            &> .quote {
+                &>input {
+                    justify-content: center;
+                    width: 150px;
+                }
+
+            }
         }
     }
     &>.other-options {
         display: flex;
         align-self: flex-start;
+        &>form {
 
-        &>.upload-profile-photo {
-            display: flex;
-            flex-direction: row;
+            &>.update-profile-photo {
+                display: flex;
+                flex-direction: column;
+                margin-left: 0;
+                height: 30px;
+                // align-items: flex-start;
+                &>#button {
+                    padding: 3px 10px;
+                    width: max-content;
+               }
+                &>.updateForm {
+                    display: none;
+                    margin-left: 25px;
+                    flex-direction: row;
+                    align-items: center;
+                }
+            }
         }
     }
 
@@ -154,7 +177,7 @@
         margin-top: 0;
         margin-left: 5%;
         align-self: flex-start;
-}
+    }
 
    form {
 
@@ -164,7 +187,19 @@
 
     div:first-child {
         text-align: left;
-        margin: 0 10%;
+        margin: 5px 10%;
+        #fileHolder {
+            width: 200px;
+            // margin-right: 0;
+            .fileSelect {
+                width: 210px;
+                height: 27px;
+                margin-right: 0;
+                padding-top: 5px;
+                padding-left: 7px;
+                padding-right: 7px;
+            }
+        }
     }
 
     div:first-child p:first-child{
@@ -203,13 +238,13 @@
             outline: none;
             padding-left: 10px;
             background: index.$secondary-color;
-            // margin-top: 5%;
             border: none;
             height: 30px;
             border-radius: 10px;
         }
 
         &>.quote {
+            margin-left: -35px;
             &>input{
                 width: 30px;
             }
@@ -220,14 +255,15 @@
 
     // }
 
-    #button {
+    #button, #Imagebutton {
         width: 40px;
         height: 28px;
+        margin-top: 4px;
         background: index.$primary-color;
         border-radius: 10px;
         color: white;
-        font-size: 1em;
-        font-weight: bold;
+        font-size: 0.8em;
+        font-weight: lighter;
         outline: none;
         right: 1px;
         border: none;
@@ -238,15 +274,15 @@
         &>ion-icon {
             font-size: 28px;
         }
-        // &>.updateBtn {}
     }
-    #cancel {
+    #cancel, #Imagecancel {
         background: index.$secondary-color;
         width: 40px;
         height: 28px;
+        margin-top: 4px;
         border-radius: 10px;
         color: rgb(27, 27, 27);
-        font-size: 1em;
+        font-size: 0.8em;
         font-weight: bold;
         outline: none;
         padding-left: 0;
@@ -261,7 +297,21 @@
             font-size: 30px;
         }
     }
+
+    #Imagebutton, #Imagecancel {
+        width: 120px;
+        text-align: center;
+        height: 25px;
+        padding: 2px, 2px;
+        padding-top: 3.5px;
+    }
 }
+}
+.full-pic {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    top: 0;
 }
 
 .sidebar {

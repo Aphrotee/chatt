@@ -17,7 +17,7 @@ class AuthController {
         if (user) {
           if (await bcrypt.compare(password, user.password)) {
             const token = jwt.sign(
-              { _id: user._id.toString(), email: user.email, username: user.username },
+              { _id: user._id.toString(), email: user.email, username: user.username, profilePhoto: user.profilePhoto },
               process.env.JWT_SECRET,
               {
                 expiresIn: "7d"

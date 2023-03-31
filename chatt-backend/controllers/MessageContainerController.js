@@ -6,6 +6,7 @@ class MessageContainerController {
 
   getContainer(req, res) {
     const sender = new mongoose.Types.ObjectId(req.userPayload._id);
+    const senderPhoto = req.userPayload.profilePhoto;
     const senderUsername = req.userPayload.username;
     const receiver = new mongoose.Types.ObjectId(req.receiverId);
 
@@ -21,6 +22,7 @@ class MessageContainerController {
               MessageContainers.create({
                 members: [sender, receiver],
                 membersUsernames: [senderUsername, Receiver.username],
+                membersPhotos: [senderPhoto, Receiver.profilePhoto],
                 numberOfMessages: 0,
                 lastMessage: '',
                 timestamp: {},

@@ -4,7 +4,7 @@ import Pusher from 'pusher-js'
 import axios from '../../axios'
 import cookies from '../../cookies';
 import gsap from 'gsap';
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, createRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 const defaultPic = '../../src/images/profile (1).png';
 
@@ -18,7 +18,12 @@ const Sidebar = () => {
     const loader = useRef()
     const details = useRef()
     const uloading = useRef(null);
+    const uloadingx = useRef(null);
     const qloading = useRef(null);
+    const qloadingx = useRef(null);
+    const ploading = useRef(null);
+    const ploadingx = useRef(null);
+    const imageRef = createRef();
     const usernameRef = useRef(null);
     const UsernameRef = useRef(null);
     const usernameEditRef = useRef(null);
@@ -27,7 +32,13 @@ const Sidebar = () => {
     const quoteEditRef = useRef(null);
     const searchWrapper = useRef(null)
     const profileWrapper = useRef(null);
+    const fileSelector = useRef(null);
+    const uploadBtn = useRef(null);
+    const uploadHandler = useRef(null)
     const profileBackground = useRef(null);
+    const smallProfilePic = useRef(null);
+    const bigProfilePic = useRef(null);
+
 
     const [navState, setNavState] = useState(false)
     const visible = () => setNavState(!navState)
@@ -39,12 +50,16 @@ const Sidebar = () => {
     const [UMsg, setUMsg] = useState("");
     const qmsg = useRef(null);
     const [QMsg, setQMsg] = useState("");
+    const pmsg = useRef(null);
+    const [PMsg, setPMsg] = useState("");
     const [input, setInput] = useState(null);
     const [inputs, setInputs] = useState({});
+    const [image, _setImage] = useState(null);
     const [messages, setMessages] = useState([])
     const [allUsers, setAllUsers] = useState([]);
     const [uLoading, setULoading] = useState(false);
     const [qLoading, setQLoading] = useState(false);
+    const [pLoading, setPLoading] = useState(false);
     const [state, setState] = useState(true);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
@@ -75,8 +90,7 @@ const Sidebar = () => {
                 }).then((response) => {
                     setUser(response.data);
                 })
-                },
-    []);
+    }, []);
 
     useEffect(() => {
         const pusher = new Pusher('5ac65fc188cfeb946d3c', {
@@ -92,7 +106,7 @@ const Sidebar = () => {
                 channel.unbind_all()
                 channel.unsubscribe()
               }
-          }, [messages]);
+    }, [messages]);
 
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
@@ -120,7 +134,6 @@ const Sidebar = () => {
         });
     }
 
-
     const userDisplay = () => {
 
         if (containers.length === 0) {
@@ -132,15 +145,7 @@ const Sidebar = () => {
         }
 
         return (
-            // containers.filter((container) => {
-            //     if (container.nummberOfMessages) {
-            //         return true;
-            //     } else {
-            //         return false;
-            //     }
-            // });
             containers.map((container) => {
-
                 return (<div className="wrap" key={container._id}
                              onClick={() => {getMessages(container._id);
                                              getName(container.membersUsernames.filter(name => name !== user.username));
@@ -149,7 +154,7 @@ const Sidebar = () => {
                                              get_id(container.members.filter(member => member !== user.id));
                                              }}>
                     <div>
-                        <img src={defaultPic} alt="" />
+                        <img src={container.membersPhotos.filter(photo => photo !== user.profilePhoto)? container.membersPhotos.filter(photo => photo !== user.profilePhoto): defaultPic} alt="" />
                         <div className='notifications'>
                             <div>99</div>
                         </div>
@@ -195,7 +200,6 @@ const Sidebar = () => {
         }))
     }
 
-
     const getUsers = () => {
         axios.get('/users/all', {
             headers: {
@@ -232,6 +236,11 @@ const Sidebar = () => {
         const name = event.target.name;
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value }));
+        if (event.target.type === 'file') {
+            console.log(event.target);
+            setInputs(values => ({ ...values, ['file_' + name]: event.target.files[0] }));
+            setInputs(values => ({ ...values, [name]: event.target.files[0].name }));
+        }
       }
 
     const getContainer = (receiver) => {
@@ -272,7 +281,7 @@ const Sidebar = () => {
                 return (
                     <div className='wrap' onClick={() => {getContainer(user.id)}} >
                         <div>
-                            <img src={defaultPic} alt=""/>
+                            <img src={user.profilePhoto? user.profilePhoto: defaultPic} alt={user.profilePhoto? user.name:"No profile photo"} />
                         </div>
                         <div className='details'>
                             <span>{user.username}</span>
@@ -301,17 +310,25 @@ const Sidebar = () => {
           umsg.current.style.color = 'red';
         }
         setUMsg(message);
-      }
+    }
     
-      const applyQMessage = (message, success) => {
+    const applyQMessage = (message, success) => {
         if (success) {
           qmsg.current.style.color = 'green';
         } else {
           qmsg.current.style.color = 'red';
         }
         setQMsg(message);
-      }
-      
+    }
+
+    const applyPMessage = (message, success) => {
+        if (success) {
+          pmsg.current.style.color = 'green';
+        } else {
+          pmsg.current.style.color = 'red';
+        }
+        setPMsg(message);
+    }
 
     const updateStatus = (event) => {
         event.preventDefault();
@@ -326,6 +343,8 @@ const Sidebar = () => {
               setQLoading(!qLoading);
               qloading.current.style.opacity = 0.6
               qloading.current.style.cursor = 'not-allowed';
+              qloadingx.current.style.opacity = 0.6
+              qloadingx.current.style.cursor = 'not-allowed';
               const userId = cookies.get('chatt_userId');
               axios.put('/users/update-bio',
               { quote },
@@ -333,22 +352,17 @@ const Sidebar = () => {
                 method: 'put',
                 headers: {
                   'Content-Type': 'application/json',
-                  'X-Token': token
+                  'X-Token': cookie
                 }
               })
                 .then((response) => {
                   applyQMessage(`updated bio`, true);
                   setUser(response.data);
-                  qloading.current.style.opacity = 1
-                  qloading.current.style.cursor = 'default';
                   setTimeout(() => {
-                    closeNameEdit();
+                    closeQuoteEdit();
                   }, 1500)
                 })
                 .catch((err) => {
-                  setQLoading(false);
-                  qloading.current.style.opacity = 1
-                  qloading.current.style.cursor = 'pointer';
                   if (err.response.status === 500) {
                     console.log(err.response.data);
                     applyQMessage('Network error, please try again later', false);
@@ -356,7 +370,12 @@ const Sidebar = () => {
                     applyQMessage(`${err.response.data['error']}`, false);
                   }
                 });
-          }
+                setQLoading(false);
+                qloading.current.style.opacity = 1
+                qloading.current.style.cursor = 'pointer';
+                qloadingx.current.style.opacity = 1
+                qloadingx.current.style.cursor = 'pointer';
+            }
         }
     }
 
@@ -367,33 +386,31 @@ const Sidebar = () => {
   
           setUMsg("");
           if (!username) {
-            applyUMessage("Please enter status quote", false)
+            applyUMessage("Please enter username", false)
           }  else {
               setULoading(!uLoading);
               uloading.current.style.opacity = 0.6
               uloading.current.style.cursor = 'not-allowed';
+              uloadingx.current.style.opacity = 0.6
+              uloadingx.current.style.cursor = 'not-allowed';
               axios.put('/users/update-username',
               { username },
               {
                 method: 'put',
                 headers: {
                   'Content-Type': 'application/json',
-                  'X-Token': token
+                  'X-Token': cookie
                 }
               })
                 .then((response) => {
                   applyUMessage(`updated username`, true);
                   setUser(response.data);
-                  uloading.current.style.opacity = 1
-                  uloading.current.style.cursor = 'default';
                   setTimeout(() => {
                     closeNameEdit();
                   }, 1500)
                 })
                 .catch((err) => {
                   setULoading(false);
-                  uloading.current.style.opacity = 1
-                  uloading.current.style.cursor = 'pointer';
                   if (err.response.status === 500) {
                     console.log(err.response.data);
                     applyUMessage('Network error, please try again later', false);
@@ -401,9 +418,94 @@ const Sidebar = () => {
                     applyUMessage(`${err.response.data['error']}`, false);
                   }
                 });
+              setULoading(false);
+              uloading.current.style.opacity = 1
+              uloading.current.style.cursor = 'pointer';
+              uloadingx.current.style.opacity = 1
+              uloadingx.current.style.cursor = 'pointer';
           }
         }
-      }
+    }
+
+    const cleanup = () => {
+        URL.revokeObjectURL(image);
+        imageRef.current.value = null;
+    }
+
+    const setImage = (newImage) => {
+        if (image) {
+            cleanup();
+        }
+        _setImage(newImage);
+    }
+
+    const uploadPhoto = (event) => {
+        event.preventDefault();
+        if (!pLoading) {
+            const { file_profilephoto } = inputs;
+            let objUrl;
+
+            try {
+                objUrl = URL.createObjectURL(file_profilephoto);
+            } catch {
+                applyPMessage('please choose photo', false);
+                return;
+            }
+            setImage(objUrl);
+
+            const formData = new FormData();
+            formData.append('file', file_profilephoto);
+            formData.append('upload_preset', 'chattprofilephoto');
+            let url;
+
+            if (!file_profilephoto) {
+                applyPMessage('Please choose photo, false');
+            } else {
+                setULoading(!pLoading);
+                ploading.current.style.opacity = 0.6
+                ploading.current.style.cursor = 'not-allowed';
+                ploadingx.current.style.opacity = 0.6
+                ploadingx.current.style.cursor = 'not-allowed';
+            
+
+                axios.post(
+                    'https://api.cloudinary.com/v1_1/dd0lgcva4/image/upload',
+                    formData
+                )
+                  .then((response) => {
+                    url = response.data['secure_url'];
+                    axios.put('/users/update-profile-photo', {
+                        profilePhoto: url
+                    }, {
+                        headers: {
+                            'X-Token': cookie,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                      .then((response) => {
+                        applyPMessage(`uploaded profile photo`, true);
+                        setUser(response.data);
+                        setTimeout(() => {
+                          closeUploadHandler();
+                        }, 1500);
+                      })
+                      .catch((err) => {
+                        if (err.response.status === 500) {
+                          console.log(err.response.data);
+                          applyPMessage('Network error, please try again later', false);
+                        } else {
+                          applyPMessage(`${err.response.data['error']}`, false);
+                        }
+                      });
+                    setPLoading(false);
+                    ploading.current.style.opacity = 1
+                    ploading.current.style.cursor = 'pointer';
+                    ploadingx.current.style.opacity = 1
+                    ploadingx.current.style.cursor = 'pointer';
+                  });
+            }
+        }
+    }
 
     const openNameEdit = () => {
         UsernameRef.current.style.display = 'none';
@@ -417,18 +519,43 @@ const Sidebar = () => {
         QuoteRef.current.style.display = 'none';
         quoteEditRef.current.style.display = 'flex';
     }
+
     const closeNameEdit = () => {
         UsernameRef.current.style.display = 'block';
         usernameRef.current.style.display = 'block';
         usernameEditRef.current.style.display = 'none';
+        setUMsg("");
     }
 
     const closeQuoteEdit = () => {
         quoteRef.current.style.display = 'block';
         QuoteRef.current.style.display = 'block';
         quoteEditRef.current.style.display = 'none';
+        setQMsg("");
     }
 
+    const openUploadHandler = () => {
+        uploadBtn.current.style.display = 'none';
+        uploadHandler.current.style.display = 'flex';
+    }
+
+    const closeUploadHandler = () => {
+        uploadBtn.current.style.display = 'block';
+        uploadHandler.current.style.display = 'none';
+        setPMsg("");
+    }
+
+    const showFullPic = () => {
+        if (user.profilePhoto) {
+          smallProfilePic.current.style.display = 'none';
+          bigProfilePic.current.style.display = 'block';
+        }
+    }
+
+    const hideFullPic = () => {
+        smallProfilePic.current.style.display = 'block';
+        bigProfilePic.current.style.display = 'none';
+    }
 
 
     return (
@@ -499,7 +626,9 @@ const Sidebar = () => {
                             <ion-icon name="close-outline"></ion-icon>
                         </div>
                     </div>
-                    <img src={defaultPic} alt="No profile photo" />
+                    <div>
+                        <img style={{borderRadius: '50%', marginBottom: '5px'}} ref={smallProfilePic} src={user.profilePhoto? user.profilePhoto: defaultPic} alt={user.profilePhoto? user.name:"No profile photo"} width={256} height={256} onClick={showFullPic} />
+                    </div>
                     <div className='info'>
                         <div className='username-text' ref={UsernameRef}>{'@' + user.username}</div>
                         <div className='username-edit' ref={usernameRef} onClick={openNameEdit} ><ion-icon name="create"></ion-icon></div>
@@ -507,9 +636,9 @@ const Sidebar = () => {
                             <form name="updateUsernameForm" onSubmit={updateUsername}>
                                 <div className='updateForm' ref={usernameEditRef}>
                                     <div className='username'>
-                                        <input type="text" name="username" placeholder={user.username} value={inputs.quote} onChange={handleEditChange} /></div>
+                                        <input type="text" name="username" placeholder={user.username} value={inputs.username} onChange={handleEditChange} /></div>
                                     <div className='buttons' id="button" ref={uloading} type="submit" onClick={updateUsername}><ion-icon name="checkmark-outline"></ion-icon></div>
-                                    <div className='buttons' id="cancel"  onClick={closeNameEdit} > <ion-icon name="close-outline" ></ion-icon></div>
+                                    <div className='buttons' id="cancel" ref={uloadingx} onClick={closeNameEdit} > <ion-icon name="close-outline" ></ion-icon></div>
                                 </div>
                             </form>
                         </div>
@@ -524,7 +653,7 @@ const Sidebar = () => {
                                     <div className='quote'>
                                         <input type="text" name="quote" placeholder={user.quote} value={inputs.quote} onChange={handleEditChange} /></div>
                                     <div className='buttons' id="button" ref={qloading} type="submit" onClick={updateStatus}><ion-icon name="checkmark-outline"></ion-icon></div>
-                                    <div className='buttons' id="cancel"  onClick={closeQuoteEdit} > <ion-icon name="close-outline" ></ion-icon></div>
+                                    <div className='buttons' id="cancel" ref={qloadingx} onClick={closeQuoteEdit} > <ion-icon name="close-outline" ></ion-icon></div>
                                 </div>
                             </form>
                         </div>
@@ -533,26 +662,21 @@ const Sidebar = () => {
                     <div className='info'>
                         <div>{user.email}</div>
                     </div>
-                    {/* <div>
-                        <form name="updateStatusQuoteForm" onSubmit={updateStatus}>
-                            <div className='quote'>
-                                <input type="text" name="quote" placeholder={user.quote} value={inputs.quote} onChange={handleStatusChange} /></div>
-                            <input id="button" ref={loading} type="submit" value={updateBtn} />
-                            <p class='message' ref={msg} >{Msg}</p>
-                        </form>
-                    </div> */}
-                    {/* <div className='other-options'>
+                    <div className='other-options'>
                         <form name="updateProfilePhotoForm">
                             <div className="update-profile-photo">
-                                <div className='UpdateBtn' type="button" id="button" placeholder="Update profile photo" value={inputs.quote} onChange={handleEditChange} >Update profile photo</div>
-                                <div className="updateForm">
-                                    <div><input type="file" name="profilephoto" placeholder={'upload image'} value={inputs.profilephoto} onChange={handleEditChange} /></div>
-                                    <div className='buttons' id="button" ref={qloading} type="submit" onClick={updateStatus}><ion-icon name="checkmark-outline"></ion-icon></div>
+                                <div className='UpdateBtn' ref={uploadBtn} type="button" id="button" placeholder="Update profile photo" value={inputs.quote} onClick={openUploadHandler} >Update profile photo</div>
+                                <div className="updateForm" ref={uploadHandler} >
+                                    <div id='fileHolder'><input className='fileSelect' name="profilephoto" ref={imageRef} placeholder={'Click to select image'} value={inputs.profilephoto} onChange={handleEditChange} onClick={() => fileSelector.current.click()} /><input type='file' accept="image/*" name="profilephoto" ref={fileSelector} style={{ display: 'none', cursor: 'pointer'}} onChange={handleEditChange} /></div>
+                                    <div id="Imagebutton" ref={ploading} type="submit" onClick={uploadPhoto}>Upload</div>
+                                    <div id="Imagecancel" ref={ploadingx} onClick={closeUploadHandler} > Cancel </div>
                                 </div>
                             </div>
                         </form>
-                    </div> */}
+                    </div>
+                    <div class='message' ref={pmsg}>{PMsg}</div>
                 </div>
+                <img className='full-pic' ref={bigProfilePic} src={user.profilePhoto? user.profilePhoto: ''} alt={user.profilePhoto? user.name:"No profile photo"} onClick={hideFullPic}/>
             </div>
         </>
         );

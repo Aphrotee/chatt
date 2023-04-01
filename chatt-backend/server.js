@@ -53,6 +53,8 @@ app.put('/api/v1/users/update-bio', verifyToken, userController.updateBio, userC
 
 app.put('/api/v1/users/update-username', verifyToken, userController.updateUsername, userController.userProfile);
 
+app.put('/api/v1/users/update-profile-photo', verifyToken, userController.updateProfilePhoto, userController.userProfile);
+
 app.post('/api/v1/messages/new', verifyToken, messageController.newMessage);
 
 app.param('containerId', (req, res, next, value) => { req.containerId = value; next();})

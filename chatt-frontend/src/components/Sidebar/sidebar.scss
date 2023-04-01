@@ -84,6 +84,7 @@
         justify-content: space-between;
         border-top-right-radius: 10px;
         border-top-left-radius: 10px;
+        margin-bottom:20px;
 
         &>.exit {
             padding-right: 10px;
@@ -107,21 +108,76 @@
             margin-left: 25px;
             padding-top: 8px;
         }
-   }
 
-   &>p{
-        &>.other-options {
-            color: blue;
+    }
+
+   .message {
+        color: red;
+        justify-self: center;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+   &>.info {
+        display: flex;
+        flex-direction: row;
+
+        &>.username-text, &>.username-edit, &>.quote-text, &>.quote-edit {
+            margin-right: 8px;
+        }
+        .username-edit, .quote-edit {
             cursor: pointer;
-            &:hover {
-                text-decoration: underline;
-                color: red;
+        }
+        .updateForm {
+            display: none;
+            flex-direction: row;
+            &> .quote {
+                &>input {
+                    justify-content: center;
+                    width: 150px;
+                }
+
             }
         }
+    }
+    &>.other-options {
+        display: flex;
+        align-self: flex-start;
+        &>form {
+
+            &>.update-profile-photo {
+                display: flex;
+                flex-direction: column;
+                margin-left: 0;
+                height: 30px;
+                // align-items: flex-start;
+                &>#button {
+                    padding: 3px 10px;
+                    width: max-content;
+               }
+                &>.updateForm {
+                    display: none;
+                    margin-left: 25px;
+                    flex-direction: row;
+                    align-items: center;
+                }
+            }
+        }
+    }
+
+   &>p {
+        // &>.other-options {
+        //     color: blue;
+        //     cursor: pointer;
+        //     &:hover {
+        //         text-decoration: underline;
+        //         color: red;
+        //     }
+        // }
         margin-top: 0;
         margin-left: 5%;
         align-self: flex-start;
-}
+    }
 
    form {
 
@@ -131,7 +187,19 @@
 
     div:first-child {
         text-align: left;
-        margin: 0 10%;
+        margin: 5px 10%;
+        #fileHolder {
+            width: 200px;
+            // margin-right: 0;
+            .fileSelect {
+                width: 210px;
+                height: 27px;
+                margin-right: 0;
+                padding-top: 5px;
+                padding-left: 7px;
+                padding-right: 7px;
+            }
+        }
     }
 
     div:first-child p:first-child{
@@ -152,9 +220,9 @@
         margin-top: .8em;
     }
 
-    .quote {
+    .quote, .username {
         position: relative;
-
+        right: 10px;
         ion-icon {
             position: absolute;
             color: index.$primary-color;
@@ -163,42 +231,87 @@
         }
     }
 
-    .message {
-        color: red;
-    }
-
     &>div {
 
         input {
             width: 100%;
             outline: none;
-            padding-left: 30px;
+            padding-left: 10px;
             background: index.$secondary-color;
-            margin-top: 5%;
             border: none;
-            height: 40px;
+            height: 30px;
             border-radius: 10px;
+        }
+
+        &>.quote {
+            margin-left: -35px;
+            &>input{
+                width: 30px;
+            }
         }
     }
 
-    #button {
-        width: 58%;
-        height: 40px;
+    // .buttons {
+
+    // }
+
+    #button, #Imagebutton {
+        width: 40px;
+        height: 28px;
+        margin-top: 4px;
         background: index.$primary-color;
         border-radius: 10px;
         color: white;
-        font-size: 1em;
-        font-weight: bold;
+        font-size: 0.8em;
+        font-weight: lighter;
         outline: none;
-        margin-top: 8%;
+        right: 1px;
         border: none;
         cursor: pointer;
         position: relative;
         justify-self: center;
-        margin-left: auto;
-        margin-right: auto;
+        padding: 2px;
+        &>ion-icon {
+            font-size: 28px;
+        }
+    }
+    #cancel, #Imagecancel {
+        background: index.$secondary-color;
+        width: 40px;
+        height: 28px;
+        margin-top: 4px;
+        border-radius: 10px;
+        color: rgb(27, 27, 27);
+        font-size: 0.8em;
+        font-weight: bold;
+        outline: none;
+        padding-left: 0;
+        left: 10px;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        justify-self: center;
+        text-align: center;
+        padding: 2px;
+        &>ion-icon {
+            font-size: 30px;
+        }
+    }
+
+    #Imagebutton, #Imagecancel {
+        width: 120px;
+        text-align: center;
+        height: 25px;
+        padding: 2px, 2px;
+        padding-top: 3.5px;
     }
 }
+}
+.full-pic {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    top: 0;
 }
 
 .sidebar {
@@ -276,7 +389,7 @@
 
             &>input {
                 outline: none;
-                border-radius: 10px;
+                border-radius: 20px;
                 width: inherit;
                 border: 0;
                 height: 42px;

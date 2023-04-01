@@ -38,7 +38,7 @@ class AuthController {
     );
   }
 
-  sendOtp(req, res) {
+  async sendOtp(req, res) {
     const { email } = req.body;
     const createOtp = (min, max) => {
       return Math.floor(Math.random() * (max - min)) + min;
@@ -54,7 +54,7 @@ class AuthController {
           const newdate = dateMilliseconds + (60 * 10000);
           const d  = new Date(newdate);
           const expireBy = (datetime.create(d, 'f d, Y H:M p').format());
-          worker.sendOtpEmail.add({ email, username: user.username, otp, expireBy })
+          await worker.sendOtpEmail({ email, username: user.username, otp, expireBy })
           res.status(200).json({ userId: user._id });
         } else {
           res.status(400).json({ error: "No user with this email address" });

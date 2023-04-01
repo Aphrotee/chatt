@@ -5,13 +5,33 @@ import axios from '../../axios'
 import cookies from '../../cookies';
 import gsap from 'gsap';
 import { useEffect, useState, useRef, createRef } from 'react'
+import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 const defaultPic = '../../src/images/profile (1).png';
+let socket;
 
 
 const Sidebar = () => {
     // browser cookie
     const cookie = cookies.get('X-Token');
+    const userId = cookies.get('chatt_userId');
+
+    // socket instance
+    useEffect(() => {
+        socket = io('http://192.168.21.84:9000');
+        socket.emit('user connect', userId);
+        console.log('connecting')
+        return () => socket.disconnect();
+    }, []);
+
+
+
+    // useEffect(() => {
+    //     socket.emit('user connect', userId);
+    //     // socket.on('connected to socket', () => {
+    //     //     alert('connected to socket');
+    //     // })
+    // }, [socket]);
 
     // DOM references
     const chatt = useRef()
@@ -30,6 +50,8 @@ const Sidebar = () => {
     const quoteRef = useRef(null);
     const QuoteRef = useRef(null);
     const quoteEditRef = useRef(null);
+    const loading = useRef(null);
+    const sidebar = useRef()
     const searchWrapper = useRef(null)
     const profileWrapper = useRef(null);
     const fileSelector = useRef(null);
@@ -60,7 +82,10 @@ const Sidebar = () => {
     const [uLoading, setULoading] = useState(false);
     const [qLoading, setQLoading] = useState(false);
     const [pLoading, setPLoading] = useState(false);
+    const [Loading, setLoading] = useState(false);
+    const [members, setMembers] = useState([])
     const [state, setState] = useState(true);
+    const [userConnected, setUserConnected] = useState(false);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
     const [profileState, setProfileState] = useState(false);
@@ -73,50 +98,105 @@ const Sidebar = () => {
     }, []);
 
     useEffect(() => {
+        socket.on('user connected', (userid) => {
+            // alert('user connected?', userConnected);
+            if (userId === userid) setUserConnected(true);
+        });
+        return () => socket.off('user connected');
+    });
 
-                axios.get("containers/all", {
-                    headers: {
-                        'X-Token': cookie
-                        }
-                }).then((response) => {
+    useEffect(() => {
+        axios.get("containers/all", {
+            headers: {
+                'X-Token': cookie
+                }
+        }).then((response) => {
 
                 setContainers(response.data)
                 })
-
-                axios.get('/users/me', {
-                    headers: {
-                        'X-Token': cookie
-                    }
-                }).then((response) => {
-                    setUser(response.data);
-                })
+        axios.get('/users/me', {
+            headers: {
+                'X-Token': cookie
+            }
+        }).then((response) => {
+            setUser(response.data);
+        });
     }, []);
 
+
+    const setContainersOnly = (oldContainers, updatedContainer) => {
+        const newContainers = oldContainers.filter(container => {
+            if (container._id !== updatedContainer._id) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [updatedContainer, ...newContainers];
+    }
+
+    const setMessagesOnly = (messages, newMessage) => {
+        const newMessages = messages.filter(message => {
+            if (message.dummyId !== newMessage.dummyId) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return [...newMessages, newMessage];
+    }
+
     useEffect(() => {
-        const pusher = new Pusher('5ac65fc188cfeb946d3c', {
-            cluster: 'mt1'
-          });
+        socket.on('new message', (message) => {
+            // setMessages((messages) => [...messages, message]);
+            if (message.containerId === other.id) {
+                setMessages((messages) => setMessagesOnly(messages, message));
+            }
+            // axios.get("containers/all", {
+            //     headers: {
+            //     'X-Token': cookie
+            //     }
+            // }).then((response) => {
 
-            const channel = pusher.subscribe('messages');
-            channel.bind('inserted', function(data) {
-                setMessages([...messages, data])
-            })
+            // // setContainers(response.data)
+            // });
+        });
+        return () => socket.off('new message');
+    });
 
-            return () => {
-                channel.unbind_all()
-                channel.unsubscribe()
-              }
-    }, [messages]);
+
+    useEffect(() => {
+        socket.once('container updated', (container) => {
+            // alert('update container';)
+            container.members.forEach(memberId => {
+                if (memberId.toString() === userId.toString()) {
+                    // alert(container.container._id);
+                    setContainers((containers) => setContainersOnly(containers, container.container));
+                }
+            });
+        });
+
+        return () => socket.off('container updated');
+    });
+
+    const mediaQuery = () => {
+        const query = window.matchMedia("(max-width: 768px)");
+        if (query.matches && media) {
+            sidebar.current.style.display = 'none';
+            setMedia(!state)
+        }
+    }
 
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
+        socket.emit('open container', id);
         axios.get(`/messages/${id}/all`, {
             headers: {
                 'X-Token': cookie
             }
         }).then((response) => {
-            setMessages(response.data)
-        })
+            setMessages(response.data);
+        });
     }
 
     const logout = () => {
@@ -130,7 +210,6 @@ const Sidebar = () => {
             cookies.remove('X-Token');
             cookies.remove('chatt_userId');
             cookies.remove('chatt_username');
-
         });
     }
 
@@ -147,11 +226,14 @@ const Sidebar = () => {
         return (
             containers.map((container) => {
                 return (<div className="wrap" key={container._id}
-                             onClick={() => {getMessages(container._id);
+                             onClick={(e) => {getMessages(container._id);
                                              getName(container.membersUsernames.filter(name => name !== user.username));
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
                                              get_id(container.members.filter(member => member !== user.id));
+                                             getContainer(container);
+                                             setMembers(container.members);
+                                             mediaQuery()
                                              }}>
                     <div>
                         <img src={container.membersPhotos.filter(photo => photo !== user.profilePhoto)? container.membersPhotos.filter(photo => photo !== user.profilePhoto): defaultPic} alt="" />
@@ -194,6 +276,11 @@ const Sidebar = () => {
     }
 
     const get_id = (_id) => {
+
+        if (Array.isArray(_id)) {
+            _id = _id[0]
+        }
+
         setOther(existingValues => ({
             ...existingValues,
             otherId:_id
@@ -218,16 +305,18 @@ const Sidebar = () => {
           });
     }
 
+    const setBorder = () => {
+
+    }
+
     const handleChange = (event) => {
         const query = event.target.value;
-        console.log(query)
 
         if (!query) {
-            console.log(query)
-            setState(true)
+            searchWrapper.current.style.display = 'none';
             setInput(null);
         } else {
-            setState(false)
+            searchWrapper.current.style.display = 'flex';
             setInput(query);
         }
     }
@@ -253,33 +342,32 @@ const Sidebar = () => {
             const containerId = response.data._id;
             const otheruser = response.data.membersUsernames.filter((name) => name !== cookies.get('chatt_username'))[0];
             getMessages(containerId, otheruser);
+            getId(containerId);
+            setMembers(response.data.members)
           })
     }
 
+
     const matchedUsers = () => {
         const match = allUsers.filter((user) => {
-            if (new RegExp(`^${input}`, 'i').test(user.username)) {
+            if (new RegExp(`\^${input}`, 'i').test(user.username)) {
                 return true;
             } else {
                 return false;
             }
         });
-        if (!input) {
-            if (searchWrapper.current !== null) {
-              searchWrapper.current.style.display = 'none';
-            }
-        } else if (!match.length && input) {
-            if (searchWrapper.current !== null) {
-                searchWrapper.current.style.display = 'block';
-            }
+        if (!match.length && input) {
             return (<div className='noUser' >No users found</div>)
         } else {
-            if (searchWrapper.current !== null) {
-                searchWrapper.current.style.display = 'block';
-            }
+
             return match.map((user) => {
+                console.log('user', user)
                 return (
-                    <div className='wrap' onClick={() => {getContainer(user.id)}} >
+                    <div className='wrap' onClick={() => {
+                        getContainer(user.id);
+                        getName(user.username);
+                        get_id(user.id);
+                        }} >
                         <div>
                             <img src={user.profilePhoto? user.profilePhoto: defaultPic} alt={user.profilePhoto? user.name:"No profile photo"} />
                         </div>
@@ -335,7 +423,6 @@ const Sidebar = () => {
         console.log(qLoading);
         if (!qLoading) {
           const { quote } = inputs;
-  
           setQMsg("");
           if (!quote) {
             applyQMessage("Please enter status quote", false)
@@ -557,10 +644,13 @@ const Sidebar = () => {
         bigProfilePic.current.style.display = 'none';
     }
 
+    useEffect(() => {
+        // socket.disconnect();
+    }, []);
 
     return (
         <>
-            <section className='sidebar'>
+            <section ref={sidebar} className='sidebar'>
             <nav>
                 <div> Chatt </div>
                     <div>
@@ -581,7 +671,7 @@ const Sidebar = () => {
                     <ion-icon name="search-outline"></ion-icon>
                 </div>
 
-                <div ref={searchWrapper} className="search-wrapper">
+                <div ref={searchWrapper} className='search-wrapper'>
                     {matchedUsers()}
                 </div>
 
@@ -589,27 +679,18 @@ const Sidebar = () => {
                     {userDisplay()}
                 </div>
 
-                <div className="search-wrapper hidden">
-                <div>
-                        <div>
-                            <img src={defaultPic} alt="" />
-                            <div className='notifications'>
-                                <div>99</div>
-                            </div>
-                        </div>
-                        <div className='details'>
-                            <span>Cecilia Atabong</span>
-                            <p>This is the last time it is yes it is</p>
-                        </div>
-                        <div className="timestamp">
-                            <span>3:45</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             </section>
 
-            <Messages messages={messages} user={user} other={other} otherUser={otherUser} setContainers={setContainers}/>
+            <Messages   messages={messages}
+                        user={user}
+                        other={other}
+                        otherUser={otherUser}
+                        setContainers={setContainers}
+                        setMessages={setMessages}
+                        setState={setState}
+                        setSearchInput={setInput}
+                        socket={socket}/>
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>

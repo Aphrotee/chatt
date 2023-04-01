@@ -38,8 +38,8 @@ class UserController {
                         email: user.email,
                         quote: user.quote,
                         profilePhoto: user.profilePhoto
-                      };
-                      worker.welcomeNewUser.add({ email: user.email, username: user.username });
+                       };
+                      await worker.welcomeNewUser({ email: user.email, username: user.username });
                       res.status(201).json(response);
                     })
                     .catch((err) => {

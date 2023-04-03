@@ -1,6 +1,6 @@
 import './sidebar.scss';
 import Messages from '../Messages/messsages'
-import Pusher from 'pusher-js'
+// import Pusher from 'pusher-js'
 import axios from '../../axios'
 import cookies from '../../cookies';
 import gsap from 'gsap';
@@ -16,9 +16,15 @@ const Sidebar = () => {
     const cookie = cookies.get('X-Token');
     const userId = cookies.get('chatt_userId');
 
+
+    const navigate = useNavigate();
+
     // socket instance
     useEffect(() => {
-        socket = io('http://192.168.21.84:9000');
+        if (!cookie || cookie === null) {
+            navigate('/login');
+        }
+        socket = io('http://172.24.104.242:9000');
         socket.emit('user connect', userId);
         console.log('connecting')
         return () => socket.disconnect();
@@ -64,7 +70,6 @@ const Sidebar = () => {
 
     const [navState, setNavState] = useState(false)
     const visible = () => setNavState(!navState)
-    const navigate = useNavigate();
 
     // State variables
     const [user, setUser] = useState([])
@@ -154,7 +159,7 @@ const Sidebar = () => {
             }
             // axios.get("containers/all", {
             //     headers: {
-            //     'X-Token': cookie
+            //         'X-Token': cookie
             //     }
             // }).then((response) => {
 
@@ -190,7 +195,7 @@ const Sidebar = () => {
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
         socket.emit('open container', id);
-        axios.get(`/messages/${id}/all`, {
+        axios.get(`/messages/${id.toString()}/all`, {
             headers: {
                 'X-Token': cookie
             }
@@ -213,6 +218,40 @@ const Sidebar = () => {
         });
     }
 
+    const getProfilePhoto = (container) => {
+        if (user.profilePhoto === undefined) user.profilePhoto = '';
+        if (container.membersPhotos) {
+            // console.log('first', container.membersPhotos);
+            if (container.membersPhotos.length > 0) {
+                // console.log('second if', container.membersPhotos);
+                const profilePhoto = container.membersPhotos.filter((photo) => {
+                    if (photo !== user.profilePhoto) return true;
+                    return false;
+                });
+                // console.log('third', profilePhoto, user.profilePhoto);
+                if (profilePhoto.length) {
+                    if (profilePhoto[0]) {
+                        return (<img src={profilePhoto[0]} alt="" />);
+                    } else {
+                        return (<img src={defaultPic} />);
+                    }
+                }
+            } else {
+                return (<img src={defaultPic} />);
+            }
+        } else {
+            return (<img src={defaultPic} />);
+        }
+    }
+
+    const getTimestamp = (container) => {
+        if (container.timestamp) {
+            return container.timestamp.time;
+        } else {
+            return '';
+        }
+    }
+
     const userDisplay = () => {
 
         if (containers.length === 0) {
@@ -230,13 +269,13 @@ const Sidebar = () => {
                                              getName(container.membersUsernames.filter(name => name !== user.username));
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
+                                             getContainerProfilePhoto(container);
                                              get_id(container.members.filter(member => member !== user.id));
-                                             getContainer(container);
+                                            //  getContainer(container.members.filter(member => member !== user.id)[0]);
                                              setMembers(container.members);
-                                             mediaQuery()
+                                             mediaQuery();
                                              }}>
-                    <div>
-                        <img src={container.membersPhotos.filter(photo => photo !== user.profilePhoto)? container.membersPhotos.filter(photo => photo !== user.profilePhoto): defaultPic} alt="" />
+                    <div>{getProfilePhoto(container)}
                         <div className='notifications'>
                             <div>99</div>
                         </div>
@@ -247,7 +286,7 @@ const Sidebar = () => {
                         <p>{container.lastMessage}</p>
                     </div>
                     <div className="timestamp">
-                        <span>{container.timestamp.time}</span>
+                        <span>{getTimestamp(container)}</span>
                     </div>
                 </div>)
             })
@@ -259,6 +298,32 @@ const Sidebar = () => {
             ...existingValues,
             name: name,
         }))
+    }
+
+    const getContainerProfilePhoto = (container) => {
+        if (user.profilePhoto === undefined) user.profilePhoto = '';
+        if (container.membersPhotos) {
+            if (container.membersPhotos.length > 0) {
+                const profilePhoto = container.membersPhotos.filter((photo) => {
+                    if (photo !== user.profilePhoto) return true;
+                    return false;
+                });
+                if (profilePhoto.length) {
+                    if (profilePhoto[0]) {
+                        setOther(existingValues => ({
+                            ...existingValues,
+                            profilePhoto: profilePhoto[0]
+                        }));
+                        console.log(other);
+                        return;
+                    }
+                }
+            }
+        }
+        setOther(existingValues => ({
+            ...existingValues,
+            profilePhoto: defaultPic
+        }));
     }
 
     const getlastSeen = (lastSeen) => {
@@ -343,6 +408,7 @@ const Sidebar = () => {
             const otheruser = response.data.membersUsernames.filter((name) => name !== cookies.get('chatt_username'))[0];
             getMessages(containerId, otheruser);
             getId(containerId);
+            getContainerProfilePhoto(response.data);
             setMembers(response.data.members)
           })
     }
@@ -531,6 +597,7 @@ const Sidebar = () => {
         if (!pLoading) {
             const { file_profilephoto } = inputs;
             let objUrl;
+            setPMsg("");
 
             try {
                 objUrl = URL.createObjectURL(file_profilephoto);
@@ -595,53 +662,53 @@ const Sidebar = () => {
     }
 
     const openNameEdit = () => {
-        UsernameRef.current.style.display = 'none';
-        usernameRef.current.style.display = 'none';
-        usernameEditRef.current.style.display = 'flex';
+        if (UsernameRef) UsernameRef.current.style.display = 'none';
+        if (usernameRef) usernameRef.current.style.display = 'none';
+        if (usernameEditRef) usernameEditRef.current.style.display = 'flex';
         
     }
 
     const openQuoteEdit = () => {
-        quoteRef.current.style.display = 'none';
-        QuoteRef.current.style.display = 'none';
-        quoteEditRef.current.style.display = 'flex';
+        if (quoteRef) quoteRef.current.style.display = 'none';
+        if (QuoteRef) QuoteRef.current.style.display = 'none';
+        if (quoteEditRef) quoteEditRef.current.style.display = 'flex';
     }
 
     const closeNameEdit = () => {
-        UsernameRef.current.style.display = 'block';
-        usernameRef.current.style.display = 'block';
-        usernameEditRef.current.style.display = 'none';
+        if (UsernameRef) UsernameRef.current.style.display = 'block';
+        if (usernameRef) usernameRef.current.style.display = 'block';
+        if (usernameEditRef) usernameEditRef.current.style.display = 'none';
         setUMsg("");
     }
 
     const closeQuoteEdit = () => {
-        quoteRef.current.style.display = 'block';
-        QuoteRef.current.style.display = 'block';
-        quoteEditRef.current.style.display = 'none';
+        if (quoteRef) quoteRef.current.style.display = 'block';
+        if (QuoteRef) QuoteRef.current.style.display = 'block';
+        if (quoteEditRef) quoteEditRef.current.style.display = 'none';
         setQMsg("");
     }
 
     const openUploadHandler = () => {
-        uploadBtn.current.style.display = 'none';
-        uploadHandler.current.style.display = 'flex';
+        if (uploadBtn) uploadBtn.current.style.display = 'none';
+        if (uploadHandler) uploadHandler.current.style.display = 'flex';
     }
 
     const closeUploadHandler = () => {
-        uploadBtn.current.style.display = 'block';
-        uploadHandler.current.style.display = 'none';
+        if (uploadBtn) uploadBtn.current.style.display = 'block';
+        if (uploadHandler) uploadHandler.current.style.display = 'none';
         setPMsg("");
     }
 
     const showFullPic = () => {
         if (user.profilePhoto) {
-          smallProfilePic.current.style.display = 'none';
-          bigProfilePic.current.style.display = 'block';
+          if (smallProfilePic) smallProfilePic.current.style.display = 'none';
+          if (bigProfilePic) bigProfilePic.current.style.display = 'block';
         }
     }
 
     const hideFullPic = () => {
-        smallProfilePic.current.style.display = 'block';
-        bigProfilePic.current.style.display = 'none';
+        if (smallProfilePic) smallProfilePic.current.style.display = 'block';
+        if (bigProfilePic) bigProfilePic.current.style.display = 'none';
     }
 
     useEffect(() => {
@@ -712,7 +779,7 @@ const Sidebar = () => {
                     </div>
                     <div className='info'>
                         <div className='username-text' ref={UsernameRef}>{'@' + user.username}</div>
-                        <div className='username-edit' ref={usernameRef} onClick={openNameEdit} ><ion-icon name="create"></ion-icon></div>
+                        <div className='username-edit' ref={usernameRef} onClick={openNameEdit} ><ion-icon name="create-outline"></ion-icon></div>
                         <div>
                             <form name="updateUsernameForm" onSubmit={updateUsername}>
                                 <div className='updateForm' ref={usernameEditRef}>
@@ -724,10 +791,10 @@ const Sidebar = () => {
                             </form>
                         </div>
                     </div>
-                    <div class='message' ref={umsg}>{UMsg}</div>
+                    <div className='message' ref={umsg}>{UMsg}</div>
                     <div className='info'>
                         <div className='quote-text' ref={QuoteRef}>{user.quote}</div>
-                        <div className='quote-edit' ref={quoteRef} onClick={openQuoteEdit} ><ion-icon ame="create"></ion-icon></div>
+                        <div className='quote-edit' ref={quoteRef} onClick={openQuoteEdit} ><ion-icon name="create-outline"></ion-icon></div>
                         <div>
                             <form name="updateQuoteForm" onSubmit={updateStatus}>
                                 <div className='updateForm' ref={quoteEditRef}>
@@ -739,7 +806,7 @@ const Sidebar = () => {
                             </form>
                         </div>
                     </div>
-                    <div class='message' ref={qmsg}>{QMsg}</div>
+                    <div clasName='message' ref={qmsg}>{QMsg}</div>
                     <div className='info'>
                         <div>{user.email}</div>
                     </div>
@@ -755,7 +822,7 @@ const Sidebar = () => {
                             </div>
                         </form>
                     </div>
-                    <div class='message' ref={pmsg}>{PMsg}</div>
+                    <div className='message' ref={pmsg}>{PMsg}</div>
                 </div>
                 <img className='full-pic' ref={bigProfilePic} src={user.profilePhoto? user.profilePhoto: ''} alt={user.profilePhoto? user.name:"No profile photo"} onClick={hideFullPic}/>
             </div>

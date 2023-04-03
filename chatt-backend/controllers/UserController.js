@@ -31,7 +31,7 @@ class UserController {
                   const quote = 'Hi!, lets connect on Chatt Instant Messaging';
                   const profilePhoto = '';
                   Users.create({ username, email, profilePhoto, password: hashedPassword, quote })
-                    .then((user) => {
+                    .then(async (user) => {
                       const response = {
                         id: user._id,
                         username: user.username,
@@ -151,13 +151,16 @@ class UserController {
                   .then((containers) => {
                     if (containers.length) {
                       containers.forEach((container) => {
-                        const otherPhoto = container.membersPhotos.filter((photo) => {
-                          if (photo !== oldPhoto) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        });
+                        let otherPhoto = [''];
+                        if (container.membersPhotos) {
+                          otherPhoto = container.membersPhotos.filter((photo) => {
+                            if (photo !== oldPhoto) {
+                              return true;
+                            } else {
+                              return false;
+                            }
+                          });
+                        }
                         const newPhotos = [...otherPhoto, profilePhoto];
                         MessageContainers.findByIdAndUpdate(container._id, {
                             $set: { membersPhotos: newPhotos }

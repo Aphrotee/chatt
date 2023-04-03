@@ -8,7 +8,13 @@ class MessageContainerController {
     const sender = new mongoose.Types.ObjectId(req.userPayload._id);
     const senderPhoto = req.userPayload.profilePhoto;
     const senderUsername = req.userPayload.username;
-    const receiver = new mongoose.Types.ObjectId(req.receiverId);
+    let receiver;
+
+    if (req.receiverId instanceof String) {
+      receiver = new mongoose.Types.ObjectId(req.receiverId);
+    } else {
+      receiver = req.receiverId;
+    }
 
     MessageContainers.aggregate([
       { $match: { members: { $all: [sender, receiver] } } }
@@ -62,7 +68,7 @@ class MessageContainerController {
   }
 
   getContainerById(req, res) {
-    const id = new mongoose.Types.ObjectId(req.containerId);
+    const id = new mongoose.Types.ObjectId(req.containerId.toString());
 
     MessageContainers.findById(id)
       .then((data) => {

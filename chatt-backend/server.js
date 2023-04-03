@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 // api routes
 
-app.get('/', appController.home);
+// app.get('/', appController.home);
 
 app.get('/api/v1/status', appController.status);
 

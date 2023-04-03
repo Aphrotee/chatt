@@ -9,7 +9,7 @@ import {
           Routes,
           Route
         } from 'react-router-dom'
-import Sidebar from './components/Sidebar/sidebar'
+import Sidebar from './components/Sidebar/sidebar';
 import Home from './components/Home/home';
 import './index.scss';
 

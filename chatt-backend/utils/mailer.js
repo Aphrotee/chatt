@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import sendGrid from '@sendgrid/mail';
+// import sendGrid from '@sendgrid/mail';
 
 const mailer = async (email, subject, body) => {
   const transporter = nodemailer.createTransport({

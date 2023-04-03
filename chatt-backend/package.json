@@ -28,6 +28,7 @@
     "mongoose": "^7.0.1",
     "morgan": "^1.10.0",
     "node-datetime": "^2.1.2",
+    "node-pre-gyp": "^0.17.0",
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.21",
     "pusher": "^5.1.2",

@@ -6,7 +6,8 @@ class SocketIO {
     const io = require('socket.io')(server, {
       pingTimeout: 60000,
       cors: {
-        origin: 'http://127.0.0.1:5173'
+        // origin: 'http://127.0.0.1:5173'
+        origin: 'https://chatt-z6ew.onrender.com'
       }
     });
     return io;

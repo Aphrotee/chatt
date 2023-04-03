@@ -10,9 +10,9 @@ const welcomeNewUser = async (job) => {
   } else {
     const username = job.username;
     const subject = "Welcome to Chatt Instant Messaging";
-    const message = `Dear ${username},\n\nYou have successfully created a Chatt Instant Messaging\
- account.\nWe are more than happy to welcome you to use Chatt to send messages to your friends,\
- colleauges and loved ones.\n\nRegards,\nChatt Instant Messaging Team`;
+    const message = `Dear ${username},<br><br>You have successfully created a Chatt Instant Messaging\
+ account.<br>We are more than happy to welcome you to use Chatt to send messages to your friends,\
+ colleauges and loved ones.<br><br>Regards,<br>Chatt Instant Messaging Team`;
     await mailer(job.email, subject, message);
   }
 };
@@ -32,10 +32,10 @@ const sendOtpEmail = async (job) => {
     const subject = "Password Reset";
     const expireBy = job.expireBy;
     const otp = job.otp;
-    const message = `Dear ${username},\n\nYou have requested for a password reset, the OTP for
+    const message = `Dear ${username},<br><br>You have requested for a password reset, the OTP for
  reseting your password is <strong>${otp}</strong>. This otp will expire by ${expireBy}.
-\nIf this wasn't you, please discard this email.
-\n\nRegards,\nChatt Instant Messaging Team`;
+ <br>If this wasn't you, please discard this email.
+<br><br>Regards,<br>Chatt Instant Messaging Team`;
     await mailer(job.email, subject, message);
   }
 };

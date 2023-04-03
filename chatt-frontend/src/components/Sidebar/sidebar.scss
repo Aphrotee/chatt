@@ -34,7 +34,7 @@
 
 .profile-background {
     width: 100vw;
-    height: 100vh;
+    height: 1000vh;
     position: absolute;
     background: black;
     z-index:1;
@@ -48,12 +48,12 @@
 
 .profile-wrapper {
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     position: absolute;
     z-index:1;
     opacity: 1;
     bottom: auto;
-    top: 8vh;
+    top: 2;
     justify-content: center;
     align-items: center;
     display: none;
@@ -69,7 +69,7 @@
    background-color: white;
    position: absolute;
    z-index: 1;
-   top: 0;
+   top: 5;
    align-items: center;
    border-radius: 10px;
    opacity: 1;
@@ -125,9 +125,12 @@
         &>.username-text, &>.username-edit, &>.quote-text, &>.quote-edit {
             margin-right: 8px;
         }
+
         .username-edit, .quote-edit {
+            margin-top: 3px;
             cursor: pointer;
         }
+
         .updateForm {
             display: none;
             flex-direction: row;
@@ -136,10 +139,10 @@
                     justify-content: center;
                     width: 150px;
                 }
-
             }
         }
     }
+
     &>.other-options {
         display: flex;
         align-self: flex-start;
@@ -311,7 +314,7 @@
     display: none;
     position: absolute;
     z-index: 1;
-    top: 0;
+    top: 1;
 }
 
 .sidebar {

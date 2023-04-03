@@ -1,10 +1,12 @@
 import redis from 'redis';
 
+const REDIS_URI= "redis://Chatt:Chatt@2106@redis-17890.c74.us-east-1-4.ec2.cloud.redislabs.com:17890";
+
 class RedisClient {
   constructor() {
     this.alive = true;
     this.client = redis.createClient({
-        url: process.env.REDIS_URI
+        url: process.env.REDIS_URI || REDIS_URI
     });
     this.client.connect();
     this.client.on('connect', () => {

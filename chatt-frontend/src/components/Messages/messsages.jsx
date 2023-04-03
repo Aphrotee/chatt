@@ -2,7 +2,8 @@ import './messages.scss';
 import axios from '../../axios'
 import cookies from '../../cookies'
 import { v4 } from 'uuid';
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react';
+const defaultPic = '../../src/images/profile (1).png';
 
 
 const Messages = ({ messages, user, other, otherUser, setContainers, setState, setSearchInput, socket, setMessages}) => {
@@ -10,14 +11,13 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
     const [input, setInput] = useState('')
     const scrollbar = useRef(null);
     const lastMessage = useRef(null);
-    const setRef = useCallback(node => {
-        if (node) { node.scrollIntoView({ smooth: true }); }
-    })
+    const message = useRef(null);
+    const messagesRef = useRef(null);
     const cookie = cookies.get('X-Token');
 
     useEffect(() => {
         const query = window.matchMedia("(max-width: 768px)");
-        if (query.matches || !media) {
+        if (query.matches/** || !media*/) {
             message.current.style.display = 'block';
         }
     }, [])
@@ -59,26 +59,57 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
         if (lastMessage.current !== null) {
             lastMessage.current.scrollIntoView({ smooth: true });
         }
+        if (messagesRef.current !== null) {
+            messagesRef.current.style.marginTop = '4em';
+        }
     }, [messages]);
 
     const display = () => {
-        if (messages.length === 0 && otherUser === null) {
-            return (
-            <div ref={scrollbar} className="empty">
-                <div>
-                    <img src="../../src/images/undraw_modern_life_re_8pdp.svg" alt="" />
-                </div>
-                <div>
-                    <p>Chatt Instant Messaging</p>
-                    <p>Send instant messages to friends and loved ones to keep in touch with another</p>
-                </div>
-            </div>)
+        if (messages !== undefined) {
+            if (messages.length === 0 && otherUser === null) {
+                return (
+                <div ref={scrollbar} className="empty">
+                    <div>
+                        <img src="../../src/images/undraw_modern_life_re_8pdp.svg" alt="" />
+                    </div>
+                    <div>
+                        <p>Chatt Instant Messaging</p>
+                        <p>Send instant messages to friends and loved ones to keep in touch with another</p>
+                    </div>
+                </div>)
+            }
+        }
+
+        const getProfilePhoto = (container) => {
+            if (user !== undefined) {
+                if (user.profilePhoto === undefined) user.profilePhoto = '';
+                if (container.profilePhoto) return (<img src={container.profilePhoto} alt={container.name} />);
+                if (container.membersPhotos) {
+                    if (container.membersPhotos.length > 0) {
+                        const profilePhoto = container.membersPhotos.filter((photo) => {
+                            if (photo !== user.profilePhoto) return true;
+                            return false;
+                        });
+                        if (profilePhoto.length) {
+                            if (profilePhoto[0]) {
+                                return (<img src={profilePhoto[0]} alt="" />);
+                            } else {
+                                return (<img src={defaultPic} />);
+                            }
+                        }
+                    } else {
+                        return (<img src={defaultPic} />);
+                    }
+                } else {
+                    return (<img src={defaultPic} />);
+                }
+            }
         }
 
         return (
             <>
             <div className="user-nav">
-                <div><img src="../../src/images/profile (1).png" alt="" /></div>
+                <div>{getProfilePhoto(other)}</div>
                 <div>
                     <p>{other.name}</p>
                     <p>Last reply at {other.lastSeen}</p>
@@ -103,7 +134,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
                 })}
             </div>
 
-                <div className="search-bar">
+            <div className="search-bar">
                 <form onSubmit={sendMessage}>
                     <div className="icons">
                         <ion-icon name="happy-outline"></ion-icon>
@@ -119,20 +150,17 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
                         <ion-icon name="paper-plane"></ion-icon>
                     </button>
                 </form>
-                </div>
+            </div>
                 </>
             )
         }
-    }
 
-
-    return (
-        <section ref={message} className='messages-wrapper'>
-
-            {display()}
-
-        </section>
+        return (
+            <section ref={message} className='messages-wrapper'>
+                {display()}
+            </section>
         );
+    }
 
 
 export default Messages;

@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import path from 'path';
 dotenv.config();
 import db from './utils/db.js';
 import socketIO from './utils/socketio.cjs';
@@ -29,7 +30,7 @@ app.use(cookieParser());
 
 // api routes
 
-app.get('/', appController.home);
+// app.get('/', appController.home);
 
 app.get('/api/v1/status', appController.status);
 
@@ -66,6 +67,18 @@ app.param('receiverId', (req, res, next, value) => { req.receiverId = value; nex
 app.get('/api/v1/container/:receiverId', verifyToken, messageContainerController.getContainer);
 
 app.get('/api/v1/containers/all', verifyToken, messageContainerController.allContainers);
+
+const __dirname1 = path.resolve();
+
+if (process.env.NODE_ENV === 'production') {
+  app.use((express.static(path.join(__dirname1, '/chatt-frontend'))));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname1, 'chatt-frontend', 'dist', 'index.html'));
+  })
+} else {
+  app.get('/', appController.home);
+}
 
 
 // listener

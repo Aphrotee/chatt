@@ -3,7 +3,7 @@ import axios from '../../axios'
 import cookies from '../../cookies'
 import { v4 } from 'uuid';
 import { useState, useRef, useEffect, useCallback } from 'react';
-const defaultPic = '../../src/images/profile (1).png';
+const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 
 
 const Messages = ({ messages, user, other, otherUser, setContainers, setState, setSearchInput, socket, setMessages}) => {
@@ -70,7 +70,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
                 return (
                 <div ref={scrollbar} className="empty">
                     <div>
-                        <img src="../../src/images/undraw_modern_life_re_8pdp.svg" alt="" />
+                            <img src={import.meta.env.VITE_EMPTY_MESSAGE_SVG} alt="" />
                     </div>
                     <div>
                         <p>Chatt Instant Messaging</p>

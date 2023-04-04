@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import { useEffect, useState, useRef, createRef } from 'react'
 import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
-const defaultPic = '../../src/images/profile (1).png';
+const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 let socket;
 
 
@@ -24,7 +24,8 @@ const Sidebar = () => {
         if (!cookie || cookie === null) {
             navigate('/login');
         }
-        socket = io('http://172.24.104.242:9000');
+        // socket = io('http://172.27.31.67:9000');
+        socket = io('https://chatt.cyclic.app');
         socket.emit('user connect', userId);
         console.log('connecting')
         return () => socket.disconnect();
@@ -657,6 +658,52 @@ const Sidebar = () => {
                     ploadingx.current.style.opacity = 1
                     ploadingx.current.style.cursor = 'pointer';
                   });
+            }
+        }
+    }
+
+    const uploadPhotos = (event) => {
+        event.preventDefault();
+        if (!pLoading) {
+            const { file_profilephoto } = inputs;
+            let objUrl;
+            setPMsg("");
+
+            try {
+                objUrl = URL.createObjectURL(file_profilephoto);
+            } catch {
+                applyPMessage('please choose photo', false);
+                return;
+            }
+            setImage(objUrl);
+
+            const formData = new FormData();
+            formData.append('file', file_profilephoto);
+            formData.append('upload_preset', 'chattprofilephoto');
+            let url;
+
+            if (!file_profilephoto) {
+                applyPMessage('Please choose photo, false');
+            } else {
+                setULoading(!pLoading);
+                ploading.current.style.opacity = 0.6
+                ploading.current.style.cursor = 'not-allowed';
+                ploadingx.current.style.opacity = 0.6
+                ploadingx.current.style.cursor = 'not-allowed';
+
+
+                axios.post(
+                    'https://api.cloudinary.com/v1_1/dd0lgcva4/image/upload',
+                    formData
+                )
+                    .then((response) => {
+                        url = response.data['secure_url'];
+                        console.log(formData, url);
+                        ploading.current.style.opacity = 1
+                        ploading.current.style.cursor = 'pointer';
+                        ploadingx.current.style.opacity = 1
+                        ploadingx.current.style.cursor = 'pointer';
+                    })
             }
         }
     }

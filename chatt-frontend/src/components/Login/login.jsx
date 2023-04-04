@@ -38,7 +38,6 @@ const Login = () => {
     }
     const loginUser = (event) => {
       event.preventDefault();
-      console.log(Loading);
       if (!Loading) {
         const { email, password } = inputs;
 
@@ -48,13 +47,11 @@ const Login = () => {
         } else if (!password) {
           applyMessage("Please enter password", false)
         } else {
-          console.log(email, password);
           setLoading(!Loading);
           setLoginBtn("Logging in...");
           loading.current.style.opacity = 0.6
           loading.current.style.cursor = 'not-allowed';
           const auth = base64.encode(`${email}:${password}`);
-          console.log(auth);
           const authorization = `Bearer ${auth}`;
           axios({
             url: '/auth/login',

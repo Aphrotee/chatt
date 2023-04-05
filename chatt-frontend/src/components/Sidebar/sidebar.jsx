@@ -436,7 +436,7 @@ const Sidebar = () => {
                         get_id(user.id);
                         }} >
                         <div>
-                            <img src={user.profilePhoto? user.profilePhoto: defaultPic} alt={user.profilePhoto? user.name:"No profile photo"} />
+                            <img src={user.profilePhoto? user.profilePhoto: defaultPic} alt={user && user.profilePhoto? user.name:"No profile photo"} />
                         </div>
                         <div className='details'>
                             <span>{user.username}</span>
@@ -621,7 +621,6 @@ const Sidebar = () => {
                 ploading.current.style.cursor = 'not-allowed';
                 ploadingx.current.style.opacity = 0.6
                 ploadingx.current.style.cursor = 'not-allowed';
-            
 
                 axios.post(
                     'https://api.cloudinary.com/v1_1/dd0lgcva4/image/upload',
@@ -822,7 +821,7 @@ const Sidebar = () => {
                         </div>
                     </div>
                     <div>
-                        <img style={{borderRadius: '50%', marginBottom: '5px'}} ref={smallProfilePic} src={user.profilePhoto? user.profilePhoto: defaultPic} alt={user.profilePhoto? user.name:"No profile photo"} width={256} height={256} onClick={showFullPic} />
+                        <img style={{ borderRadius: '50%', marginBottom: '5px' }} ref={smallProfilePic} src={user.profilePhoto ? user.profilePhoto : defaultPic} alt={user && user.profilePhoto? user.name:"No profile photo"} width={256} height={256} onClick={showFullPic} />
                     </div>
                     <div className='info'>
                         <div className='username-text' ref={UsernameRef}>{'@' + user.username}</div>
@@ -871,7 +870,7 @@ const Sidebar = () => {
                     </div>
                     <div className='message' ref={pmsg}>{PMsg}</div>
                 </div>
-                <img className='full-pic' ref={bigProfilePic} src={user.profilePhoto? user.profilePhoto: ''} alt={user.profilePhoto? user.name:"No profile photo"} onClick={hideFullPic}/>
+                <img className='full-pic' ref={bigProfilePic} src={user.profilePhoto ? user.profilePhoto : ''} alt={user && user.profilePhoto? user.name:"No profile photo"} onClick={hideFullPic}/>
             </div>
         </>
         );

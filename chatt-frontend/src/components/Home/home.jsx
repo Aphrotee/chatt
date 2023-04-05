@@ -6,9 +6,8 @@ import Login from '../Login/login.jsx';
 
 const Home = () => {
     const cookie = cookies.get('X-Token');
-    const navigate = useNavigate();
 
-    if (!cookie) {
+    if (!cookie || cookie === null || cookie === '' || cookie === undefined) {
         return (<Login />);
     } else {
         return (<Messages />);

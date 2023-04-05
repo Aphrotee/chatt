@@ -65,7 +65,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
     }, [messages]);
 
     const display = () => {
-        if (messages !== undefined) {
+        if (messages !== undefined && other) {
             if (messages.length === 0 && otherUser === null) {
                 return (
                 <div ref={scrollbar} className="empty">
@@ -83,7 +83,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
         const getProfilePhoto = (container) => {
             if (user !== undefined) {
                 if (user.profilePhoto === undefined) user.profilePhoto = '';
-                if (container.profilePhoto) return (<img src={container.profilePhoto} alt={container.name} />);
+                if (container.profilePhoto) return (<img src={container.profilePhoto} alt={container? container.name: ''} />);
                 if (container.membersPhotos) {
                     if (container.membersPhotos.length > 0) {
                         const profilePhoto = container.membersPhotos.filter((photo) => {
@@ -111,8 +111,8 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
             <div className="user-nav">
                 <div>{getProfilePhoto(other)}</div>
                 <div>
-                    <p>{other.name}</p>
-                    <p>Last reply at {other.lastSeen}</p>
+                    <p>{other? other.name: ""}</p>
+                        <p>{other ? `Last reply at ${other.lastSeen}`: ''}</p>
                 </div>
                 <div>
                     <ion-icon name="call-outline"></ion-icon>

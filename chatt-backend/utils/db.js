@@ -54,7 +54,7 @@ class DBClient {
               MessageContainerController.findById(new mongoose.Types.ObjectId(id))
                 .then((container) => {
                   const members = container.members;
-                  console.log('emitting update in container:', container._id);
+                  console.log('emitting update in container:', container._id.toString());
                   socket.emit('container updated', { members, container });
                 })
             }

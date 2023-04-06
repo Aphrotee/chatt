@@ -1,12 +1,15 @@
 import './sidebar.scss';
 import Messages from '../Messages/messsages'
-// import Pusher from 'pusher-js'
+import Navbar from '../Navbar/navbar'
 import axios from '../../axios'
 import cookies from '../../cookies';
 import gsap from 'gsap';
 import { useEffect, useState, useRef, createRef } from 'react'
 import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch} from 'react-redux'
+import { useMediaQuery } from 'react-responsive'
+import { Display } from '../../actions/display';
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 let socket;
 
@@ -15,9 +18,22 @@ const Sidebar = () => {
     // browser cookie
     const cookie = cookies.get('X-Token');
     const userId = cookies.get('chatt_userId');
-
-
+    const display = useSelector(state => state.setDisplay)
+    const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
     const navigate = useNavigate();
+    const dispatch = useDispatch()
+
+    // responsive based on media width
+    useEffect(() => {
+
+        if (!isMobile || (isMobile && display)) {
+            sidebar.current.style.display = 'block';
+
+        } else if (isMobile && !display) {
+            sidebar.current.style.display = 'none';
+        }
+
+    }, [display, isMobile])
 
     // socket instance
     useEffect(() => {
@@ -42,6 +58,7 @@ const Sidebar = () => {
 
     // DOM references
     const chatt = useRef()
+    const sidebar = useRef()
     const loader = useRef()
     const details = useRef()
     const uloading = useRef(null);
@@ -58,7 +75,6 @@ const Sidebar = () => {
     const QuoteRef = useRef(null);
     const quoteEditRef = useRef(null);
     const loading = useRef(null);
-    const sidebar = useRef()
     const searchWrapper = useRef(null)
     const profileWrapper = useRef(null);
     const fileSelector = useRef(null);
@@ -267,12 +283,12 @@ const Sidebar = () => {
             containers.map((container) => {
                 return (<div className="wrap" key={container._id}
                              onClick={(e) => {getMessages(container._id);
+                                             dispatch(Display());
                                              getName(container.membersUsernames.filter(name => name !== user.username));
                                              getlastSeen( container.timestamp.time);
                                              getId(container._id);
                                              getContainerProfilePhoto(container);
                                              get_id(container.members.filter(member => member !== user.id));
-                                            //  getContainer(container.members.filter(member => member !== user.id)[0]);
                                              setMembers(container.members);
                                              mediaQuery();
                                              }}>
@@ -466,7 +482,7 @@ const Sidebar = () => {
         }
         setUMsg(message);
     }
-    
+
     const applyQMessage = (message, success) => {
         if (success) {
           qmsg.current.style.color = 'green';
@@ -537,7 +553,7 @@ const Sidebar = () => {
         event.preventDefault();
         if (!uLoading) {
           const { username } = inputs;
-  
+
           setUMsg("");
           if (!username) {
             applyUMessage("Please enter username", false)
@@ -711,7 +727,7 @@ const Sidebar = () => {
         if (UsernameRef) UsernameRef.current.style.display = 'none';
         if (usernameRef) usernameRef.current.style.display = 'none';
         if (usernameEditRef) usernameEditRef.current.style.display = 'flex';
-        
+
     }
 
     const openQuoteEdit = () => {
@@ -764,20 +780,7 @@ const Sidebar = () => {
     return (
         <>
             <section ref={sidebar} className='sidebar'>
-            <nav>
-                <div> Chatt </div>
-                    <div>
-                        <div onClick={visible}>
-                            <ion-icon name="ellipsis-vertical"></ion-icon>
-                        </div>
-                        <div className={navState ? "dropdown": "hidden"}>
-                        <ul>
-                            <li onClick={showProfile}>Profile</li>
-                            <li onClick={logout}>Log Out</li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <Navbar />
             <div className='chats'>
                 <div className='menu'>
                     <input type="search" placeholder='Search to start a converstion' value={input || ''} onClick={getUsers} onChange={handleChange} />

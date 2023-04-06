@@ -3,10 +3,13 @@ import axios from '../../axios'
 import cookies from '../../cookies'
 import { v4 } from 'uuid';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector} from 'react-redux'
+import { useMediaQuery } from 'react-responsive'
+import { Display } from '../../actions/display';
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 
 
-const Messages = ({ messages, user, other, otherUser, setContainers, setState, setSearchInput, socket, setMessages}) => {
+const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, setMessages}) => {
 
     const [input, setInput] = useState('')
     const scrollbar = useRef(null);
@@ -14,13 +17,21 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
     const message = useRef(null);
     const messagesRef = useRef(null);
     const cookie = cookies.get('X-Token');
-
+    const isMobile = useMediaQuery({query: `(max-width: 768px)`});
+    const messageDisplay = useSelector(state => state.setDisplay);
+    const dispatch = useDispatch()
+    const match = window.matchMedia('(max-width: 768px)').matches
+    // responsive based on media width
     useEffect(() => {
-        const query = window.matchMedia("(max-width: 768px)");
-        if (query.matches/** || !media*/) {
+
+        if (!isMobile || (isMobile && !messageDisplay)) {
             message.current.style.display = 'block';
+
+        } else if (isMobile && messageDisplay) {
+            message.current.style.display = 'none';
         }
-    }, [])
+
+    }, [messageDisplay, isMobile])
 
     const sendMessage = async (e) => {
         e.preventDefault()
@@ -109,6 +120,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
         return (
             <>
             <div className="user-nav">
+                {match ? <span onClick={() => dispatch(Display())}><ion-icon name="arrow-back-outline"></ion-icon></span> : null}
                 <div>{getProfilePhoto(other)}</div>
                 <div>
                     <p>{other? other.name: ""}</p>

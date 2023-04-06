@@ -120,7 +120,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
             </div>
 
             <div ref={scrollbar} className='messages'>
-                {messages.map((message, index) => {
+                {messages? messages.map((message, index) => {
                     const LastMssage = messages.length - 1 === index;
                     if (Object.keys(message).length !== 0 && user !== undefined) {
                         return (
@@ -131,7 +131,7 @@ const Messages = ({ messages, user, other, otherUser, setContainers, setState, s
                             </div>
                         )
                     }
-                })}
+                }): <div></div>}
             </div>
 
             <div className="search-bar">

@@ -264,7 +264,7 @@ const Sidebar = () => {
         }
 
         return (
-            containers.map((container) => {
+            containers? containers.map((container) => {
                 return (<div className="wrap" key={container._id}
                              onClick={(e) => {getMessages(container._id);
                                              getName(container.membersUsernames.filter(name => name !== user.username));
@@ -290,7 +290,7 @@ const Sidebar = () => {
                         <span>{getTimestamp(container)}</span>
                     </div>
                 </div>)
-            })
+            }) : <div></div>
         )
     }
 
@@ -427,7 +427,7 @@ const Sidebar = () => {
             return (<div className='noUser' >No users found</div>)
         } else {
 
-            return match.map((user) => {
+            return match? match.map((user) => {
                 console.log('user', user)
                 return (
                     <div className='wrap' onClick={() => {
@@ -444,7 +444,7 @@ const Sidebar = () => {
                         </div>
                     </div>
                 )
-            });
+            }): <div></div>;
         }
     }
 

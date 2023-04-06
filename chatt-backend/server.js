@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
+import engines from 'consolidate';
 dotenv.config();
 import db from './utils/db.js';
 import socketIO from './utils/socketio.cjs';
@@ -72,9 +73,12 @@ const __dirname1 = path.resolve();
 
 if (process.env.NODE_ENV === 'production') {
   app.use((express.static(path.join(__dirname1, '/chatt-frontend'))));
+  app.set('views', __dirname1 + '/chatt-frontend' + '/dist');
+  app.engine('html', engines.mustache);
+  app.set('view engine', 'html');
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname1, 'chatt-frontend', 'dist', 'index.html'));
+    res.render(path.resolve(__dirname1, 'chatt-frontend', 'dist', 'index.html'));
   })
 } else {
   app.get('/', appController.home);

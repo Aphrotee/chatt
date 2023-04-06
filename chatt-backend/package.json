@@ -33,6 +33,7 @@
     "nodemon": "^2.0.21",
     "pusher": "^5.1.2",
     "redis": "^4.6.5",
+    "redux-thunk": "^2.4.2",
     "sinon": "^15.0.2",
     "socket.io": "^4.6.1"
   }

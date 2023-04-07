@@ -74,6 +74,11 @@
    border-radius: 10px;
    opacity: 1;
 
+   &>div:nth-child(2) img{
+    object-fit: cover;
+    aspect-ratio: 16/9;
+    }
+
    &>.header-box {
         display: flex;
         width: 100%;
@@ -451,7 +456,8 @@
             }
         }
 
-        .chats-wrapper > div:hover, .search-wrapper > div:hover {
+
+        .chats-wrapper > div:hover, .search-wrapper > div:not(.noUser):hover {
             cursor: pointer;
             border-left:3px solid index.$primary-color;
         }
@@ -520,13 +526,6 @@
                     float: right;
                 }
             }
-        }
-        .search-wrapper {
-            display: none;
-            position: absolute;
-            flex-direction: column;
-            z-index: 1;
-            box-shadow: 2px 0 10px rgba(128, 128, 128, 0.705);
         }
     }
 }

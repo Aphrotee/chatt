@@ -9,22 +9,25 @@ import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch} from 'react-redux'
 import { useMediaQuery } from 'react-responsive'
-import { Display } from '../../actions/display';
+import { Display, profileDisplay} from '../../actions/display';
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 let socket;
-
 
 const Sidebar = () => {
     // browser cookie
     const cookie = cookies.get('X-Token');
     const userId = cookies.get('chatt_userId');
     const display = useSelector(state => state.setDisplay)
+    const displayProfile = useSelector(state => state.profileDisplay)
     const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
     const navigate = useNavigate();
     const dispatch = useDispatch()
+    const [state, setState] = useState(true);
+    const [input, setInput] = useState(null);
 
     // responsive based on media width
     useEffect(() => {
+        if (!input) setState(true)
 
         if (!isMobile || (isMobile && display)) {
             sidebar.current.style.display = 'block';
@@ -33,7 +36,7 @@ const Sidebar = () => {
             sidebar.current.style.display = 'none';
         }
 
-    }, [display, isMobile])
+    }, [display, isMobile, input])
 
     // socket instance
     useEffect(() => {
@@ -96,7 +99,6 @@ const Sidebar = () => {
     const [QMsg, setQMsg] = useState("");
     const pmsg = useRef(null);
     const [PMsg, setPMsg] = useState("");
-    const [input, setInput] = useState(null);
     const [inputs, setInputs] = useState({});
     const [image, _setImage] = useState(null);
     const [messages, setMessages] = useState([])
@@ -106,11 +108,9 @@ const Sidebar = () => {
     const [pLoading, setPLoading] = useState(false);
     const [Loading, setLoading] = useState(false);
     const [members, setMembers] = useState([])
-    const [state, setState] = useState(true);
     const [userConnected, setUserConnected] = useState(false);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
-    const [profileState, setProfileState] = useState(false);
     const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
 
     useEffect(() => {
@@ -136,6 +136,7 @@ const Sidebar = () => {
 
                 setContainers(response.data)
                 })
+
         axios.get('/users/me', {
             headers: {
                 'X-Token': cookie
@@ -144,6 +145,15 @@ const Sidebar = () => {
             setUser(response.data);
         });
     }, []);
+
+    useEffect(() => {
+        if (displayProfile) {
+            profileWrapper.current.style.display = 'block';
+        } else {
+            profileWrapper.current.style.display = 'none';
+        }
+
+    }, [displayProfile])
 
 
     const setContainersOnly = (oldContainers, updatedContainer) => {
@@ -201,13 +211,6 @@ const Sidebar = () => {
         return () => socket.off('container updated');
     });
 
-    const mediaQuery = () => {
-        const query = window.matchMedia("(max-width: 768px)");
-        if (query.matches && media) {
-            sidebar.current.style.display = 'none';
-            setMedia(!state)
-        }
-    }
 
     const getMessages = (id, otheruser) => {
         setOtherUser(otheruser);
@@ -290,7 +293,6 @@ const Sidebar = () => {
                                              getContainerProfilePhoto(container);
                                              get_id(container.members.filter(member => member !== user.id));
                                              setMembers(container.members);
-                                             mediaQuery();
                                              }}>
                     <div>{getProfilePhoto(container)}
                         <div className='notifications'>
@@ -387,19 +389,16 @@ const Sidebar = () => {
           });
     }
 
-    const setBorder = () => {
-
-    }
 
     const handleChange = (event) => {
         const query = event.target.value;
 
         if (!query) {
-            searchWrapper.current.style.display = 'none';
             setInput(null);
+            setState(true)
         } else {
-            searchWrapper.current.style.display = 'flex';
             setInput(query);
+            setState(false)
         }
     }
 
@@ -444,7 +443,6 @@ const Sidebar = () => {
         } else {
 
             return match? match.map((user) => {
-                console.log('user', user)
                 return (
                     <div className='wrap' onClick={() => {
                         getContainer(user.id);
@@ -462,16 +460,6 @@ const Sidebar = () => {
                 )
             }): <div></div>;
         }
-    }
-
-    const removeProfile = () => {
-        profileBackground.current.style.display = 'none';
-        profileWrapper.current.style.display = 'none';
-    }
-
-    const showProfile = () => {
-        profileBackground.current.style.display = 'flex';
-        profileWrapper.current.style.display = 'flex';
     }
 
     const applyUMessage = (message, success) => {
@@ -787,7 +775,7 @@ const Sidebar = () => {
                     <ion-icon name="search-outline"></ion-icon>
                 </div>
 
-                <div ref={searchWrapper} className='search-wrapper'>
+                <div ref={searchWrapper} className={state? 'hidden': 'search-wrapper'}>
                     {matchedUsers()}
                 </div>
 
@@ -819,7 +807,7 @@ const Sidebar = () => {
                 <div className="user-profile-box" >
                     <div className="header-box">
                         <div className="header-text" >Profile</div>
-                        <div className="exit" onClick={removeProfile} >
+                        <div className="exit" onClick={() => dispatch(profileDisplay())} >
                             <ion-icon name="close-outline"></ion-icon>
                         </div>
                     </div>

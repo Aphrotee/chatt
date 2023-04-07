@@ -10,7 +10,7 @@ const setDisplay = (state = true, action) => {
     }
 }
 
-const profileDisplay = (state = true, action) => {
+const profileDisplay = (state = false, action) => {
     switch(action.type) {
         case "PROFILE-DISPLAY":
             return !state

@@ -54,7 +54,7 @@ const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, 
                 'X-Token': cookie
              }
         })
-        setState(true);
+        // setState(true);
 
         // axios.get("containers/all", {
         //     headers: {

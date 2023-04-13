@@ -115,15 +115,16 @@
 
     .messages {
         z-index: -2;
-        height: 86.9%;
+        height: 82.9%;
         overflow-y: scroll;
         overflow-x:hidden;
         scrollbar-width: 5px;
         scrollbar-color: darkgray;
         scrollbar-base-color: aqua;
+        padding-top: 50px;
 
         &>div:last-child {
-            padding-bottom: 1.5em;
+            // padding-bottom: 1.5em;
         }
 
 

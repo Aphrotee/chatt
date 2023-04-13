@@ -49,8 +49,8 @@ const Sidebar = () => {
         if (!cookie || cookie === null) {
             navigate('/login');
         }
-        socket = io('http://172.29.220.240:9000');
-        // socket = io('https://chatt.cyclic.app');
+        // socket = io('http://172.29.220.240:9000');
+        socket = io('https://chatt.cyclic.app');
         socket.emit('user connect', userId);
         console.log('connecting')
         return () => socket.disconnect();

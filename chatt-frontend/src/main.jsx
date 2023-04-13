@@ -24,7 +24,7 @@ import './index.scss';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-    <Router>
+    <Router basename='/chatt'>
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/messages" element={<Sidebar />}></Route>

@@ -10,13 +10,17 @@ import { userContainer } from '../../actions/container';
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 
 
-const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, setMessages }) => {
+const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, setMessages, socket }) => {
 
-    const [input, setInput] = useState('')
+    const [input, setInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+    const [typing, setTyping] = useState(false);
+    const [startTyping, setStartTyping] = useState(0);
     const scrollbar = useRef(null);
     const lastMessage = useRef(null);
     const message = useRef(null);
     const messagesRef = useRef(null);
+    const typingRef = useRef(null);
     const cookie = cookies.get('X-Token');
     const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
     const messageDisplay = useSelector(state => state.setDisplay);
@@ -50,6 +54,7 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
         setInput("")
         dispatch(userContainer());
         setSearchInput("");
+        setTyping(false);
         if (msg.length === 0) {
             return;
         }
@@ -81,6 +86,59 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
         }
     }, [messages]);
 
+    useEffect(() => {
+        setTimeout(() => {
+            const now = Date.now();
+            if (now - startTyping >= 3000) {
+                setTyping(false);
+            }
+        }, 3000);
+    }, [startTyping]);
+
+    const handleTyping = (e) => {
+        setInput(e.target.value);
+        setStartTyping(Date.now());
+        if (input) {
+            setTyping(true);
+        } else {
+            setTyping(false);
+        }
+    };
+
+    useEffect(() => {
+        if (typing) {
+            socket.emit('typing', { sender: user.id, container: other.id, receiver: other.otherId });
+        } else {
+            socket.emit('not typing', { sender: user.id, container: other.id, receiver: other.otherId });
+        }
+    }, [typing]);
+
+    useEffect(() => {
+        socket.on('is typing', (data) => {
+            if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
+                setIsTyping(true);
+            }
+        });
+
+        socket.on('is not typing', (data) => {
+            if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
+                setIsTyping(false);
+            }
+        });
+        return () => {
+            socket.off('is typing');
+            socket.off('is not typing');
+        }
+    });
+
+    useEffect(() => {
+        if (isTyping) {
+            typingRef.current.style.display = 'block';
+        } else {
+            typingRef.current.style.display = 'none';
+        }
+    })
+
     const displayMessage = () => {
         // console.log(other)
         if (messages) {
@@ -88,7 +146,7 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
                 return (
                 <div ref={scrollbar} className="empty">
                     <div>
-                            <img src={import.meta.env.VITE_EMPTY_MESSAGE_SVG} alt="" />
+                        <img src={import.meta.env.VITE_EMPTY_MESSAGE_SVG} alt="" />
                     </div>
                     <div>
                         <p>Chatt Instant Messaging</p>
@@ -153,6 +211,7 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
                     }
                 }): <div></div>}
             </div>
+            <div className='Typing' ref={typingRef}>typing...</div>
 
             <div className="search-bar">
                 <form onSubmit={sendMessage}>
@@ -162,7 +221,7 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
                     </div>
 
                     <input value={input}
-                           onChange={(e) => setInput(e.target.value)}
+                           onChange={handleTyping}
                            type="search" name="" id=""
                            placeholder='Send a Message'/>
 

@@ -32,6 +32,12 @@ class DBClient {
             socket.join(containerId);
             console.log('user opened container', containerId);
           });
+          socket.on('typing', (data) => {
+            socket.emit('is typing', data);
+          });
+          socket.on('not typing', (data) => {
+            socket.emit('is not typing', data);
+          });
           const messages = db.collection('messages');
           const messagecontainers = db.collection('messagecontainers');
           const messageChangeStream = messages.watch();

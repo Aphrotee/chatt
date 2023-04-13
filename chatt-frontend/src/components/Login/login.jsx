@@ -155,7 +155,7 @@ const Login = () => {
                             <ion-icon name="lock-closed"></ion-icon>
                             <input type="password" name="password" placeholder='Password' value={inputs.password} onChange={handleChange} /></div>
                         <input id="button" ref={loading} type="submit" value={loginBtn} />
-                        <p class='message' ref={msg}>{Msg}</p>
+                        <p className='message' ref={msg}>{Msg}</p>
 
                         <p>Don't have an account? <u className="other-options" onClick={() => {navigate('/signup')}} > Sign Up</u></p>
                         <p><u className="other-options" onClick={forgotPassword}>Forgot Password?</u></p>

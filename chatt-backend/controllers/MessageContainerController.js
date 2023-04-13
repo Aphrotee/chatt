@@ -6,16 +6,15 @@ class MessageContainerController {
 
   getContainer(req, res) {
     const sender = new mongoose.Types.ObjectId(req.userPayload._id);
+    const receiver = new mongoose.Types.ObjectId(req.receiverId);
     const senderPhoto = req.userPayload.profilePhoto;
     const senderUsername = req.userPayload.username;
-    let receiver;
 
-    if (req.receiverId instanceof String) {
-      receiver = new mongoose.Types.ObjectId(req.receiverId);
-    } else {
-      receiver = req.receiverId;
-    }
-
+    // if (req.receiverId instanceof String) {
+    //   receiver = new mongoose.Types.ObjectId(req.receiverId);
+    // } else {
+    //   receiver = req.receiverId;
+    // }
     MessageContainers.aggregate([
       { $match: { members: { $all: [sender, receiver] } } }
     ])

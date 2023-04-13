@@ -9,7 +9,9 @@ import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch} from 'react-redux'
 import { useMediaQuery } from 'react-responsive'
-import { Display, profileDisplay} from '../../actions/display';
+import { Display, profileDisplay, getUser} from '../../actions/index';
+import { userContainer } from '../../actions/container';
+
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 let socket;
 
@@ -18,7 +20,8 @@ const Sidebar = () => {
     const cookie = cookies.get('X-Token');
     const userId = cookies.get('chatt_userId');
     const display = useSelector(state => state.setDisplay)
-    const displayProfile = useSelector(state => state.profileDisplay)
+    const displayProfile = useSelector(state => state.profileDisplay);
+    const allContainers = useSelector(state => state.userContainer);
     const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
     const navigate = useNavigate();
     const dispatch = useDispatch()
@@ -27,6 +30,9 @@ const Sidebar = () => {
 
     // responsive based on media width
     useEffect(() => {
+        dispatch(getUser());
+        dispatch(userContainer());
+
         if (!input) setState(true)
 
         if (!isMobile || (isMobile && display)) {
@@ -43,8 +49,8 @@ const Sidebar = () => {
         if (!cookie || cookie === null) {
             navigate('/login');
         }
-        // socket = io('http://172.27.31.67:9000');
-        socket = io('https://chatt.cyclic.app');
+        socket = io('http://172.29.220.240:9000');
+        // socket = io('https://chatt.cyclic.app');
         socket.emit('user connect', userId);
         console.log('connecting')
         return () => socket.disconnect();
@@ -106,12 +112,12 @@ const Sidebar = () => {
     const [uLoading, setULoading] = useState(false);
     const [qLoading, setQLoading] = useState(false);
     const [pLoading, setPLoading] = useState(false);
-    const [Loading, setLoading] = useState(false);
+    // const [Loading, setLoading] = useState(false);
     const [members, setMembers] = useState([])
     const [userConnected, setUserConnected] = useState(false);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
-    const [other, setOther] = useState({"name":"", "lastSeen":"", "id" : "", "otherId": ""})
+    const [other, setOther] = useState({ "name": "", "status": "", "lastSeen":"", "id" : "", "otherId": ""})
 
     useEffect(() => {
         gsap.fromTo(loader.current, {display: 'block'}, {display: 'none', duration: 3})
@@ -148,9 +154,12 @@ const Sidebar = () => {
 
     useEffect(() => {
         if (displayProfile) {
-            profileWrapper.current.style.display = 'block';
+            profileWrapper.current.style.display = 'flex';
+            profileBackground.current.style.display = 'flex';
         } else {
             profileWrapper.current.style.display = 'none';
+            profileBackground.current.style.display = 'none';
+
         }
 
     }, [displayProfile])
@@ -220,6 +229,7 @@ const Sidebar = () => {
                 'X-Token': cookie
             }
         }).then((response) => {
+            console.log(response.data);
             setMessages(response.data);
         });
     }
@@ -288,16 +298,16 @@ const Sidebar = () => {
                              onClick={(e) => {getMessages(container._id);
                                              dispatch(Display());
                                              getName(container.membersUsernames.filter(name => name !== user.username));
-                                             getlastSeen( container.timestamp.time);
+                                             getlastSeen(container.timestamp.time);
                                              getId(container._id);
                                              getContainerProfilePhoto(container);
                                              get_id(container.members.filter(member => member !== user.id));
                                              setMembers(container.members);
                                              }}>
                     <div>{getProfilePhoto(container)}
-                        <div className='notifications'>
+                        {/* <div className='notifications'>
                             <div>99</div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className='details'>
 
@@ -389,7 +399,6 @@ const Sidebar = () => {
           });
     }
 
-
     const handleChange = (event) => {
         const query = event.target.value;
 
@@ -411,7 +420,7 @@ const Sidebar = () => {
             setInputs(values => ({ ...values, ['file_' + name]: event.target.files[0] }));
             setInputs(values => ({ ...values, [name]: event.target.files[0].name }));
         }
-      }
+    }
 
     const getContainer = (receiver) => {
         axios.get(`/container/${receiver}`, {
@@ -420,15 +429,16 @@ const Sidebar = () => {
             }
         })
           .then((response) => {
-            const containerId = response.data._id;
+            const container = response.data;
             const otheruser = response.data.membersUsernames.filter((name) => name !== cookies.get('chatt_username'))[0];
-            getMessages(containerId, otheruser);
-            getId(containerId);
-            getContainerProfilePhoto(response.data);
-            setMembers(response.data.members)
-          })
+            console.log('container', container);
+            getMessages(container._id, otheruser);
+            getId(container._id);
+            getlastSeen(container.timestamp.time);
+            getContainerProfilePhoto(container);
+            setMembers(container.members);
+          });
     }
-
 
     const matchedUsers = () => {
         const match = allUsers.filter((user) => {
@@ -444,10 +454,10 @@ const Sidebar = () => {
 
             return match? match.map((user) => {
                 return (
-                    <div className='wrap' onClick={() => {
+                    <div className='wrap' key={user.id} onClick={(e) => {
                         getContainer(user.id);
                         getName(user.username);
-                        get_id(user.id);
+                        get_id([user.id]);
                         }} >
                         <div>
                             <img src={user.profilePhoto? user.profilePhoto: defaultPic} alt={user && user.profilePhoto? user.name:"No profile photo"} />

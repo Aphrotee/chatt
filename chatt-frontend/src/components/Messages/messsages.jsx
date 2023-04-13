@@ -6,10 +6,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector} from 'react-redux'
 import { useMediaQuery } from 'react-responsive'
 import { Display } from '../../actions/display';
+import { userContainer } from '../../actions/container';
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 
 
-const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, setMessages}) => {
+const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, setMessages }) => {
 
     const [input, setInput] = useState('')
     const scrollbar = useRef(null);
@@ -17,10 +18,11 @@ const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, 
     const message = useRef(null);
     const messagesRef = useRef(null);
     const cookie = cookies.get('X-Token');
-    const isMobile = useMediaQuery({query: `(max-width: 768px)`});
+    const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
     const messageDisplay = useSelector(state => state.setDisplay);
+    const user = useSelector(state => state.getUser);
     const dispatch = useDispatch()
-    const match = window.matchMedia('(max-width: 768px)').matches
+    // const match = window.matchMedia('(max-width: 768px)').matches
     // responsive based on media width
     useEffect(() => {
 
@@ -36,18 +38,22 @@ const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, 
     const sendMessage = async (e) => {
         e.preventDefault()
 
+        const msg = input.trim();
         const data =  {
-            message: input,
+            message: msg,
             containerId: other.id,
             receiverId: other.otherId,
             senderId: user.id,
             type: "text",
             dummyId: v4()
         }
-        setMessages((messages) => [...messages, data])
         setInput("")
+        dispatch(userContainer());
         setSearchInput("");
-
+        if (msg.length === 0) {
+            return;
+        }
+        setMessages((messages) => [...messages, data])
 
         await axios.post('/messages/new', data, {
             headers: {
@@ -75,9 +81,10 @@ const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, 
         }
     }, [messages]);
 
-    const display = () => {
-        if (messages !== undefined && other) {
-            if (messages.length === 0 && otherUser === null) {
+    const displayMessage = () => {
+        // console.log(other)
+        if (messages) {
+            if (messages.length === 0 && !other.id) {
                 return (
                 <div ref={scrollbar} className="empty">
                     <div>
@@ -90,9 +97,10 @@ const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, 
                 </div>)
             }
         }
+        
 
         const getProfilePhoto = (container) => {
-            if (user !== undefined) {
+            if (user !== undefined && container !== undefined) {
                 if (user.profilePhoto === undefined) user.profilePhoto = '';
                 if (container.profilePhoto) return (<img src={container.profilePhoto} alt={container? container.name: ''} />);
                 if (container.membersPhotos) {
@@ -120,7 +128,7 @@ const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, 
         return (
             <>
             <div className="user-nav">
-                {match ? <span onClick={() => dispatch(Display())}><ion-icon name="arrow-back-outline"></ion-icon></span> : null}
+                    {window.matchMedia('(max-width: 768px)').matches ? <span onClick={() => dispatch(Display())}><ion-icon name="arrow-back-outline"></ion-icon></span> : null}
                 <div>{getProfilePhoto(other)}</div>
                 <div>
                     <p>{other? other.name: ""}</p>
@@ -169,7 +177,7 @@ const Messages = ({ messages, user, other, otherUser, setState, setSearchInput, 
 
         return (
             <section ref={message} className='messages-wrapper'>
-                {display()}
+                {displayMessage()}
             </section>
         );
     }

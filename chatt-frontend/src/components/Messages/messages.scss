@@ -274,6 +274,20 @@
                 padding: 0 38px;
             }
 
+            .icons>ion-icon[name=attach-sharp] {
+                position: absolute;
+                top: 34%;
+                display: block;
+                right: 15%;
+            }
+
+            .icons>ion-icon[name=happy-sharp] {
+                position: absolute;
+                top: 40%;
+                display: block;
+                left: 8%;
+            }
+
         }
     }
 }

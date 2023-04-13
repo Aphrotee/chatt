@@ -804,7 +804,7 @@ const Sidebar = () => {
                         setMessages={setMessages}
                         setState={setState}
                         setSearchInput={setInput}
-                        socket={socket}/>
+                        socket={socket} />
             <div ref={loader} className='loading'>
                 <div ref={details}>
                     <p>Chatt Instant Messaging</p>

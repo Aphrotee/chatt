@@ -106,36 +106,44 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
     };
 
     useEffect(() => {
-        if (typing) {
-            socket.emit('typing', { sender: user.id, container: other.id, receiver: other.otherId });
-        } else {
-            socket.emit('not typing', { sender: user.id, container: other.id, receiver: other.otherId });
+        if (socket) {
+            if (typing) {
+                socket.emit('typing', { sender: user.id, container: other.id, receiver: other.otherId });
+            } else {
+                socket.emit('not typing', { sender: user.id, container: other.id, receiver: other.otherId });
+            }
         }
     }, [typing]);
 
     useEffect(() => {
-        socket.on('is typing', (data) => {
-            if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
-                setIsTyping(true);
-            }
-        });
+        if (socket) {
+            socket.on('is typing', (data) => {
+                if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
+                    setIsTyping(true);
+                }
+            });
 
-        socket.on('is not typing', (data) => {
-            if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
-                setIsTyping(false);
+            socket.on('is not typing', (data) => {
+                if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
+                    setIsTyping(false);
+                }
+            });
+            return () => {
+                socket.off('is typing');
+                socket.off('is not typing');
             }
-        });
-        return () => {
-            socket.off('is typing');
-            socket.off('is not typing');
         }
     });
 
     useEffect(() => {
         if (isTyping) {
-            typingRef.current.style.display = 'block';
+            if (typingRef.current !== null) {
+                typingRef.current.style.display = 'block';
+            }
         } else {
-            typingRef.current.style.display = 'none';
+            if (typingRef.current !== null) {
+                typingRef.current.style.display = 'none';
+            }
         }
     })
 

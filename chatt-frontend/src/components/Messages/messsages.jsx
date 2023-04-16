@@ -1,12 +1,14 @@
 import './messages.scss';
-import axios from '../../axios'
-import cookies from '../../cookies'
+import axios from '../../axios';
+import cookies from '../../cookies';
 import { v4 } from 'uuid';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector} from 'react-redux'
-import { useMediaQuery } from 'react-responsive'
+import { useDispatch, useSelector} from 'react-redux';
+import { useMediaQuery } from 'react-responsive';
+import Lottie from 'react-lottie';
 import { Display } from '../../actions/display';
 import { userContainer } from '../../actions/container';
+import animationData from '../../animations/typing.json'
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 
 
@@ -26,6 +28,15 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
     const messageDisplay = useSelector(state => state.setDisplay);
     const user = useSelector(state => state.getUser);
     const dispatch = useDispatch()
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    }
+
     // const match = window.matchMedia('(max-width: 768px)').matches
     // responsive based on media width
     useEffect(() => {
@@ -40,10 +51,10 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
     }, [messageDisplay, isMobile])
 
     const sendMessage = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         const msg = input.trim();
-        const data =  {
+        const data = {
             message: msg,
             containerId: other.id,
             receiverId: other.otherId,
@@ -51,7 +62,7 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
             type: "text",
             dummyId: v4()
         }
-        setInput("")
+        setInput("");
         dispatch(userContainer());
         setSearchInput("");
         setTyping(false);
@@ -103,6 +114,12 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
         } else {
             setTyping(false);
         }
+        // setTimeout(() => {
+        //     const now = Date.now();
+        //     if (now - startTyping >= 3000) {
+        //         setTyping(false);
+        //     }
+        // }, 3000);
     };
 
     useEffect(() => {
@@ -118,23 +135,33 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
     useEffect(() => {
         if (socket) {
             socket.on('is typing', (data) => {
-                if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
+                console.log(data);
+                console.log(other.id, other.otherId, user.id);
+                if (data.container === other.id) {
+                    alert('typing in ' + data.container);
                     setIsTyping(true);
-                }
-            });
-
-            socket.on('is not typing', (data) => {
-                if (data.container === other.id && data.sender === other.otherId && data.receiver === user.id) {
-                    setIsTyping(false);
                 }
             });
             return () => {
                 socket.off('is typing');
-                socket.off('is not typing');
             }
         }
     });
 
+    useEffect(() => {
+        if (socket) {
+            console.log(other.id, other.otherId, user.id);
+            socket.on('is not typing', (data) => {
+                console.log(data);
+                if (data.container === other.id.toString() && data.sender === other.otherId.toString() && data.receiver === user.id.toString()) {
+                    setIsTyping(false);
+                }
+            });
+            return () => {
+                socket.off('is not typing');
+            }
+        }
+    })
     useEffect(() => {
         if (isTyping) {
             if (typingRef.current !== null) {
@@ -142,7 +169,7 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
             }
         } else {
             if (typingRef.current !== null) {
-                typingRef.current.style.display = 'none';
+                // typingRef.current.style.display = 'none';
             }
         }
     })
@@ -217,9 +244,17 @@ const Messages = ({ messages, /**user,*/ other, /**otherUser,*/ setSearchInput, 
                             </div>
                         )
                     }
-                }): <div></div>}
+                }) : <div></div>}
+                <div>
+                </div>
+                <div className='other-user-wrapper typing' ref={typingRef}>typing...
+                    <Lottie
+                        options={defaultOptions}
+                        width={70}
+                        height={180}
+                        style={{}} />
+                </div>
             </div>
-            <div className='Typing' ref={typingRef}>typing...</div>
 
             <div className="search-bar">
                 <form onSubmit={sendMessage}>

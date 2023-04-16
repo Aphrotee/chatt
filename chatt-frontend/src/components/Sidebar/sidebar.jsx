@@ -14,6 +14,9 @@ import { userContainer } from '../../actions/container';
 
 const defaultPic = import.meta.env.VITE_DEFAULT_PIC;
 let socket;
+const socketEndpoint = 'http://192.168.116.94:9000';
+// const socketEndpoint = 'https://chatt.cyclic.app';
+
 
 const Sidebar = () => {
     // browser cookie
@@ -27,6 +30,7 @@ const Sidebar = () => {
     const dispatch = useDispatch()
     const [state, setState] = useState(true);
     const [input, setInput] = useState(null);
+    const [userConnected, setUserConnected] = useState(false);
 
     // responsive based on media width
     useEffect(() => {
@@ -42,20 +46,36 @@ const Sidebar = () => {
             sidebar.current.style.display = 'none';
         }
 
-    }, [display, isMobile, input])
+    }, [display, isMobile, input]);
+
+    const connectToSocket = () => {
+        socket = io(socketEndpoint);
+        socket.emit('user connect', userId);
+        console.log('connecting');
+    }
 
     // socket instance
     useEffect(() => {
         if (!cookie || cookie === null) {
             navigate('/login');
         }
-        // socket = io('http://172.29.220.240:9000');
-        socket = io('https://chatt.cyclic.app');
-        socket.emit('user connect', userId);
-        console.log('connecting')
+        connectToSocket();
         return () => socket.disconnect();
     }, []);
 
+    // useEffect(() => {
+    //     if (socket) {
+    //         setUserConnected(false);
+    //         socket.emit('Hey server').on('Hi client', () => {
+    //             setUserConnected(true);
+    //         });
+    //         if (!userConnected) {
+    //             connectToSocket();
+    //         }
+    //     } else {
+    //         connectToSocket();
+    //     }
+    // });
 
 
     // useEffect(() => {
@@ -114,7 +134,6 @@ const Sidebar = () => {
     const [pLoading, setPLoading] = useState(false);
     // const [Loading, setLoading] = useState(false);
     const [members, setMembers] = useState([])
-    const [userConnected, setUserConnected] = useState(false);
     const [otherUser, setOtherUser] = useState(null);
     const [containers, setContainers] = useState([]);
     const [other, setOther] = useState({ "name": "", "status": "", "lastSeen":"", "id" : "", "otherId": ""})

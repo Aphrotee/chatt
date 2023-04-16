@@ -26,6 +26,23 @@ class DBClient {
             console.log('user connected', userId);
             socket.emit('user connected', userId);
           });
+
+          // connection check
+          socket.on('Hey server', () => {
+            socket.emit('Hi client');
+          })
+
+          const emitTyping = (data) => {
+            socket.emit('is typing', data);
+            socket.in(data.sender).emit('is typing', data);
+            socket.in(data.receiver).emit('is typing', data);
+          }
+
+          const emitStopTyping = (data) => {
+            socket.emit('is not typing', data);
+            socket.in(data.sender).emit('is not typing', data);
+            socket.in(data.receiver).emit('is not typing', data);
+          }
     
           // socket.off('user connect');
           socket.on('open container', (containerId) => {
@@ -33,17 +50,18 @@ class DBClient {
             console.log('user opened container', containerId);
           });
           socket.on('typing', (data) => {
-            socket.emit('is typing', data);
+            emitTyping(data);
+            console.log(`${data.sender} is typing in ${data.container}`);
           });
           socket.on('not typing', (data) => {
-            socket.emit('is not typing', data);
+            emitStopTyping(data);
+            console.log(`${data.sender} stopped typing in ${data.container}`);
           });
           const messages = db.collection('messages');
           const messagecontainers = db.collection('messagecontainers');
           const messageChangeStream = messages.watch();
           const msgContChangeStream = messagecontainers.watch();
           messageChangeStream.on('change', (change) => {
-            // console.log('Change occured:', change);
             if (change.operationType === 'insert') {
               const messageDetails = change.fullDocument;
               const container = messageDetails.containerId;
@@ -52,7 +70,6 @@ class DBClient {
             }
           });
           msgContChangeStream.on('change', async (change) => {
-            // console.log('Change occured:', change);
             if (change.operationType === 'update') {
               // const containerDetails = change.updateDescription.updatedFields;
               const id = change.documentKey._id;

@@ -89,7 +89,7 @@ const Sidebar = () => {
     const fileSelector = useRef(null);
     const uploadBtn = useRef(null);
     const uploadHandler = useRef(null)
-    const profileBackground = useRef(null);
+    // const profileBackground = useRef(null);
     const smallProfilePic = useRef(null);
     const bigProfilePic = useRef(null);
 
@@ -155,11 +155,10 @@ const Sidebar = () => {
     useEffect(() => {
         if (displayProfile) {
             profileWrapper.current.style.display = 'flex';
-            profileBackground.current.style.display = 'flex';
+            // profileBackground.current.style.display = 'flex';
         } else {
             profileWrapper.current.style.display = 'none';
-            profileBackground.current.style.display = 'none';
-
+            // profileBackground.current.style.display = 'none';
         }
 
     }, [displayProfile])
@@ -456,6 +455,7 @@ const Sidebar = () => {
                 return (
                     <div className='wrap' key={user.id} onClick={(e) => {
                         getContainer(user.id);
+                        dispatch(Display());
                         getName(user.username);
                         get_id([user.id]);
                         }} >
@@ -752,7 +752,6 @@ const Sidebar = () => {
         if (uploadBtn) uploadBtn.current.style.display = 'none';
         if (uploadHandler) uploadHandler.current.style.display = 'flex';
     }
-
     const closeUploadHandler = () => {
         if (uploadBtn) uploadBtn.current.style.display = 'block';
         if (uploadHandler) uploadHandler.current.style.display = 'none';
@@ -811,8 +810,8 @@ const Sidebar = () => {
                     <p ref={chatt}> Keeping in touch with friends, family and onnecting with new people all over the world </p>
                 </div>
             </div>
-            <div ref={profileBackground} className="profile-background">
-            </div>
+            {/* <div ref={profileBackground} className="profile-background">
+            </div> */}
             <div ref={profileWrapper} className="profile-wrapper">
                 <div className="user-profile-box" >
                     <div className="header-box">

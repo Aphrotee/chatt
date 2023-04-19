@@ -18,11 +18,11 @@ function Navbar() {
     const dispatch = useDispatch()
     const profile = useSelector(state => state.profileDisplay)
 
-    useEffect(() => {
-        if (!profile) {
-            setState()
-        }
-    }, [profile])
+    // useEffect(() => {
+    //     if (!profile) {
+    //         setState()
+    //     }
+    // }, [profile])
 
     const logout = () => {
         axios.delete('/auth/logout', {
@@ -49,7 +49,7 @@ function Navbar() {
                 </div>
                 <div className={state ? "dropdown": "hidden"}>
                 <ul>
-                    <li onClick={ () => {dispatch(profileDisplay())}}>Profile</li>
+                    <li onClick={ () => {dispatch(profileDisplay()); setState(!state)}}>Profile</li>
                     <li onClick={logout}>Log Out</li>
                 </ul>
             </div>

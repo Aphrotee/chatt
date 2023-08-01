@@ -235,7 +235,7 @@ class AuthController {
                   $set: { password: hashedPassword }
                 })
                   .then((updated) => {
-                    res.status(200).json({ message: "Password reset successful" });
+                    res.status(204).json({ message: "Password reset successful" });
                   })
                   .catch((err) => {
                     res.status(500).json({ eror: err.toString() });
@@ -257,7 +257,7 @@ class AuthController {
   logout(req, res) {
     redis.set(req.token, 0, 60 * 60 * 24 * 7);
     res.cookie('X-Token', '');
-    res.json({message: "successfully logged out"});
+    res.status(204).json({message: "successfully logged out"});
   };
 
 }

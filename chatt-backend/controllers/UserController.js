@@ -4,6 +4,198 @@ import Users from '../models/Users.js';
 import MessageContainers from '../models/MessageContainers.js';
 import worker from '../worker.js';
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Users:
+ *       type: object
+ *       required:
+ *         - email
+ *         - username
+ *         - password
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the user
+ *         username:
+ *           type: string
+ *           description: The unique name of the user
+ *           example: Temitope
+ *         email:
+ *           type: string
+ *           description: The valid email of the user
+ *           example: temitopeaiyebogan@gmail.com
+ *         password:
+ *           type: string
+ *           description: The encrypted password of the user
+ *         quote:
+ *           type: string
+ *           description: The user profile's status quote
+ *           example: Hi!, lets connect on Chatt Instant Messaging
+ *         profilePhoto:
+ *           type: string
+ *           description: The cloudinary-generated url routing to the profile photo of the user stored in the remotely
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the user
+ *         username:
+ *           type: string
+ *           description: The unique name of the user
+ *           example: Temitope
+ *         email:
+ *           type: string
+ *           description: The valid email of the user
+ *           example: temitopeaiyebogan@gmail.com
+ *         quote:
+ *           type: string
+ *           description: The user profile's status quote
+ *           example: Hi!, lets connect on Chatt Instant Messaging
+ *         profilePhoto:
+ *           type: string
+ *           description: The cloudinary-generated url routing to the profile photo of the user stored in the remotely
+ *     users:
+ *       type: array
+ *       items:
+ *         $ref: '#/components/schemas/User'
+ *     Username:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The unique name of the user
+ *     Bio:
+ *       type: object
+ *       properties:
+ *         quote:
+ *           type: string
+ *           description: The status bio of the user
+ *     ProfilePhoto:
+ *       type: object
+ *       properties:
+ *         profilephoto:
+ *           type: string
+ *           description: The clodinary url of the profilephoto of the user
+ * paths:
+ *   /users/me:
+ *     get:
+ *       parameters:
+ *       - name: X-Token
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: carries the jwt authentication token
+ *       tags:
+ *         - users
+ *       summary: retrieves the profile of the current user
+ *       security:
+ *         - SessionAuth: []
+ *       responses:
+ *         '200':
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/User'
+ *   /users/all:
+ *     get:
+ *       parameters:
+ *       - name: X-API-Key
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: carries the API key that can be used to authenticate without being logged in
+ *       tags:
+ *         - users
+ *       summary: retrieves all users
+ *       security:
+ *         - ApiKey: []
+ *       responses:
+ *         '200':
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/users'
+ *   /users/update-username:
+ *     put:
+ *       parameters:
+ *       - name: X-Token
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: carries the jwt authentication token
+ *       tags:
+ *         - users
+ *       summary: updates the username of the current user
+ *       security:
+ *         - SessionAuth: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Username'
+ *       responses:
+ *         '200':
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/User'
+ *         '403': 
+ *           description: username taken already
+ *   /users/update-bio:
+ *     put:
+ *       parameters:
+ *       - name: X-Token
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: carries the jwt authentication token
+ *       tags:
+ *         - users
+ *       summary: updates the profile bio of the user
+ *       security:
+ *         - SessionAuth: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Bio'
+ *       responses:
+ *         '200':
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/User'
+ *   /users/update-profile-photo:
+ *     put:
+ *       parameters:
+ *       - name: X-Token
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: carries the jwt authentication token
+ *       tags:
+ *         - users
+ *       summary: updates the profilephoto link of the user
+ *       security:
+ *         - SessionAuth: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProfilePhoto'
+ *       responses:
+ *         '200':
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/User'
+ */
 
 class UserController {
 

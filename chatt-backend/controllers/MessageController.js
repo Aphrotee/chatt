@@ -4,9 +4,141 @@ import Messages from '../models/Messages.js';
 import users from '../models/Users.js';
 import messagecontainers from '../models/MessageContainers.js';
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Message:
+ *       type: object
+ *       required:
+ *         - message
+ *         - type
+ *         - username
+ *         - senderId
+ *         - receiverId
+ *         - containerId
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the message
+ *         message:
+ *           type: string
+ *           description: message body
+ *           example: Hello! My name is Temitope
+ *         type:
+ *           type: string
+ *           description: type of message being sent
+ *           example: text
+ *         username:
+ *           type: string
+ *           description: The name of the user sending the message
+ *           example: Temitope
+ *         timestamp:
+ *           type: object
+ *           description: The timestamp object of the message with fields `date` and `time` 
+ *         milliTimestamp:
+ *           type: int
+ *           description: The timestamp in milliseconds. Useful for arranging messages in order
+ *           example: 172991097239
+ *         senderId:
+ *           type: string
+ *           description: The unique id of the message sender
+ *         receiverId:
+ *           type: string
+ *           description: The unique id of the message receiver
+ *         containerId:
+ *           type: string
+ *           description: The unique id of the message container to bear the message for both the sender and receiver
+ *     Messages:
+ *       type: array
+ *       items:
+ *         $ref: '#/components/schemas/Message'
+ *     messageReturn:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the message
+ *         type:
+ *           type: string
+ *           description: type of message being sent
+ *           example: text
+ *         username:
+ *           type: string
+ *           description: The name of the user sending the message
+ *           example: Temitope
+ *         timestamp:
+ *           type: object
+ *           description: The timestamp object of the message with fields `date` and `time` 
+ *         milliTimestamp:
+ *           type: int
+ *           description: The timestamp in milliseconds. Useful for arranging messages in order
+ *           example: 172991097239
+ *         senderId:
+ *           type: string
+ *           description: The unique id of the message sender
+ *         receiverId:
+ *           type: string
+ *           description: The unique id of the message receiver
+ *         containerId:
+ *           type: string
+ *           description: The unique id of the message container to bear the message for both the sender and receiver
+ * paths:
+ *   /messages/new:
+ *     post:
+ *       parameters:
+ *       - name: X-Token
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: carries the jwt token for authentication
+ *       tags:
+ *         - messages
+ *       summary: sends a new message and also stores it in the specified container
+ *       security:
+ *         - SessionAuth: []
+ *       requestBody:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *         required: true
+ *       responses:
+ *         '201':
+ *           description: message sent
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/messageReturn'
+ *   /messages/{containerId}/all:
+ *     get:
+ *       parameters:
+ *       - name: X-Token
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: carries the jwt token for authentication
+ *       - name: containerId
+ *         in: path
+ *         description: carries the id of tthe container whose messages are to be fetched
+ *         required: true
+ *         schema:
+ *           type: string
+ *       tags:
+ *         - messages
+ *       summary: retrieves all messages peculiar to a particular message container
+ *       security:
+ *         - SessionAuth: []
+ *       responses:
+ *         '200':
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Messages'
+ *     
+ */
 
 class MessageController{
-
 
   async newMessage(req, res) {
     const {

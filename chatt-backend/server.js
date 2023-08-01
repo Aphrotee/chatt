@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import engines from 'consolidate';
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerui from "swagger-ui-express"; 
 dotenv.config();
 import db from './utils/db.js';
 import socketIO from './utils/socketio.cjs';
@@ -69,6 +71,37 @@ app.get('/api/v1/container/:receiverId', verifyToken, messageContainerController
 
 app.get('/api/v1/containers/all', verifyToken, messageContainerController.allContainers);
 
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Chatt Instant Messaging Api doc",
+      version: "1.0.0",
+      description: "This a chatt application API for the backend of Chatt Instant Messaging made with Express and\
+      documented with Swagger",
+      contact: {
+        name: "Temitope Aiyebogan",
+        email: "temitopeaiyebogan@gmail.com"
+      }
+    },
+    servers: [
+      {
+        url: "http://localhost:3000/api/v1/"
+      },
+      {
+        url: "https://chatt.cyclic.app/api/v1/"
+      }
+    ]
+  },
+  apis: ["./controllers/*.js"]
+};
+
+const spacs = swaggerJSDoc(options);
+app.use(
+    "/api-doc",
+    swaggerui.serve,
+    swaggerui.setup(spacs)
+)
 const __dirname1 = path.resolve();
 
 if (process.env.NODE_ENV === 'production') {

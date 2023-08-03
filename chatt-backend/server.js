@@ -86,9 +86,6 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000/api/v1/"
-      },
-      {
         url: "https://chatt.cyclic.app/api/v1/"
       }
     ]

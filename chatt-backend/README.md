@@ -1,3 +1,3 @@
 ## API Documentation
 
-The API documentation is found at https://chatt.cyclic.app/api/v1/api-doc
+The API documentation is found at https://chatt.cyclic.app/api-doc
